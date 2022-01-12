@@ -28,7 +28,32 @@ raw_count_data <- read_excel("data/raw-count-data.xlsx",
 ```
 
 ```{r variants}
-raw_variant_data <-  
+raw_variant_data <- read_excel(
+  "data/raw-variant-data.xlsx",
+  col_types = c(
+    "date",
+    "text",
+    "numeric",
+    "skip",
+    "skip",
+    "numeric",
+    "skip",
+    "skip",
+    "numeric",
+    "skip",
+    "skip",
+    "numeric",
+    "skip",
+    "skip",
+    "numeric",
+    "skip",
+    "skip",
+    "numeric"
+  ),
+  skip = 1
+) %>%
+  janitor::clean_names() %>%
+  mutate(date = as.Date(date))
 ```
 
 ## Cacluate counts
@@ -77,6 +102,30 @@ ggplotly(count_plot)
 ```
 
 
-```{r}
+```{r variant count}
+variant_data <-
+raw_variant_data %>%
+  # average by date
+  group_by(date) %>%
+  summarize(across(contains('frequency'), ~mean(., na.rm = T))) %>%
+  pivot_longer(contains('frequency'), names_to = 'mutation', values_to = 'frequency') %>%
+  mutate(mutation = str_remove(mutation, "_frequency")) %>%
+  mutate(variant = case_when(mutation == 'n501y' ~ "Alpha, Beta & Gamma", 
+                             mutation == 'l452r' ~ 'Delta',
+                             mutation == 'k417n' ~  'Omicron', 
+                             TRUE ~ 'Other')) %>%
+  mutate(mutation = toupper(mutation))
+  
 ```
 
+
+```{r variant graph}
+variant_plot<-
+variant_data %>%
+  filter(!variant == "Other") %>%
+  ggplot(aes(x = date, y = frequency, color = variant)) + 
+  geom_line() + 
+  councilR::council_theme()
+
+ggplotly(variant_plot)  
+```
