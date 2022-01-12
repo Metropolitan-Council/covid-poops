@@ -1,0 +1,82 @@
+---
+title: "data-processing"
+author: "Ashley Asmus"
+date: "1/12/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+library(janitor)
+library(tidyverse)
+library(plotly)
+```
+
+## Read in raw data from Excel
+
+```{r counts}
+raw_count_data <- read_excel("data/raw-count-data.xlsx", 
+    col_types = c("text", "skip", "skip", 
+        "date", "skip", "numeric", "numeric", 
+        "skip", "skip", "skip", "numeric", 
+        "skip", "skip", "skip", "skip", "skip", 
+        "skip", "skip", "skip", "skip"), 
+    skip = 1) %>%
+  janitor::clean_names() %>%
+  mutate(sample_start_date = as.Date(sample_start_date))
+```
+
+```{r variants}
+raw_variant_data <-  
+```
+
+## Cacluate counts
+```{r count reshape}
+seq_date <- function(x) seq(min(x, na.rm = T), max(x, na.rm = T), by = "day")
+all_dates <- seq_date(raw_count_data$sample_start_date)
+
+count_data <-
+raw_count_data %>%
+  mutate(flow_l_day = metro_flow_rate_mgd_on_sample_start_date * 3785411.8) %>%
+  select(-metro_flow_rate_mgd_on_sample_start_date) %>%
+  pivot_longer(cols = c("copies_l_3", "copies_l_4"), names_to = "run_num", names_prefix = "copies_l_", 
+               values_to = "n_l") %>%
+  # calculate n per day, per person, per person in millions
+  mutate(copies_day = n_l * flow_l_day) %>%
+  mutate(copies_day_person = copies_day / 195000) %>%
+  mutate(copies_day_person_M = copies_day_person/1e7) %>%
+  # average across runs for a sample average
+  group_by(sample_name, sample_start_date, flow_l_day) %>%
+  summarize(across(c(copies_day_person_M), ~mean(., na.rm = T))) %>%
+  ungroup() %>%
+  # average by date: 
+  group_by(sample_start_date) %>%
+  add_tally(name = 'n_samples') %>%
+  summarize(copies_day_person_M_mn = mean(copies_day_person_M, na.rm = T),
+            copies_day_person_M_se = sd(copies_day_person_M, na.rm = T)/(n_samples)) %>%
+  ungroup() %>%
+  unique() %>%
+  rename(date = sample_start_date) %>%
+  # calculate a rolling 7 day average
+  # (fill in for missing dates)
+  complete(date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by="days")) %>%
+  arrange(date)
+```
+
+
+```{r count graph}
+# Graph of counts
+count_plot <- 
+ggplot(count_data, aes(x = date, y = copies_day_person_M_mn))+ 
+  geom_point() + 
+  geom_errorbar(aes(ymin = copies_day_person_M_mn - copies_day_person_M_se, ymax = copies_day_person_M_mn + copies_day_person_M_se)) + 
+  geom_line(linetype = 'dashed', color = 'gray50') + 
+  councilR::council_theme()
+ggplotly(count_plot)
+```
+
+
+```{r}
+```
+
