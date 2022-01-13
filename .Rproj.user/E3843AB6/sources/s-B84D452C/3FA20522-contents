@@ -14,9 +14,9 @@ library(plotly)
 ```
 
 ## Read in raw data from Excel
-
-```{r counts}
-raw_count_data <- read_excel("data/raw-count-data.xlsx", 
+### copy data
+```{r load}
+raw_load_data <- read_excel("data/raw-load-data.xlsx", 
     col_types = c("text", "skip", "skip", 
         "date", "skip", "numeric", "numeric", 
         "skip", "skip", "skip", "numeric", 
@@ -27,17 +27,48 @@ raw_count_data <- read_excel("data/raw-count-data.xlsx",
   mutate(sample_start_date = as.Date(sample_start_date))
 ```
 
+### variant data
 ```{r variants}
-raw_variant_data <-  
+raw_variant_data <- read_excel(
+  "data/raw-variant-data.xlsx",
+  col_types = c(
+    "date",
+    "text",
+    "numeric",
+    "skip",
+    "skip",
+    "numeric",
+    "skip",
+    "skip",
+    "numeric",
+    "skip",
+    "skip",
+    "numeric",
+    "skip",
+    "skip",
+    "numeric",
+    "skip",
+    "skip",
+    "numeric"
+  ),
+  skip = 1
+) %>%
+  janitor::clean_names() %>%
+  mutate(date = as.Date(date))
 ```
 
-## Cacluate counts
-```{r count reshape}
-seq_date <- function(x) seq(min(x, na.rm = T), max(x, na.rm = T), by = "day")
-all_dates <- seq_date(raw_count_data$sample_start_date)
+### case load from MDH
+```{r}
+```
 
-count_data <-
-raw_count_data %>%
+
+## Cacluate load
+```{r load reshape}
+seq_date <- function(x) seq(min(x, na.rm = T), max(x, na.rm = T), by = "day")
+all_dates <- seq_date(raw_load_data$sample_start_date)
+
+load_data <-
+raw_load_data %>%
   mutate(flow_l_day = metro_flow_rate_mgd_on_sample_start_date * 3785411.8) %>%
   select(-metro_flow_rate_mgd_on_sample_start_date) %>%
   pivot_longer(cols = c("copies_l_3", "copies_l_4"), names_to = "run_num", names_prefix = "copies_l_", 
@@ -62,21 +93,56 @@ raw_count_data %>%
   # (fill in for missing dates)
   complete(date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by="days")) %>%
   arrange(date)
+
+head(load_data)
 ```
 
 
-```{r count graph}
-# Graph of counts
-count_plot <- 
-ggplot(count_data, aes(x = date, y = copies_day_person_M_mn))+ 
+## Graph of load
+```{r load graph}
+# Graph of load
+load_plot <- 
+ggplot(load_data, aes(x = date, y = copies_day_person_M_mn))+ 
   geom_point() + 
   geom_errorbar(aes(ymin = copies_day_person_M_mn - copies_day_person_M_se, ymax = copies_day_person_M_mn + copies_day_person_M_se)) + 
   geom_line(linetype = 'dashed', color = 'gray50') + 
   councilR::council_theme()
-ggplotly(count_plot)
+ggplotly(load_plot)
 ```
 
 
+## Reshape variant data
+```{r variant proportion}
+variant_data <-
+raw_variant_data %>%
+  # average by date
+  group_by(date) %>%
+  summarize(across(contains('frequency'), ~mean(., na.rm = T))) %>%
+  pivot_longer(contains('frequency'), names_to = 'mutation', values_to = 'frequency') %>%
+  mutate(mutation = str_remove(mutation, "_frequency")) %>%
+  mutate(variant = case_when(mutation == 'n501y' ~ "Alpha, Beta & Gamma", 
+                             mutation == 'l452r' ~ 'Delta',
+                             mutation == 'k417n' ~  'Omicron', 
+                             TRUE ~ 'Other')) %>%
+  mutate(mutation = toupper(mutation))
+head(variant_data)
+```
+
+
+## Graph of variants
+```{r variant graph}
+variant_plot<-
+variant_data %>%
+  filter(!variant == "Other") %>%
+  ggplot(aes(x = date, y = frequency, color = variant)) + 
+  geom_line() + 
+  councilR::council_theme()
+
+ggplotly(variant_plot)  
+```
+
+## Write to .csv
 ```{r}
+write.csv(variant_data, 'data/clean_variant_data.csv', row.names = F)
+write.csv(load_data, 'data/clean_load_data.csv', row.names = F)
 ```
-
