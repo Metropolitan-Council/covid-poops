@@ -1,0 +1,3637 @@
+---
+title: "Looking ahead to electric vehicles"
+subtitle: "What our Travel Behavior Inventory Survey tells us about the potential for vehicle electrification in our region"
+author: "Ashley Asmus"
+date: "12/15/2021"
+output: 
+  html_document: 
+    self-contained: false
+    css: style.css
+    code_download: true
+    code_folding: show
+    toc: true
+    toc_float: true
+    toc_depth: 6
+nocite: '@*'
+---
+
+
+```{r setup, include=FALSE}
+setwd('C:/Users/AsmusAL/Documents/MetC_Locals/MTS/TBIHouseholdSurvey/EV Study/')
+knitr::opts_chunk$set(collapse = TRUE,
+                      comment = ">",
+                      out.width = "100%")
+
+
+suppressMessages(library(bit64, quietly = T)) # for loading in integer iDs for households/persons in TBI dataset
+suppressMessages(library(tidyverse, quietly = T))
+suppressMessages(library(ggplot2, quietly = T))
+suppressMessages(library(plotly, quietly = T)) # interactive graphics
+suppressMessages(library(gt, quietly = T)) # new package that creates G ood T ables
+suppressMessages(library(srvyr, quietly = T)) # survey statistics
+suppressMessages(library(effectsize, quietly = T)) # effect sizes for lms
+suppressMessages(library(paletteer, quietly = T)) # lovely color palettes
+suppressMessages(library(DT, quietly = T)) # data tables
+knitr::opts_chunk$set(echo = FALSE, message = FALSE)
+# create dataset:
+load('EVStudy.RData')
+load('Data/tbi_covid.RData')
+
+# Color Palette: Ponyo https://github.com/EmilHvitfeldt/r-color-palettes
+medcol <-
+  paletteer::paletteer_d('ghibli::PonyoMedium') %>%
+  as.character() %>%
+  as.list()
+
+names(medcol) <-
+  c("mdBrown",
+    "mdBlue",
+    "mdTeal",
+    "mdPink",
+    "mdOrange",
+    "mdYellow",
+    "mdPeach")
+
+litecol <-
+  paletteer::paletteer_d('ghibli::PonyoLight') %>%
+  as.character() %>%
+  as.list()
+
+names(litecol) <-
+  c("ltBrown",
+    "ltBlue",
+    "ltTeal",
+    "ltPink",
+    "ltOrange",
+    "ltYellow",
+    "ltPeach")
+
+tencol <- c(
+  '#d8af39',
+  '#c2be48',
+  '#accc60',
+  '#95d77d',
+  '#7fe09c',
+  '#4bb993',
+  '#249183',
+  '#126a6b',
+  '#14454c',
+  'black'
+)
+
+darkcol <-
+  paletteer::paletteer_d('ghibli::PonyoDark') %>%
+  as.character() %>%
+  as.list()
+
+names(darkcol) <-
+  c("daBrown",
+    "daBlue",
+    "daTeal",
+    "daPink",
+    "daOrange",
+    "daYellow",
+    "daPeach")
+```
+
+# About this work
+The Metropolitan Council is conducting research into Electric Vehicle (EV) adoption in the region. This research will help policymakers understand the potential role of EVs in reducing greenhouse gas emissions from transportation.
+
+As part of the study, we relied on data from our 2018-2019 Travel Behavior Inventory Household Survey (TBI) (link) to understand current driving and vehicle ownership patterns across the region. The TBI is a region-wide, comprehensive travel survey of metro residents. The survey gathers key data on how people travel, along with key demographic variables that help to place travel behavior in context. 
+
+The following (paragraphs? Report?) take a deeper look at the TBI data, with a special focus on people who drive and own vehicles today. We ask the question, “what is the potential for vehicle electrification in our region?”
+
+# Our metro area "fleet" of private vehicles is old and fossil fuel-dependent
+```{r Vehicle Averages, echo = F, message = F}
+## Average age, emissions and and mpg for all vehicles
+veh_avg<-
+  veh %>%
+  select(hh_id, year, mpgCityNew, mpgHighwayNew, co2New) %>%
+  left_join(select(hh, hh_id, hh_weight)) %>%
+  mutate(year = ifelse(year == 1980, NA, year)) %>% # this is actually NA.
+  mutate(age = 2019 - year) %>%
+  as_survey(ids = 1, weights = hh_weight) %>%
+  summarize(
+    age = survey_mean(age, vartype = "se", na.rm = T),
+    mpgCity = survey_mean(mpgCityNew, vartype = "se", na.rm = T),
+    mpgHwy = survey_mean(mpgHighwayNew, vartype = "se", na.rm = T),
+    co2 = survey_mean(co2New, vartype = "se", na.rm = T)
+  ) %>%
+  mutate(across(everything(), ~round(., 1)))
+
+## Average age, emissions and mpg for vehicles by fuel type
+veh_pct_xfuel <-
+  veh %>%
+  select(hh_id, fuel, year, mpgCityNew, mpgHighwayNew, co2New) %>%
+  left_join(select(hh, hh_id, hh_weight)) %>%
+  mutate(year = ifelse(year == 1980, NA, year)) %>% # this is actually NA.
+  mutate(age = 2019 - year) %>%
+  mutate(
+    fuel =
+      recode_factor(
+        fuel,
+        "Missing: Skip logic" = "Other/Not Provided",
+        # these entries are from cars that were entered by hand by the survey respondent
+        "Missing: Non-response" = "Other/Not Provided",
+        "Other" = "Other/Not Provided"
+      )
+  ) %>%
+  as_survey(ids = 1, weights = hh_weight) %>%
+  group_by(fuel) %>%
+  summarize(
+    percent = 100 * survey_prop(vartype = "se")) %>%
+  mutate(across(c(percent, percent_se), ~round(.)))
+```
+
+```{r Emissions per person}
+emissions_per_person <-
+  veh_trips %>%
+  # select(veh_id, trip_id, distance) %>% 
+   left_join(veh %>% select(veh_id, co2New)) %>%
+  # apply median co2 emissions value to vehicles with missing information (probably an under-estimate).
+  mutate(co2New = ifelse(is.na(co2New), median(co2New, na.rm = T), co2New)) %>%
+  left_join(trip %>% select(trip_id, person_id, day_num, vehicle_driver)) %>%
+  filter(vehicle_driver == 'Driver') %>%
+  select(person_id, day_num, co2New, distance) %>%
+  # count for all residents:
+  right_join(day %>% select(person_id, day_num, day_weight)) %>%
+  replace_na(list(co2New = 0, distance = 0)) %>%
+  mutate(co2_trip_kg = (co2New * distance) / 1000) %>%
+  group_by(person_id, day_num, day_weight) %>%
+  summarize(
+    co2_day_kg = sum(co2_trip_kg, na.rm = T),
+    driving_distance = sum(distance, na.rm = T)
+  ) %>%
+  # get just metro-area adults:
+  left_join(per %>% select(person_id, age)) %>%
+  # just adults:
+  filter(!age %in% c("Under 5", "5-15")) %>%
+  select(-age) %>%
+  # just weekdays:
+  filter(day_weight > 0) %>%
+  arrange(person_id, day_num)
+
+emissions_per_person %>%
+  as_survey_design(w = day_weight) %>%
+  # add up  (survey total) for all the trips on a typical weekday
+  summarize(
+    avg_co2_perday_kg = survey_mean(co2_day_kg, na.rm = T),
+    total_co2_perday_kg = survey_total(co2_day_kg, na.rm = T),
+    avg_miles_perday = survey_mean(driving_distance, na.rm = T)) %>%
+  # transform to tons of co2: 
+  mutate(total_co2_perday_T = total_co2_perday_kg/1000,
+         avg_co2_perday_T = avg_co2_perday_kg/1000) %>%
+  # get an annual emissions number:
+  mutate(annual_co2_T = 365 * total_co2_perday_T,
+         annual_co2_T_perperson = 365 * avg_co2_perday_T) %>%
+  # put this in millions:
+  mutate(annual_co2_T_m = round(annual_co2_T/1000000, 1),
+         annual_co2_perperson_T_m = round(annual_co2_T_perperson/1000000, 3))
+
+
+
+# Histogram: Per Person Emissions
+emissions_per_person %>%
+  filter(driving_distance < 720) %>%
+   mutate(co2Bins = cut(
+    co2_day_kg,
+    breaks = c(-1, 0, seq(from = 5, to = 40, by = 5), Inf), 
+    labels = c(
+      "0",
+      "0-5",
+      "5-10",
+      "10-15",
+      "15-20",
+      "20-25",
+      "25-30",
+      "30-35",
+      "35-40",
+      "40+"
+    )
+  )) %>% 
+  left_join(day %>% select(person_id, day_num, num_trips)) %>%
+  mutate(traveled = ifelse(num_trips == 0, "Stayed home", "Made trips")) %>%
+  filter(num_trips > 0) %>%
+  as_survey_design(weights = day_weight) %>%
+  group_by(co2Bins) %>%
+  summarize(n_adults = survey_total(),
+            pct_adults = 100 * survey_prop()) %>%
+  ungroup() %>%
+  mutate(mytext = paste0(
+    round(pct_adults),
+    '% (±',
+    round(pct_adults_se),
+    '%)\nadults'
+  )) %>%
+  ggplot(aes(x = co2Bins, y = pct_adults)) +
+  geom_bar(stat = 'identity', fill = tencol[7]) +
+  geom_errorbar(
+    aes(
+      ymin = pct_adults - pct_adults_se,
+      ymax = pct_adults + pct_adults_se
+    ),
+    width = 0,
+    color = 'gray70'
+  ) +
+  theme_minimal() +
+  scale_x_discrete(drop = F) +
+  geom_text(
+    aes(label = mytext, y = pct_adults  + pct_adults_se + 2),
+    size = 4,
+    fontface  = "italic"
+  ) +
+  labs(x = "daily emissions from personal vehicles (kg CO2 per day)", y = "number of adults") +
+  theme(legend.position =  "none") +
+  ggtitle("Estimated number of vehicles in region by fuel efficiency",
+          subtitle = "Estimates derived using household-level weights.Error bars are standard errors of the weighted total. \nOnly includes vehicles with EPA efficiency records (90% of vehicles in the TBI dataset).") +
+  # coord_cartesian(ylim = c(2002, 2020))+
+  theme(
+    # axis.title.y = element_blank(),
+    # axis.text.y = element_blank(),
+    axis.text.x = element_text(size = 12),
+    panel.grid = element_blank(),
+    axis.title= element_text(size = 14),
+    strip.text = element_text(size = 18),
+    strip.background = element_rect(fill = 'gray90', color = 'white'),
+    title = element_blank(),
+    plot.title = element_blank(),
+    plot.subtitle = element_blank(),
+    legend.position = 'bottom',
+    panel.background = element_rect(fill = 'gray97', color = NA),
+    plot.background = element_rect(fill = 'gray97', color = NA)
+  )
+
+  
+
+```
+The average vehicle in the metro region is over `r round(veh_avg$age, 1)` years old, gets an average of `r veh_avg$mpgCity` miles per gallon in city driving conditions (`r veh_avg$avg_mpg_highway` miles per gallon highway), and emits approximately `r veh_avg$co2` grams of CO2 per mile. 
+
+```{r Vehicle MPG plot, echo = F, message = F}
+veh %>%
+  select(veh_id, hh_id, mpgCityNew) %>%
+  left_join(hh %>% select(hh_id, hh_weight)) %>%
+  filter(mpgCityNew > 0) %>%
+  mutate(mpgBins = cut(
+    mpgCityNew,
+    breaks = seq(from = 10, to = 50, by = 5),
+    labels = c(
+      "10-15",
+      "15-20",
+      "20-25",
+      "25-30",
+      "30-35",
+      "35-40",
+      "40-45",
+      "45-50"
+    )
+  )) %>%
+  mutate(mpgBins = as.character(mpgBins)) %>%
+  replace_na(list(mpgBins = "50+")) %>%
+  as_survey_design(weights = hh_weight) %>%
+  group_by(mpgBins) %>%
+  summarize(n_vehicles = survey_total(),
+            pct_vehicles = survey_prop()) %>%
+  ungroup() %>%
+  mutate(mytext = paste0(
+    round(n_vehicles / 1000),
+    'K (±',
+    round(n_vehicles_se / 1000),
+    'K)\nvehicles'
+  )) %>%
+  ggplot(aes(x = mpgBins, y = n_vehicles)) +
+  geom_bar(stat = 'identity', fill = tencol[7]) +
+  geom_errorbar(
+    aes(
+      ymin = n_vehicles - n_vehicles_se,
+      ymax = n_vehicles + n_vehicles_se
+    ),
+    width = 0,
+    color = 'gray70'
+  ) +
+  theme_minimal() +
+  scale_x_discrete(drop = F) +
+  geom_text(
+    aes(label = mytext, y = n_vehicles  + n_vehicles_se + 50000),
+    size = 4,
+    fontface  = "italic"
+  ) +
+  labs(x = "miles per gallon (city)", y = "Number of Vehicles") +
+  theme(legend.position =  "none") +
+  ggtitle("Estimated number of vehicles in region by fuel efficiency",
+          subtitle = "Estimates derived using household-level weights.Error bars are standard errors of the weighted total. \nOnly includes vehicles with EPA efficiency records (90% of vehicles in the TBI dataset).") +
+  # coord_cartesian(ylim = c(2002, 2020))+
+  theme(
+    # axis.title.y = element_blank(),
+    axis.text.y = element_blank(),
+    axis.text.x = element_text(size = 12),
+    panel.grid = element_blank(),
+    axis.title= element_text(size = 14),
+    strip.text = element_text(size = 18),
+    strip.background = element_rect(fill = 'gray90', color = 'white'),
+    title = element_blank(),
+    plot.title = element_blank(),
+    plot.subtitle = element_blank(),
+    legend.position = 'bottom',
+    panel.background = element_rect(fill = 'gray97', color = NA),
+    plot.background = element_rect(fill = 'gray97', color = NA)
+  )
+```
+
+At an average daily driving  distance of `r round(dailyco2$avg_miles_perday)` miles, metro drivers contribute `round(dailyco2$avg_co2_perday_kg)`kg of CO2 into the atmosphere per adult each day. This adds up to `round(dailyco2$annual_co2_T_perperson)` tons of CO2 per adult each year. For the average person to offset their annual driving-related emissions, they would have to replace roughly `r prettyNum(round(dailyco2$annual_co2_T_perperson/.0264, -3), big.mark = ",")` incandescent light bulbs with LED light bulbs in their house. (https://www.epa.gov/energy/greenhouse-gases-equivalencies-calculator-calculations-and-references).
+
+Scaling up tot he entire region, driving puts about `r prettyNum(round(dailyco2$total_co2_perday_T, -3), big.mark = ",")` metric tons of CO2 into the atmosphere each day, or `r dailyco2$annual_co2_T_m` million tons of CO2 per year. To put that in context, tree growth in Minnesota’s forests store a grand total of 8.9 million tons of CO2 per year. (https://www.pca.state.mn.us/air/greenhouse-gas-emissions-data). 
+
+```{r EV owner income, echo=FALSE, message=FALSE}
+veh_income_summary <- 
+  veh_income %>%
+  group_by(fuel, income_detailed) %>%
+  summarize(n = sum(hh_weight)) %>%
+  # tally() %>%
+  mutate(pct = 100 * n/sum(n))
+
+mean_income <- 
+veh_income %>%
+  group_by(fuel) %>%
+  summarize(weighted_mean_income = weighted.mean(income_midpoint, w = hh_weight))
+
+income_diff <- mean_income$weighted_mean_income[mean_income$fuel == "Electric"] - mean_income$weighted_mean_income[mean_income$fuel == "Gas"]
+
+income_diff2 <- mean_income$weighted_mean_income[mean_income$fuel == "Electric"] - mean_income$weighted_mean_income[mean_income$fuel == "No Vehicle"]
+
+
+income_diff_approx <- prettyNum(round(income_diff, -3), big.mark = ",", big.interval = 3)
+income_diff_approx2 <- prettyNum(round(income_diff2, -3), big.mark = ",", big.interval = 3)
+```
+
+Currently, EV share of the metro fleet remains low. In our 2019 Travel Survey of `r prettyNum(nrow(hh), big.mark = ",")` metro-area households, only `veh %>% filter(fuel == 'Electric') %>% select(hh_id) %>% unique() %>% nrow()` had an electric vehicle. 
+The vast majority of vehicles the region -- approximately `r veh_pct_xfuel$percent[veh_pct_xfuel$fuel == 'Gas']`% -- use gasoline fuel. Only `r veh_pct_xfuel$percent[veh_pct_xfuel$fuel == 'Electric']`% of vehicles are electric. 
+```{r Vehicle Count, echo=FALSE, message=FALSE}
+veh %>% 
+  left_join(hh %>% select(hh_id, hh_weight)) %>%
+  mutate(fuel = 
+           recode_factor(fuel, 
+                         "Missing: Skip logic" = "Other/Not Provided",
+                         # these entries are from cars that were entered by hand by the survey respondent
+                         "Missing: Non-response" = "Other/Not Provided",
+                         "Other" = "Other/Not Provided")) %>%
+  group_by(fuel) %>%
+  add_tally() %>%
+  as_survey_design(ids = 1, weights = hh_weight) %>%
+  group_by(fuel) %>%
+  summarize(n = unweighted(n()),
+            est_n = survey_total(),
+            est_pct = 100 * survey_prop()) %>%
+  mutate(pct = 100 * n/sum(n)) %>%
+  select(fuel, n, pct, est_n, est_n_se, est_pct, est_pct_se) %>%
+  arrange(desc(est_n)) %>%
+  gt(rowname_col = 'fuel') %>%
+  fmt_number(
+    columns = c(pct, est_pct, est_pct_se),
+    decimals = 1
+  ) %>%
+    fmt_number(
+    columns = c(n, est_n, est_n_se),
+    decimals = 0
+  ) %>%
+   tab_spanner(
+    label = "Raw Survey Totals",
+    columns = c(n, pct)
+  ) %>%
+  tab_spanner(
+    label = "Regional Estimates",
+    columns = c(est_n, est_n_se, est_pct, est_pct_se)
+  ) %>%
+  tab_footnote(
+    footnote = "Survey totals are scaled up to estimates for the entire region using household-level survey weights.",
+    locations = cells_column_spanners(spanners = "Regional Estimates")
+  ) %>%
+  cols_label(fuel = "Fuel Type", n = "N", pct = "Share (%)",
+             est_n = "N", est_n_se = "SE", est_pct = "Share (%)", est_pct_se = "SE (%)") %>%
+  tab_header(title = "Number and Share (%) of Vehicles in the Region, by Fuel Type")
+```
+
+The EV owners in our survey tended to be wealthier and were more likely to live in the urban center of the region than the average resident, but drove about the same amount as the regional average. 
+
+```{r EV characteristics}
+ev_income_summary <- 
+  veh_income %>%
+  mutate(income_cat = case_when(income_detailed %in% c("$250K+", "$200-$250K", "$150-200K", "$100-150K") ~ "$100K+", 
+                                income_detailed == "Prefer not to answer" ~ "Prefer not to answer",
+                                TRUE ~ "<$100K")) %>%
+  as_survey_design(w = hh_weight) %>%
+  group_by(fuel, income_cat) %>%
+  summarize(pct = 100 * survey_prop()) %>%
+  filter(fuel=="Electric") %>%
+  filter(income_cat == "$100K+") %>%
+  mutate(fuel = "EV-owning households")
+
+veh_income_summary <- 
+  veh_income %>%
+  filter(!num_vehicles == 0) %>%
+  mutate(income_cat = case_when(income_detailed %in% c("$250K+", "$200-$250K", "$150-200K", "$100-150K") ~ "$100K+", 
+                                income_detailed == "Prefer not to answer" ~ "Prefer not to answer",
+                                TRUE ~ "<$100K")) %>%
+  as_survey_design(w = hh_weight) %>%
+  group_by(income_cat) %>%
+  summarize(pct = 100 * survey_prop()) %>%
+  filter(income_cat == "$100K+") %>%
+  mutate(fuel = "All vehicle-owning households")
+
+hh_income_summary <- 
+  veh_income %>%
+  mutate(income_cat = case_when(income_detailed %in% c("$250K+", "$200-$250K", "$150-200K", "$100-150K") ~ "$100K+", 
+                                income_detailed == "Prefer not to answer" ~ "Prefer not to answer",
+                                TRUE ~ "<$100K")) %>%
+  as_survey_design(w = hh_weight) %>%
+  group_by(income_cat) %>%
+  summarize(pct = 100 * survey_prop()) %>%
+  filter(income_cat == "$100K+") %>%
+  mutate(fuel = "All households")
+
+income_summary <- bind_rows(ev_income_summary, veh_income_summary, hh_income_summary) %>%
+  mutate(measure = "Share of households with income greater than $100,000") %>%
+  select(-income_cat) %>%
+  mutate(across(c(pct, pct_se), ~round(.))) %>%
+  mutate(value = paste0(pct, "% (±", pct_se, "%)")) %>%
+  select(-pct_se, -pct)
+
+
+ev_geography_summary <- 
+  veh_income %>%
+  filter(!num_vehicles == 0) %>%
+  left_join(hh %>% select(hh_id, thriveCatBroader)) %>%
+  as_survey_design(w = hh_weight) %>%
+  group_by(fuel, thriveCatBroader) %>%
+  summarize(pct = survey_prop())%>%
+  filter(fuel=="Electric") %>%
+  filter(thriveCatBroader == "Urban") %>%
+  mutate(fuel = "EV-owning households")
+  
+veh_geography_summary <- 
+  veh_income %>%
+  left_join(hh %>% select(hh_id, thriveCatBroader)) %>%
+  as_survey_design(w = hh_weight) %>%
+  group_by(thriveCatBroader) %>%
+  summarize(pct = survey_prop())%>%
+  filter(thriveCatBroader == "Urban") %>%
+  mutate(fuel = "All vehicle-owning households")
+
+veh_geography_summary <- 
+  veh_income %>%
+  left_join(hh %>% select(hh_id, thriveCatBroader)) %>%
+  as_survey_design(w = hh_weight) %>%
+  group_by(thriveCatBroader) %>%
+  summarize(pct = survey_prop())%>%
+  filter(thriveCatBroader == "Urban") %>%
+  mutate(fuel = "All vehicle-owning households")
+  
+  qev_vmt_summary <- 
+  veh_income %>%
+  left_join(hh_vmt_days %>% select(hh_id, hh_vmt, day_weight)) %>%
+  filter(!is.na(day_weight)) %>%
+  as_survey_design(w = day_weight) %>%
+  group_by(fuel) %>%
+  summarize(avg_vmt = survey_mean(hh_vmt))%>%
+  filter(fuel=="Electric")
+
+income_diff <- veh_income_summary$avg_income[mean_income$fuel == "Electric"] - 
+  veh_income_summary$avg_income[veh_income_summary$fuel == "Gas"]
+
+region_income <- 
+  veh_income %>%
+  as_survey_design(w = hh_weight) %>%
+  summarize(avg_income = survey_mean(income_midpoint))
+
+income_diff <- veh_income_summary$avg_income[mean_income$fuel == "Electric"] - 
+  veh_income_summary$avg_income[veh_income_summary$fuel == "Gas"]
+
+income_diff_approx <- prettyNum(round(income_diff, -3), big.mark = ",", big.interval = 3)
+income_diff_approx2 <- prettyNum(round(income_diff2, -3), big.mark = ",", big.interval = 3)
+```
+
+
+# Who owns a vehicle today?
+```{r}
+vehicle_n_summary <- 
+  veh_income %>%
+  mutate(num_vehicles = recode_factor(num_vehicles,
+                                      '0' = '0',
+                                      '1' = '1',
+                                      '2' = '2',
+                                      '3' = '3',
+                                      '4' = '4+',
+                                      '5' = '4+',
+                                      '6' = '4+',
+                                      '7' = '4+',
+                                      '8+' = '4+')) %>%
+  as_survey_design(ids = 1, weights = hh_weight) %>%
+  group_by(num_vehicles) %>%
+  summarize(est_pct = 100 * survey_prop(),
+             est_n = survey_total()) %>%
+  mutate(income_detailed = "All Incomes") %>% 
+  ungroup()
+
+vehicle_n_summary_income <- 
+  veh_income %>%
+  mutate(num_vehicles = recode_factor(num_vehicles,
+                                      '0' = '0',
+                                      '1' = '1',
+                                      '2' = '2',
+                                      '3' = '3',
+                                      '4' = '4+',
+                                      '5' = '4+',
+                                      '6' = '4+',
+                                      '7' = '4+',
+                                      '8+' = '4+')) %>%
+  as_survey_design(ids = 1, weights = hh_weight) %>%
+  group_by(income_detailed, num_vehicles) %>%
+  summarize(est_pct = 100 * survey_prop(),
+            est_n = survey_total()) %>%
+  ungroup()
+
+vehicle_n_summary_50K <- 
+  veh_income %>%
+  filter(!income_detailed == "Prefer not to answer") %>%
+  droplevels() %>%
+  summary()
+  mutate(income_broadest = ifelse(income_detailed %in% levels(income_detailed)[2:6], "$50K+", "<$50K"))
+  mutate(num_vehicles = recode_factor(num_vehicles,
+                                      '0' = '0',
+                                      '1' = '1',
+                                      '2' = '2',
+                                      '3' = '3',
+                                      '4' = '4+',
+                                      '5' = '4+',
+                                      '6' = '4+',
+                                      '7' = '4+',
+                                      '8+' = '4+')) %>%
+  as_survey_design(ids = 1, weights = hh_weight) %>%
+  group_by(income_detailed, num_vehicles) %>%
+  summarize(est_pct = 100 * survey_prop(),
+            est_n = survey_total()) %>%
+  ungroup()
+
+
+vehicle_n_summary_race <- 
+
+  mutate(num_vehicles = recode_factor(num_vehicles,
+                                      '0' = '0',
+                                      '1' = '1',
+                                      '2' = '2',
+                                      '3' = '3',
+                                      '4' = '4+',
+                                      '5' = '4+',
+                                      '6' = '4+',
+                                      '7' = '4+',
+                                      '8+' = '4+')) %>%
+  as_survey_design(ids = 1, weights = hh_weight) %>%
+  group_by(race, num_vehicles) %>%
+  summarize(est_pct = 100 * survey_prop(),
+            est_n = survey_total()) %>%
+  ungroup()
+
+```
+
+Across all incomes, `r round(vehicle_n_summary$est_pct[vehicle_n_summary$num_vehicles == '0'])`% of households do not own a vehicle, `r round(vehicle_n_summary$est_pct[vehicle_n_summary$num_vehicles == '1'])`% own one vehicle and and `r round(sum(vehicle_n_summary$est_pct[vehicle_n_summary$num_vehicles %in% c('2', '3', '4+')]))%>% as.integer() %>% formatC(big.mark = ",")`% own multiple vehicles. If all households owning multiple vehicles traded in one vehicle for an EV, `r sum(vehicle_n_summary$est_n[vehicle_n_summary$num_vehicles %in% c('2', '3', '4+')]) %>% as.integer() %>% formatC(big.mark = ",")` vehicles would be required. For reference, across the entire state in 2019, a total of 2,823 BEVs were sold (https://evadoption.com/ev-market-share/ev-market-share-state/), which was only 1.08% of the total `r round((2823*100)/(1.08))%>% as.integer() %>% formatC(big.mark = ",")` vehicles sold in Minnesota that year.
+
+Although the opportunity for a regional fleet transition to EV technology is promising at the regional level, we know that access to personal vehicles is not shared equally among our region’s residents. Lower-income households are less likely to have a vehicle than higher-income households; and households with BIPOC members are less likely to have a vehicle than households with white members. 
+
+
+About 48% of the region's lowest-income households (those earning $15,000 per year or less) do not own a vehicle, while almost all of the highest-income households (those earning 250,000 or more) own two or more vehicles, with many owning 3 or even 4 or more vehicles. 
+
+```{r Income Number of Vehicles Plot, echo = FALSE, message = F}
+p1_dat <- 
+vehicle_n_summary %>%
+  bind_rows(vehicle_n_summary_income) %>%
+  mutate(income_detailed = factor(income_detailed, levels = c("All Incomes", rev(levels(veh_income$income_detailed))))) %>%
+  ungroup() %>%
+  arrange(income_detailed, num_vehicles) %>%
+  group_by(income_detailed) %>%
+  pivot_longer(cols = c(est_pct, est_pct_se, est_n, est_n_se), names_prefix = 'est_') %>%
+  mutate(est = ifelse(name %in% c('pct_se', 'n_se'), 'se', 'est')) %>%
+  mutate(val_type = ifelse(name %in% c('pct', 'pct_se'), 'Share of Households (%)', 'Number of Households (in thousands)'))%>%
+  select(-name) %>%
+  pivot_wider(names_from = 'est') %>%
+  mutate(myEst = ifelse(val_type == 'Number of Households (in thousands)', 
+                        round(est/1000),
+                        round(est))) %>%
+  mutate(mySE = ifelse(val_type == 'Number of Households (in thousands)', 
+                        round(se/1000),
+                        round(se))) %>%
+  mutate(myLabel = paste(myEst, "%\n(±", mySE, "%)")) %>%
+  mutate(myLabel = ifelse(val_type == 'Number of Households (in thousands)' & est < 10000, paste(myEst, "% (±", mySE, "%)"),
+                          ifelse(val_type == 'Share of Households (%)' & est < 10, paste(myEst, "% (±", mySE, "%)"),
+                                 myLabel))) %>%
+   mutate(myLabel = ifelse(val_type == 'Share of Households (%)' & est < 2, "",
+                                 myLabel)) %>%
+  mutate(num_vehicles = factor(num_vehicles, levels = c('4+', '3', '2', '1', '0'))) %>%
+  filter(!income_detailed == 'All Incomes') %>%
+  droplevels()
+
+plot1 <-
+p1_dat %>%
+  filter(val_type == 'Share of Households (%)') %>%
+  ggplot(aes(x = income_detailed, y = est, fill = num_vehicles))+ 
+  geom_bar(position = 'stack', stat = 'identity') + 
+  geom_text(aes(label = myLabel, color = num_vehicles), fontface = 'italic', position = position_stack(vjust = 0.5), size = 4) + 
+  # facet_wrap(~val_type, nrow = 2, scales = 'free_y') + 
+  theme_minimal() + 
+  scale_fill_manual(values = c(tencol[5:10], 'white'), name = "Number of Vehicles in Household: ")+
+    scale_color_manual(values = c(rep('black', 2), 'gray20', 'gray90', 'gray90'), name = "Number of Vehicles in Household: ")+
+  guides(color = FALSE) + 
+  ggtitle("Percent of households owning zero, one, two, three or four vehicles, by income", 
+          subtitle = "Data weighted at the household level. Only households that report income information are shown.") + 
+  labs(y = 'Percent of Households') + 
+  theme(
+    # axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.text.x = element_text(size = 12),
+        panel.grid = element_blank(),
+        axis.title.x = element_blank(),
+        strip.text = element_text(size = 18),
+        strip.background = element_rect(fill = 'gray90', color = 'white'),
+        title = element_text(size = 16),
+        plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5),
+        legend.position = 'bottom',
+                panel.background = element_rect(fill = 'gray97', color = NA),
+        plot.background = element_rect(fill = 'gray97', color = NA))
+
+plot1
+```
+
+An even larger disparity exists with regards to race: only 3% of households with white members lack access to a personal vehicle, compared to 24% of households with African-American members. Meanwhile, 47% of households with white members have two or more vehicles, compared to only 31% of households with Black members. The racial disparity in personal vehicle ownership is statistically significant even after accounting for important determinants, including income, where people live, employment status and family size. 
+```{r Race Number of Vehicles Plot, echo = FALSE, message = F}
+p2_dat <- 
+ vehicle_n_summary_race %>%
+  arrange(race, num_vehicles) %>%
+  group_by(race) %>%
+  pivot_longer(cols = c(est_pct, est_pct_se, est_n, est_n_se), names_prefix = 'est_') %>%
+  mutate(est = ifelse(name %in% c('pct_se', 'n_se'), 'se', 'est')) %>%
+  mutate(val_type = ifelse(name %in% c('pct', 'pct_se'), 'Share of Households (%)', 'Number of Households (in thousands)'))%>%
+  select(-name) %>%
+  pivot_wider(names_from = 'est') %>%
+  mutate(myEst = ifelse(val_type == 'Number of Households (in thousands)', 
+                        round(est/1000),
+                        round(est))) %>%
+  mutate(mySE = ifelse(val_type == 'Number of Households (in thousands)', 
+                        round(se/1000),
+                        round(se))) %>%
+  mutate(myLabel = paste(myEst, "%\n(±", mySE, "%)")) %>%
+  mutate(myLabel = ifelse(val_type == 'Number of Households (in thousands)' & est < 10000, paste(myEst, "% (±", mySE, "%)"),
+                          ifelse(val_type == 'Share of Households (%)' & est < 10, paste(myEst, "% (±", mySE, "%)"),
+                                 myLabel))) %>%
+  mutate(num_vehicles = factor(num_vehicles, levels = c('4+', '3', '2', '1', '0'))) %>%
+  droplevels()
+
+plot2 <-
+p2_dat %>%
+  filter(race %in% c('African-American', 'Asian', 'Indigenous', 'white', 'Hispanic/Latino')) %>%
+    droplevels() %>%
+  mutate(race = factor(race, levels = c('African-American', 'Indigenous', 'Hispanic/Latino', 'Asian', 'white'))) %>%
+
+  filter(val_type == 'Share of Households (%)') %>%
+  ggplot(aes(x = race, y = est, fill = num_vehicles))+ 
+  geom_bar(position = 'stack', stat = 'identity') + 
+  geom_text(aes(label = myLabel, color = num_vehicles), fontface = 'italic', position = position_stack(vjust = 0.5), size = 4) + 
+  # facet_wrap(~val_type, nrow = 2, scales = 'free_y') + 
+  theme_minimal() + 
+  scale_fill_manual(values = c(tencol[5:10], 'white'), name = "Number of Vehicles in Household: ")+
+    scale_color_manual(values = c(rep('black', 2), 'gray20', 'gray90', 'gray90'), name = "Number of Vehicles in Household: ")+
+  guides(color = FALSE) + 
+  ggtitle("Percent of households owning zero, one, two, three or four vehicles, by race/ethnicity", 
+          subtitle = "Data weighted at the household level. Only households that report race are shown.\nMulti-racial households are counted in each category.") + 
+  labs(y = 'Percent of Households') + 
+  theme(
+    # axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.text.x = element_text(size = 12),
+        panel.grid = element_blank(),
+        axis.title.x = element_blank(),
+        strip.text = element_text(size = 18),
+        strip.background = element_rect(fill = 'gray90', color = 'white'),
+        title = element_text(size = 16),
+        plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5),
+        legend.position = 'bottom',
+                        panel.background = element_rect(fill = 'gray97', color = NA),
+        plot.background = element_rect(fill = 'gray97', color = NA)
+        )
+
+plot2
+```
+### Interactive Graph
+```{r}
+ggplotly(plot1, autosize = F, height = 800, width = 900, margin = m)
+```
+
+### Summary Table
+```{r}
+vehicle_n_summary %>%
+  bind_rows(vehicle_n_summary_income) %>%
+  mutate(income_detailed = factor(income_detailed, levels = c("All Incomes", levels(veh_income$income_detailed)))) %>%
+  ungroup() %>%
+  arrange(income_detailed, num_vehicles) %>%
+  group_by(income_detailed) %>%
+  gt(rowname_col = 'num_vehicles') %>%
+  fmt_number(
+    columns = c(est_pct, est_pct_se),
+    decimals = 1
+  ) %>%
+    fmt_number(
+    columns = c(est_n, est_n_se),
+    decimals = 0
+  ) %>%
+  tab_footnote(
+    footnote = "Estimated number and share of households are calculated from survey data using household-level weights.",
+    locations = cells_title(groups = c('title'))
+  ) %>%
+  cols_label(num_vehicles = "Number of Vehicles in Household",
+             est_n = "Number of HHs", est_n_se = "SE", est_pct = "Share of HHs (%)", est_pct_se = "SE (%)") %>%
+  tab_header(title = "Number and Share (%) of Households Owning 0, 1, 2, or 3+ Vehicles, by Household Income")
+```
+
+### Download Data
+```{r}
+vehicle_n_summary %>%
+  bind_rows(vehicle_n_summary_income) %>%
+  mutate(income_detailed = factor(income_detailed, levels = c("All Incomes", levels(veh_income$income_detailed)))) %>%
+  ungroup() %>%
+  arrange(income_detailed, num_vehicles) %>%
+  group_by(income_detailed) %>%
+  mutate(est_pct = est_pct/100, est_pct_se = est_pct_se/100) %>%
+  DT::datatable(extensions = 'Buttons', 
+                options = list(dom = 'Btrip',
+                               buttons = c('copy', 'excel', 'csv'), 
+                               searching = FALSE, 
+                               pageLength = 10, 
+                               lengthMenu = FALSE)) %>%
+  DT::formatPercentage('est_pct', 1) %>%
+  DT::formatPercentage('est_pct_se', 1) %>%
+  DT::formatRound('est_n', 0) %>%
+  DT::formatRound('est_n_se', 0)
+```
+
+
+
+## Diving Deeper: Income, Race, Geography, and Family Structure {.tabset}
+Next, we consider multiple characteristics that determine vehicle ownership: income, race, geography, and family structure (number of children and workers).
+
+Using a weighted generalized linear model, we compare a few factors that might predict whether or not households had access to a vehicle. Although we asked people how many vehicles they owned in the survey, we will start by analyzing vehicle ownership as a binary, yes/no variable: households will be separated into those that have access to one or more vehicles, and those without any vehicles at all.
+
+Note on income: To save on some degrees of freedom in the analysis, we will translate household income from a categorical variable to a numeric one, by assigning the midpoint of the income category (e.g., households making 50-75,000 per year will be assigned a numeric income of 62,500).
+
+Note on race/ethnicity: This analysis is being performed at the household-level, but race and ethnicity are recorded at the person level (multiple people per household). We know that people of color (especially Black and Latino people) face social and economic barriers in our region stemming from systemic racism. To keep our model simple and applicable at the household level while accounting for race, we assign any household with at least one non-White family member as a household with people of color; the remaining households are white households.
+
+### Results
+This plot shows the results from a generalized linear model examining the relationship between household income, geography, number of children, number of workers and race (whether the household included people of color). 
+
+Positive coefficients indicate where the variable increases the odds of owning a vehicle, and negative coefficinets (Race) indicates where the variable decreases the odds of owning a vehicle. Coefficients closer to zero are less impactful, and all coefficients are standardized so that they can be compared to each other. 
+
+This graph shows that geography has the strongest effect on the likelihood of owning a vehicle: households in Urban, Suburban and Rural areas are all more likely to own a vehicle than households in the Urban Core. Somewhat surprisingly, the effects of geography on the likelihood of vehicle is similar across Urban, Suburban and Rural categories, suggesting that it is the threshold from the "Urban Core" to outside of it that drives up vehicle ownership.
+
+Having more workers and higher income also increases the odds of a household owning a car, but less so than geography. Having children only has a marginal positive effect on car ownership. 
+
+Race has a slight negative effect -- which is notable, considering that this is after accounting for all the other variables in this analysis (income, geography, and household structure).
+
+```{r Analysis of Car Ownership, echo = F, message = F}
+weighted_glm <- 
+with(veh_income_race,
+     glm(own_car ~ income_midpoint + thriveCatBroader + num_kids + num_workers + hh_with_poc,
+         w = hh_weight))
+
+
+
+std_car_params <-
+standardize_parameters(weighted_glm, method = "posthoc") %>%
+  filter(!Parameter == "(Intercept)") %>%
+  mutate(Parameter = recode_factor(Parameter,
+                                   "income_midpoint" = "Income",
+                                    "thriveCatBroaderUrban" = "Urban\nvs. Urban Core",
+                                   "thriveCatBroaderSuburban" = "Suburban\nvs. Urban Core",
+                                   "thriveCatBroaderRural" = "Rural\nvs. Urban Core",
+                                   "num_kids" = "Number of\nchildren",
+                                   "num_workers" = "Number of\nworkers",
+                                   "hh_with_poc" = "1+ People of Color\nin Household")) %>%
+  as.data.frame() %>%
+  select(-CI)
+
+coefplot <- 
+std_car_params %>%
+  mutate(myLab = recode_factor(Parameter,
+                                   "Income" = "Higher income is associated with higher rates of vehicle ownership",
+                                    "Urban\nvs. Urban Core" = "Relative to households in the Urban Core, households in Urban areas are more likely to own a vehicle",
+                               "Suburban\nvs. Urban Core" = "Relative to households in the Urban Core, households in Suburban areas are more likely to own a vehicle",
+                               "Rural\nvs. Urban Core" = "Relative to households in the Urban Core, households in Rural areas are more likely to own a vehicle",
+                               
+                                   "Number of\nchildren" = "Having a child has a marginal, non-significant increases the likelihood of owning a vehicle.",
+                               
+                                    "Number of\nworkers" = "Households with more workers are more likely to own a vehicle than those with fewer workers",
+                                   "1+ People of Color\nin Household" = "Households with 1+ POC are less likely to own a vehicle than all-white households")) %>%
+  ggplot(aes(x = Parameter, y = Std_Coefficient, color = Std_Coefficient, group = Parameter, label = myLab)) + 
+    geom_hline(yintercept = 0, color = 'gray90', lwd = 10) + 
+      geom_hline(yintercept = 0, linetype = 'dashed') + 
+  geom_errorbar(aes(ymin = CI_low, ymax = CI_high), width = 0, lwd = 1) + 
+  geom_point(size = 5) + 
+  geom_text(aes(label = round(Std_Coefficient, 2)), 
+            nudge_x = .25, nudge_y = .01, size = 6, fontface = 'italic') + 
+  theme_minimal() + 
+  guides(color =F)+
+  theme(panel.grid = element_blank()) +  
+  theme(axis.title.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.x = element_text(size = 12)) + 
+  ggtitle("Effects of Demographic Variables on Vehicle Ownership")
+
+ggplotly(coefplot, tooltip = 'myLab')
+```
+
+### Summary Table
+```{r}
+# TABLE
+std_car_params %>% 
+  gt() %>%
+    fmt_number(
+    columns = c(Std_Coefficient, CI_low, CI_high),
+    decimals = 2
+  ) %>%
+  tab_header(title = "Results of Generalized Linear Model of Car Ownership (Binary Variable)") %>%
+    tab_footnote(
+    footnote = "Coefficients are standardized post-hoc, such that a change in one standard deviation of [x] any numeric variable (or a change from the reference factor level to the indicated factor level, for Thrive Community Categories) results in a change of [y] standard deviation of the log-odds owning a car.",
+    locations = cells_title(groups = c('title'))
+  ) %>%
+  cols_label(Std_Coefficient = "Standardized Coefficient",
+             CI_low = "Lower", CI_high = "Upper") %>%
+  tab_spanner(label = "95% Confidence Interval",
+              columns = c('CI_low', 'CI_high'))
+```
+
+### Download Data
+```{r}
+veh_income_race %>%
+  select(-thriveCatBroad) %>%
+  arrange(hh_id) %>%
+  DT::datatable(extensions = 'Buttons', 
+                options = list(dom = 'Btrip',
+                               buttons = c('copy', 'excel', 'csv'), 
+                               searching = FALSE, 
+                               pageLength = 10, 
+                               lengthMenu = FALSE))
+```
+
+
+
+
+### Plot
+```{r}
+p1 <-
+veh_income_summary %>%
+  mutate(pct_label = round(pct)) %>%
+  # mutate(pct_label = ifelse(pct_label <=1 , NA, pct_label)) %>%
+  # mutate(pct_label = paste(pct_label, "%", sep = "")) %>%
+  # mutate(pct_label = ifelse(pct_label == "NA%", "", pct_label)) %>%
+  mutate(fuel2 = ifelse(fuel == 'No Vehicle', 'households with no vehicle make', paste(fuel, 'vehicles are owned by households making'))) %>%
+  mutate(`>` = paste(pct_label, "% of", fuel2, income_detailed, "per year.")) %>%
+  
+  ### here is where the plot starts
+  ggplot(aes(x = fuel, y = pct, label = `>`, fill = income_detailed)) +
+  geom_bar(position = "stack", stat = 'identity') +
+  geom_text(aes(label = pct_label), position = position_stack(vjust = 0.5)) + 
+  theme_minimal() + 
+  labs(y = "% of Cars", x= "Fuel Type") + 
+  scale_fill_manual(values = tencol, name = "Income")+
+  scale_color_manual(values = c(rep("white", 5), rep("black", 5))) +
+  guides(color = F) + 
+  ggtitle("Household Income Predicts Car Ownership and Car Fuel Type", subtitle = "Data weighted at the household level. Only households with vehicles\nthat report income information are shown.") + 
+  theme(axis.text.y = element_blank(),
+        panel.grid = element_blank())
+
+ggplotly(p1, tooltip = c(">"))
+```
+
+### Summary Table
+```{r}
+veh_income_summary %>%
+  gt::gt() %>%
+  tab_header(
+    title = "Number and Share (%) of Vehicles in the Metro, by Vehicle Fuel Type and Household Income",
+    subtitle = "Percentages for each fuel type sum to 100%. Data are scaled to the MPO region using household-level weights."
+  ) %>%
+  fmt_number(
+    columns = pct,
+    decimals = 1
+  ) %>%
+  fmt_number(
+    columns = n,
+    decimals = 0
+  ) %>%
+  cols_label(income_detailed = "Household Income", n = "Number of Vehicles", pct = "% of Vehicles in Fuel Category")
+
+
+```
+
+### Download Data
+```{r}
+veh_income_summary %>%
+  mutate(pct = pct/100) %>%
+  DT::datatable(extensions = 'Buttons', 
+                options = list(dom = 'Btrip',
+                               buttons = c('copy', 'excel', 'csv'), 
+                               searching = FALSE, 
+                               pageLength = 10, 
+                               lengthMenu = FALSE)) %>%
+  formatPercentage('pct', digits = 1) %>%
+  formatRound('n', 0)
+```
+
+## Higher-income = newer car {.tabset}
+According to the TBI, the average vehicle in the metro is 8.6 years old. Gas vehicles are on average 8.7 years old. Diesel vehicles tend to be older than the average (9.4 years old), while Hybrid (7.4 years old) and Electric (3.6 years old) tend to be newer than the average car. 
+```{r}
+newcardat <- 
+veh %>% 
+  select(hh_id, fuel, year) %>%
+  mutate(fuel = 
+           recode_factor(fuel, 
+                         "Missing: Skip logic" = "Other/Not Provided",
+                         # these entries are from cars that were entered by hand by the survey respondent
+                         "Missing: Non-response" = "Other/Not Provided",
+                         "Other" = "Other/Not Provided")) %>%
+  left_join(select(hh, hh_id, income_broad)) %>%
+  filter(!fuel == "Other/Not Provided") %>%
+  filter(!income_broad == "Prefer not to answer") %>%
+  filter(!year == 1980) %>% # this is actually NA.
+  mutate(year = 2019 - year) %>%
+  droplevels() %>%
+  left_join(hh %>% select(hh_id, hh_weight)) %>%
+  as_survey(ids = 1, weights = hh_weight) %>%
+  group_by(income_broad, fuel) %>%
+  summarize(
+    year = survey_mean(year, vartype = "se")
+  )
+
+## Global average? 
+ave_year <- 
+veh %>% 
+  select(hh_id, fuel, year) %>%
+  mutate(fuel = 
+           recode_factor(fuel, 
+                         "Missing: Skip logic" = "Other/Not Provided",
+                         # these entries are from cars that were entered by hand by the survey respondent
+                         "Missing: Non-response" = "Other/Not Provided",
+                         "Other" = "Other/Not Provided")) %>%
+  left_join(select(hh, hh_id, income_broad)) %>%
+  filter(!fuel == "Other/Not Provided") %>%
+  filter(!income_broad == "Prefer not to answer") %>%
+  filter(!year == 1980) %>% # this is actually NA.
+  mutate(year = 2019 - year) %>%
+  droplevels() %>%
+  left_join(hh %>% select(hh_id, hh_weight)) %>%
+  as_survey(ids = 1, weights = hh_weight) %>%
+  summarize(
+    year = survey_mean(year, vartype = "se")
+  )
+
+# Income Average
+ave_year_income <- 
+veh_income %>% 
+  filter(!is.na(year)) %>%
+  select(hh_id, income_detailed, year) %>%
+  filter(!income_detailed == "Prefer not to answer") %>%
+  filter(!year == 1980) %>% # this is actually NA.
+  mutate(year = 2019 - year) %>%
+  droplevels() %>%
+  left_join(hh %>% select(hh_id, hh_weight)) %>%
+  as_survey(ids = 1, weights = hh_weight) %>%
+  group_by(income_detailed) %>%
+  summarize(
+    year = survey_mean(year, vartype = "se")
+  )
+
+# Income Average: Multiple Vehicles
+ave_year_income_multi <- 
+veh_income %>% 
+  filter(!is.na(year)) %>%
+  select(hh_id, income_detailed, year) %>%
+  filter(!income_detailed == "Prefer not to answer") %>%
+  filter(!year == 1980) %>% # this is actually NA.
+  mutate(year = 2019 - year) %>%
+  droplevels() %>%
+  group_by(hh_id, income_detailed) %>%
+  add_tally() %>%
+  filter(n>=2) %>%
+  ungroup() %>%
+  # only 14 hh's with income <$15K and multiple cars - exclude
+  # filter(income_detailed == "<$15K") %>%  select(hh_id) %>% unique() %>% nrow()
+  filter(!income_detailed == '<$15K') %>%
+  group_by(hh_id, income_detailed) %>%
+  summarize(min_year = min(year), 
+            max_year = max(year)) %>%
+  ungroup() %>%
+  left_join(hh %>% select(hh_id, hh_weight)) %>%
+  as_survey(ids = 1, weights = hh_weight) %>%
+  group_by(income_detailed) %>%
+  summarize(
+    min_year = survey_mean(min_year, vartype = "se"),
+    max_year = survey_mean(max_year, vartype = 'se')
+  )
+
+
+```
+
+Vehicle age is also related to income, in the ways you might expect. This is especially true for gas vehicles, where the lowest-income households (making $25K per year or less) own vehicles that are 12 years old on average, while the highest-income households (100 K per year or more) have cars that are 8 years old on average.
+
+### Plot (by Fuel Type & Income)
+```{r, echo=FALSE, message = FALSE}
+newcarplot <-
+  newcardat %>%
+  mutate(ave_year_label = as.character(round(year))) %>%
+  mutate(">" = paste('Households making', income_broad, 'per year have', fuel, 'vehicles that are', round(year), '+/-', round(year_se, 1), 'years old on average.')) %>%
+  complete(income_broad, fuel, fill = list(n = 0, year = 0)) %>%
+  unique() %>%
+  ggplot(aes(x = income_broad, y = year, fill = fuel, text = `>`)) +
+  geom_bar(stat = 'identity', position = 'dodge') +
+  geom_errorbar(aes(ymin = year - year_se, ymax = year + year_se), width = 0, color = 'gray70') + 
+  theme_minimal() + 
+  facet_grid(~fuel) + 
+  scale_x_discrete(drop = F) +
+  geom_text(aes(label = round(year), y = year  + 1), size = 5, fontface  = "italic") +
+  labs(y = "Age of Car (Years)") +
+  scale_fill_manual(values = c(medcol[1], 'white'))+
+  theme(legend.position =  "none") + 
+  ggtitle("Vehicle Age by Fuel Type & Owner's Household Income", subtitle = "Average vehicle age in each group shown in italics. Error bars are standard errors of the weighted mean. Data are weighted at the household level.") + 
+  # coord_cartesian(ylim = c(2002, 2020))+
+  theme(axis.text.x = element_text(vjust = 0.5, angle = 90),
+        axis.text.y = element_blank(),
+        axis.title.x = element_blank(),
+        panel.grid = element_blank(),
+        strip.text = element_text(size = 14), 
+        strip.background = element_rect(color = 'white', fill = 'gray90'))
+
+ggplotly(newcarplot, tooltip = '>')
+```
+
+### Plot (by Income)
+```{r}
+
+ave_year_income %>%
+  mutate(income_detailed = factor(income_detailed, levels = rev(levels(income_detailed)))) %>%
+  ggplot(aes(x = income_detailed, y = year)) +
+  geom_hline(yintercept = ave_year$year, lwd = 4, color = tencol[7], alpha = 0.25) +
+  geom_bar(stat = 'identity', position = 'dodge', fill = tencol[7]) +
+  geom_errorbar(aes(ymin = year - year_se, ymax = year + year_se), width = 0, color = 'gray70') + 
+  theme_minimal() + 
+  scale_x_discrete(drop = F) +
+  geom_text(aes(label = round(year, 1), y = year  + year_se + 0.5), size = 5, fontface  = "italic") +
+    annotate("text", x = '$200-$250K', y = ave_year$year[1] + 0.7, label = "Region average: 8.6 years", color = tencol[7], alpha = 0.8, fontface = 'italic', size = 6) + 
+  labs(y = "Age of vehicle (years)") +
+  theme(legend.position =  "none") + 
+  ggtitle("Vehicle age by household income", subtitle = "Data are weighted at the household level. Only households that report income are shown.") + 
+  # coord_cartesian(ylim = c(2002, 2020))+
+  theme(
+    # axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.text.x = element_text(size = 12),
+        panel.grid = element_blank(),
+        axis.title.x = element_blank(),
+        strip.text = element_text(size = 18),
+        strip.background = element_rect(fill = 'gray90', color = 'white'),
+        title = element_text(size = 16),
+        plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5),
+        legend.position = 'bottom',
+        panel.background = element_rect(fill = 'gray97', color = NA),
+        plot.background = element_rect(fill = 'gray97', color = NA))
+oldest_newest_by_income <- 
+ave_year_income_multi %>%
+  pivot_longer(cols = c(min_year, min_year_se, max_year, max_year_se)) %>%
+  mutate(valtype = ifelse(name %in% c('min_year_se', 'max_year_se'), 'se', 'average')) %>%
+  mutate(name = ifelse(name %in% c('min_year_se', 'min_year'), 'newest', 'oldest')) %>%
+  mutate(name = factor(name, levels = c('newest', 'oldest'))) %>%
+  pivot_wider(names_from = valtype) %>%
+  mutate(income_detailed = factor(income_detailed, levels = rev(levels(income_detailed)))) %>%
+  ggplot(aes(x = income_detailed, y = average, fill = name)) +
+  geom_bar(stat = 'identity', position = position_dodge(width = 0.8)) +
+  geom_errorbar(aes(ymin = average - se, ymax = average + se), width = 0, color = 'gray70', position = position_dodge(width = 0.8)) + 
+  theme_minimal() + 
+  geom_text(aes(label = round(average, 1), y = average  + se + 0.5), size = 5, fontface  = "italic", position = position_dodge(width = 0.8)) +
+  labs(y = "Age of vehicle (years)") +
+  scale_fill_manual(values = c(tencol[6], tencol[8], 'white'), name = '') + 
+  theme(legend.position =  "none") + 
+  ggtitle("Age of newest and oldest household vehicles, by income,\nfor households with multiple vehicles", subtitle = "Data are weighted at the household level. Only households that report income are shown.\nHouseholds making $15K or less are excluded due to low sample size.") + 
+  # coord_cartesian(ylim = c(2002, 2020))+
+  theme(
+    # axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.text.x = element_text(size = 12),
+        panel.grid = element_blank(),
+        axis.title.x = element_blank(),
+        strip.text = element_text(size = 18),
+        strip.background = element_rect(fill = 'gray90', color = 'white'),
+        title = element_text(size = 16),
+        plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(size = 12, hjust = 0.5),
+        legend.position = 'bottom',
+                panel.background = element_rect(fill = 'gray97', color = NA),
+        plot.background = element_rect(fill = 'gray97', color = NA))
+
+
+ggsave('oldest_newest_car_byincome.png', oldest_newest_by_income, dpi = 300)
+```
+
+### Download Data
+```{r}
+newcardat %>%
+  DT::datatable(extensions = 'Buttons', 
+                options = list(dom = 'Btrip',
+                               buttons = c('copy', 'excel', 'csv'), 
+                               searching = FALSE, 
+                               pageLength = 10, 
+                               lengthMenu = FALSE)) 
+```
+
+## Higher-income = more likely to consider buying a car {.tabset}
+In the 2020 COVID-19 Panel Survey, a follow-up survey to the Travel Behavior Inventory houseold survey, we asked participants "How likely is it that you will purchase a vehicle sometime in the next six months?"
+
+In fall 2020, 13% (+/- 1%) of adults said they were "very likely" or "somewhat likely" to buy a new vehicle from a dealer or through a private purchase (e.g., Craigslist).
+
+### Plot
+```{r}
+veh_year <-
+veh_income %>% 
+  filter(!is.na(year)) %>%
+  select(hh_id, income_detailed, year) %>%
+  filter(!income_detailed == "Prefer not to answer") %>%
+  filter(!year == 1980) %>% # this is actually NA.
+  mutate(year = 2019 - year) %>%
+  droplevels() %>%
+  # only 14 hh's with income <$15K and multiple cars - exclude
+  # filter(income_detailed == "<$15K") %>%  select(hh_id) %>% unique() %>% nrow()
+  group_by(hh_id) %>%
+  summarize(max_year = max(year)) %>%
+  ungroup() 
+
+veh_purchase <-
+    cov_dat %>%
+      select(
+        wave,
+        weight,
+        person_id,
+        hh_id,
+        income,
+        transportation_purchases_bicycle,
+        transportation_purchases_vehicle_dealer,
+        transportation_purchases_vehicle_personal
+      ) %>%
+  left_join(veh_year) %>%
+  mutate(wave = factor(wave, levels = c('Spring', 'Summer', 'Fall'))) %>%
+  mutate(
+    likely_to_buy_bike = ifelse(
+      transportation_purchases_bicycle %in% c('Very likely', 'Somewhat likely'),
+      1,
+      0
+    ),
+    likely_to_buy_car1 = ifelse(
+      transportation_purchases_vehicle_dealer %in% c('Very likely', 'Somewhat likely'),
+      1,
+      0
+    ),
+    likely_to_buy_car2 = ifelse(
+      transportation_purchases_vehicle_personal %in% c('Very likely', 'Somewhat likely'),
+      1,
+      0
+    ),
+    very_likely_to_buy_car = ifelse(
+      transportation_purchases_vehicle_personal == 'Very likely' |
+        transportation_purchases_vehicle_dealer == 'Very likely',
+      1,
+      0
+    ),
+      somewhat_likely_to_buy_car = ifelse(
+      transportation_purchases_vehicle_personal == 'Somewhat likely' |
+        transportation_purchases_vehicle_dealer == 'Somewhat likely',
+      1,
+      0
+    )
+  ) %>%
+  mutate(likely_to_buy_car = ifelse(likely_to_buy_car1 == 1 |
+                                      likely_to_buy_car2 == 1, 1, 0)) %>%
+  mutate(max_year = case_when(max_year < 3 ~ '<3\nyears',
+                              max_year < 6 ~ '3-5\nyears',
+                              max_year < 11 ~ '6-10\nyears',
+                              max_year < 16 ~ '11-15\nyears',
+                              max_year < 20 ~ '16-20\nyears',
+                              max_year < 38 ~ '20+\nyears', 
+                              TRUE ~ 'No\ncar'
+                              )) %>%
+  mutate(max_year = factor(max_year, levels = c('<3\nyears', '3-5\nyears', '6-10\nyears', '11-15\nyears', '16-20\nyears', '20+\nyears', 'No\ncar')))
+
+buy_car_all <- 
+veh_purchase %>%
+  as_survey_design(ids = 1, weights = weight) %>%
+  group_by(wave, likely_to_buy_car) %>%
+  summarize(est_pct = 100 * survey_prop(),
+             est_n = survey_total()) %>%
+  filter(likely_to_buy_car == 1) %>%
+  ungroup() %>%
+  select(-likely_to_buy_car) %>%
+  mutate(purchase = 'car')
+
+buy_car_income <- 
+veh_purchase %>%
+  as_survey_design(ids = 1, weights = weight) %>%
+  group_by(wave, income, likely_to_buy_car) %>%
+  summarize(est_pct = 100 * survey_prop(),
+             est_n = survey_total()) %>%
+  filter(likely_to_buy_car == 1) %>%
+  ungroup() %>%
+  select(-likely_to_buy_car) %>%
+  mutate(purchase = 'car')
+
+buy_car_income1 <- 
+veh_purchase %>%
+  as_survey_design(ids = 1, weights = weight) %>%
+  group_by(wave, income, very_likely_to_buy_car) %>%
+  summarize(est_pct = 100 * survey_prop(),
+             est_n = survey_total()) %>%
+  filter(very_likely_to_buy_car == 1) %>%
+  ungroup() %>%
+  select(-very_likely_to_buy_car) %>%
+  mutate(purchase = 'very\nlikely')
+
+buy_car_income2 <- 
+veh_purchase %>%
+  as_survey_design(ids = 1, weights = weight) %>%
+  group_by(wave, income, somewhat_likely_to_buy_car) %>%
+  summarize(est_pct = 100 * survey_prop(),
+             est_n = survey_total()) %>%
+  filter(somewhat_likely_to_buy_car == 1) %>%
+  ungroup() %>%
+  select(-somewhat_likely_to_buy_car) %>%
+  mutate(purchase = 'somewhat\nlikely')
+
+buy_car_age1 <- 
+veh_purchase %>%
+  as_survey_design(ids = 1, weights = weight) %>%
+  group_by(wave, max_year, very_likely_to_buy_car) %>%
+  summarize(est_pct = 100 * survey_prop(),
+             est_n = survey_total()) %>%
+  filter(very_likely_to_buy_car == 1) %>%
+  ungroup() %>%
+  select(-very_likely_to_buy_car) %>%
+  mutate(purchase = 'very likely to buy in next 6 months')
+
+buy_car_age2 <- 
+veh_purchase %>%
+  as_survey_design(ids = 1, weights = weight) %>%
+  group_by(wave, max_year, somewhat_likely_to_buy_car) %>%
+  summarize(est_pct = 100 * survey_prop(),
+             est_n = survey_total()) %>%
+  filter(somewhat_likely_to_buy_car == 1) %>%
+  ungroup() %>%
+  select(-somewhat_likely_to_buy_car) %>%
+  mutate(purchase = 'somewhat likely to buy in next 6 months')
+
+buy_car_income12 <- bind_rows(buy_car_income1, buy_car_income2) %>%
+  mutate(mytext = 
+           paste0(round(est_pct), '%\n(', round(est_n/1000), ',000\npeopl e)'))
+
+buy_car_age12 <- bind_rows(buy_car_age1, buy_car_age2) %>%
+  mutate(mytext = 
+           paste0(round(est_pct), '%\n(', round(est_n/1000), ',000\npeople)'))
+
+# buy_car_plot <- 
+buy_car_income12 %>%
+  filter(wave == 'Fall') %>%
+  mutate(income = recode_factor(income,
+                         'Under $25,000' = 'Under $25K',       '$25,000-$49,999' = '$25-50K', '$50,000-$74,999' = '$50-75K', '$75,000-$99,999' = '$75-100K', '$100,000-$199,999' = '$100-200K', '$200,000 or more' = '$200K +')) %>%
+  filter(!income == 'Prefer not to answer') %>%
+  ggplot(aes(x = purchase, y = est_pct, fill = purchase, color = purchase, label = mytext)) + 
+  geom_bar(stat = 'identity', position = position_dodge(width = 1), width = 0.9, color= NA)+
+  facet_grid(~income) + 
+  geom_errorbar(aes(ymin = est_pct - est_pct_se, ymax = est_pct + est_pct_se), width = 0, position = position_dodge(width = 1)) + 
+  geom_text(size = 4.5, fontface = 'italic', vjust = -0.25,
+            aes(y = est_pct + est_pct_se)) + 
+  theme_minimal() + 
+  guides(color = F, fill = F) +
+    labs(y = "Age of vehicle (years)") +
+  theme(legend.position =  "none") + 
+  ggtitle('Percent of adults who were "somewhat" or "very likely"\nto buy a car in next 6 months, by income', subtitle = "Data are weighted at the person level. Only people that reported household income are shown.") + 
+  # coord_cartesian(ylim = c(2002, 2020))+
+  scale_color_manual(values = c(tencol[6], tencol[7], 'white')) + 
+  scale_y_continuous(limits = c(0, 22)) + 
+  scale_fill_manual(values = c(tencol[4], tencol[6], 'white')) + 
+  theme(
+    axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.text.x = element_text(size = 12),
+        panel.grid = element_blank(),
+        axis.title.x = element_blank(),
+        strip.text = element_text(size = 14),
+        strip.background = element_rect(fill = 'gray89', color = NA),
+        title = element_text(size = 16),
+        plot.title = element_text(size = 18, hjust = 0.5),
+        plot.subtitle = element_text(size = 12, hjust = 0.5),
+        legend.position = 'bottom',
+        panel.background = element_rect(fill = 'gray89', color = NA),
+        plot.background = element_rect(fill = 'gray97', color = NA))
+
+
+
+# buy_car_plot <- 
+buy_car_age12 %>%
+  filter(wave == 'Fall') %>%
+  mutate(mytext = paste0(round(est_n/1000), 'K (±', round(est_n_se/1000), 'K)\npeople')) %>%
+  ggplot(aes(x = max_year, y = est_n, fill = max_year, color = max_year, label = mytext)) + 
+  geom_bar(stat = 'identity', position = position_dodge(width = 1), color= NA)+
+  geom_errorbar(aes(ymin = est_n - est_n_se, ymax = est_n + est_n_se), width = 0, position = position_dodge(width = 1)) +
+  geom_text(size = 4.5, fontface = 'italic', aes(y = est_n + est_n_se + 5000)
+            ) + 
+  theme_minimal() + 
+  facet_grid(~purchase) + 
+  guides(color = F, fill = F) +
+    labs(y = "Age of vehicle (years)") +
+  theme(legend.position =  "none") + 
+  ggtitle('Estimated number of metro-area adults who were "somewhat" or "very likely"\nto buy a vehicle in next 6 months, by age of oldest vehicle', subtitle = "Survey data are from Fall 2020 and are weighted at the person level.") + 
+  # coord_cartesian(ylim = c(2002, 2020))+
+  scale_color_manual(values = c('gray40', 'gray40', 'gray40', 'gray40', 'gray40', 'gray40', 'gray40')) + 
+  # scale_y_continuous(limits = c(0, 22)) + 
+  scale_fill_manual(values = c(tencol[c(10, 9, 7, 6, 5, 3)], 'gray97')) + 
+  labs(x = 'Age of oldest vehicle') + 
+  # coord_flip() + 
+  theme(
+    axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.text.x = element_text(size = 12),
+        panel.grid = element_blank(),
+        # axis.title.x = element_blank(),
+        strip.text = element_text(size = 14),
+        strip.background = element_rect(fill = 'gray89', color = NA),
+        title = element_text(size = 16),
+        plot.title = element_text(size = 18, hjust = 0.5),
+        plot.subtitle = element_text(size = 12, hjust = 0.5),
+        legend.position = 'bottom',
+        panel.background = element_rect(fill = 'gray89', color = NA),
+        plot.background = element_rect(fill = 'gray97', color = NA))
+
+buy_car_plot <- 
+buy_car_income1 %>%
+  filter(wave == 'Fall') %>%
+  filter(!income == 'Prefer not to answer') %>%
+  ggplot(aes(x = income, y = est_pct)) + 
+  geom_bar(stat = 'identity', position = position_dodge(width = 0.5),
+           fill = medcol$mdTeal, color = medcol$mdTeal)+
+  geom_errorbar(aes(ymin = est_pct - est_pct_se, ymax = est_pct + est_pct_se), width = 0, color = litecol$ltTeal) + 
+  geom_text(aes(label = paste(round(est_pct), "%", sep = '')), 
+            position = position_stack(vjust = 0.5),
+             size = 4, fontface = 'italic',
+            color = litecol$ltTeal) + 
+  theme_minimal() + 
+  guides(color = F, fill = F) +
+  theme(panel.grid = element_blank(), 
+        axis.line.x = element_line(),
+        axis.text.y = element_blank(),
+        axis.title.y = element_blank(),
+        # axis.title.x = element_blank(),
+        text = element_text(size = 18),
+        strip.background = element_rect(fill = 'gray90', color = 'white')) + 
+  labs(title = 'Percent of adults who responded that they were\n"somewhat" or "very likely" to buy a car in next 6 months, by survey wave', x = '2019 Household Income')
+
+
+ggplotly(buy_car_plot)
+```
+
+### Download Data
+```{r}
+buy_car_income %>%
+  mutate(est_pct = est_pct/100, est_pct_se = est_pct_se/100) %>%
+  select(-purchase) %>%
+  DT::datatable(extensions = 'Buttons', 
+                options = list(dom = 'Btrip',
+                               buttons = c('copy', 'excel', 'csv'), 
+                               searching = FALSE, 
+                               pageLength = 10, 
+                               lengthMenu = FALSE)) %>%
+  DT::formatPercentage('est_pct', 1) %>%
+  DT::formatPercentage('est_pct_se', 1) %>%
+  DT::formatRound('est_n', 0) %>%
+  DT::formatRound('est_n_se', 0)
+```
+
+
+
+# Alleviating Range Anxiety: How Far We Drive
+In the second part of this report, we examine how far vehicles are driven: per day, and per trip. These data show that typical travel behavior rarely exceeds current EV range limits, and that for many a lower-range EV (e.g., a Nissan Leaf) could meet most daily needs.
+
+## Daily Miles Traveled Per Vehicle {.tabset}
+```{r Daily VMT}
+# On average, a vehicle in the Metropolitan area travels x miles per day
+avg_dist <- 
+veh_miles_perday %>%
+  # filter(distance > 0) %>%
+  # filter(distance < 720) %>%
+  summarize(average_daily_dist = weighted.mean(distance, w = day_weight),
+            median_daily_dist = matrixStats::weightedMedian(distance, w = day_weight))
+
+max_dist <- max(veh_miles_perday$distance)
+
+dist_dat <-
+  veh_miles_perday %>%
+  
+  filter(distance > 0) %>%
+  # cut into bins:
+  mutate(distBins = cut(distance, breaks = seq(from = 0, to = max_dist, by = 10),
+                        labels = c(seq(from = 10, to = max_dist, by =10)))) %>%
+  # weighted data: 
+  as_survey_design(ids = 1, weights = day_weight) %>%
+  group_by(distBins) %>%
+  summarize(n_vehicles = survey_total(),
+            pct_vehicles = survey_prop()) %>%
+  ungroup() %>%
+  mutate(distBins = as.numeric(as.character(distBins))) %>%
+  arrange(distBins) %>%
+  mutate(cuml_n_vehicles = cumsum(n_vehicles), 
+         cuml_pct_vehicles = cumsum(pct_vehicles))
+```
+
+The distribution of travel distances shows that the vast majority of daily vehicle distances are much shorter than current EV battery ranges.
+
+Counting only days where they are used (and not parked all day), vehicles in the region travel an average of `r round(avg_dist$average_daily_dist, 1)` miles per day. The median distance traveled is `r round(avg_dist$median_daily_dist, 1)`.
+
+### Plot
+On any given typical weekday, only `r round(dist_dat$n_vehicles[dist_dat$distBins ==250])` vehicles in the region (or, `r round(dist_dat$pct_vehicles[dist_dat$distBins ==250])`% of all vehicles in the region) travel more than 250 miles per day. Meanwhile, `r round(sum(veh_miles_perday$day_weight[veh_miles_perday$distance == 0]))` vehicles do not travel at all.
+
+```{r, echo = F, message = FALSE}
+dist_cuml_plot <- 
+dist_dat %>%
+  filter(distBins <=250) %>%
+  mutate(`>` = paste('On a typical weekday, ', 
+                     round(100 * cuml_pct_vehicles), ' % of vehicles travel less than ', distBins, ' miles per day.', sep = "")) %>%
+  ggplot(aes(x = distBins, y = cuml_pct_vehicles, label = `>`)) + 
+  geom_line(color = darkcol$daTeal) + 
+  geom_point(color = medcol$mdTeal, size = 5) +
+  theme_minimal() +
+  labs(x = "Daily Distance (miles)", y = "Percent of Vehicles") + 
+  ggtitle("Percent of Vehicles Traveling _ Miles Per Day or Less")
+
+ggplotly(dist_cuml_plot, tooltip = '>')
+```
+
+### Histogram
+Bins are in 10-mile increments. Data are weighted at the day level. Days where vehicles do not move are excluded.
+```{r, echo = F, message = FALSE}
+dist_histogram <- 
+dist_dat %>%
+  mutate(`>` = paste('On a typical weekday, ', round(n_vehicles, -3), ' vehicles ',  '(', round(100 * pct_vehicles),' ±', round(pct_vehicles_se), '% of vehicles in the region)', ' travel ', distBins-10, ' to ', distBins, ' miles per day.', sep = "")) %>%
+  ggplot(aes(label = `>`)) + 
+  geom_bar(aes(x = distBins, y = n_vehicles), stat = 'identity',
+           fill = medcol$mdTeal, color = 'white') + 
+  geom_errorbar(aes(x = distBins, y = n_vehicles, 
+                    ymin = n_vehicles - n_vehicles_se, 
+                    ymax = n_vehicles + n_vehicles_se), width = 0,
+                color = darkcol$daTeal) + 
+  theme_minimal() +
+  ggtitle("Daily Miles Traveled Per Vehicle") + 
+  labs(x = "Daily Distance (miles)", y = "Number of Vehicles") + 
+  geom_vline(color = medcol$mdPink, linetype = 'longdash', aes(xintercept = 720)) + 
+  annotate("text", x =720, y = 100000, label = "Daily travel distances > 720 miles trimmed from subsequent analyses", col =medcol$mdPink, hjust = -0.5)
+
+ggplotly(dist_histogram, tooltip = '>')
+```
+Of course, there are some very long travel distances in the TBI dataset (maximum: `r round(max(veh_miles_perday$distance))`). The median (50th percentile) daily distance traveled by a given vehicle in the dataset is only `r round(quantile(veh_miles_perday$distance, probs = 0.5)[[1]])` miles. Only 5% of daily vehicle mileage records are more than `r round(quantile(veh_miles_perday$distance, probs = 0.95)[[1]])` miles, and only 0.5% of daily mileage records are longer than `r round(quantile(veh_miles_perday$distance, probs = 0.995)[[1]])`. For most analyses in this report, we trim out the `r round(nrow(veh_trips  %>% filter(distance> 720)))` daily vehicle mileage records greater than 720 miles (dashed red line in the plot above), which would represent 12 hours of driving at 60 miles per hour. These indicate potentially spurious survey records that may actually include long-distance passenger travel (airplane trips, e.g.).
+
+
+### Download Data
+```{r}
+dist_dat %>%
+  filter(!is.na(distBins)) %>%
+  mutate(distBins = paste(distBins-10, "-", distBins)) %>%
+  mutate(distBins = ifelse(distBins == '0 - 10', "Less than 10", distBins)) %>%
+  DT::datatable(extensions = 'Buttons', 
+                options = list(dom = 'Btrip',
+                               buttons = c('copy', 'excel', 'csv'), 
+                               searching = FALSE, 
+                               pageLength = 10, 
+                               lengthMenu = FALSE),
+                colnames = c("Miles Traveled Per Day", "Number of Vehicles", "N SE", "% of Vehicles", "% SE", "Cumulative N", "Cumulative %")) %>%
+  DT::formatPercentage('pct_vehicles', 1) %>%
+  DT::formatPercentage('cuml_pct_vehicles', 1) %>%
+  DT::formatPercentage('pct_vehicles_se', 1) %>%
+  DT::formatRound('n_vehicles', 0) %>%
+  DT::formatRound('cuml_n_vehicles', 0) %>%
+  DT::formatRound('n_vehicles_se', 0)
+  
+```
+
+
+## Daily Miles Traveled Per Vehicle: Diving Deeper
+```{r}
+get_cuml_distance_dat <- function(byVar){
+  col <- enquo(byVar)
+  
+  max_dist <- 250
+  by_dist <- 5
+  
+  dist_dat <-
+    veh_miles_perday %>%
+    filter(distance > 0) %>%
+    mutate(distance = ifelse(distance>= max_dist, max_dist, distance)) %>%
+    # cut into bins:
+    mutate(distBins = cut(distance, 
+                          breaks = seq(from = 0, to = max_dist, by = by_dist),
+                          labels = c(seq(from = by_dist, to = max_dist, by =by_dist)))) %>%
+  
+  # weighted data: 
+  as_survey_design(ids = 1, weights = day_weight) %>%
+  group_by(!!col, distBins) %>%
+  summarize(n_vehicles = survey_total(),
+            pct_vehicles = survey_prop()) %>%
+  ungroup() %>%
+  mutate(distBins = as.numeric(as.character(distBins))) %>%
+  arrange(!!col, distBins) %>%
+  group_by(!!col) %>%
+  mutate(cuml_n_vehicles = cumsum(n_vehicles), 
+         cuml_pct_vehicles = cumsum(pct_vehicles))
+  
+  return(dist_dat)
+}
+
+dist_cuml_plot <- function(byVar, byDat){
+  byVar <- enquo(byVar)
+  ggplot1<-
+  byDat %>%
+  filter(distBins <=245) %>%
+  ggplot(aes(x = distBins, y = cuml_pct_vehicles, group = !!byVar, color = !!byVar)) + 
+  geom_point(aes(text = cum_label), size = 2) +
+  geom_line() + 
+  scale_color_manual(values = c(unlist(medcol), 'gray70', 'gray90')) +
+  theme_minimal() +
+  labs(x = "Daily Distance (miles)", y = "Percent of Vehicles") + 
+  ggtitle("Percent of Vehicles Traveling _ Miles Per Day or Less") + 
+  theme(panel.grid = element_blank())
+  ggplotly(ggplot1, tooltip = c('text'))
+}
+
+dist_hist_plot <- function(byVar, byDat, ...) {
+  myCol <- enquo(byVar)
+  ggplot2 <-
+  byDat %>%
+    filter(distBins <= 250) %>%
+    ggplot(aes(text = hist_label, fill = !!myCol, color = !!myCol)) +
+    geom_bar(
+      aes(x = distBins, y = n_vehicles),
+      stat = 'identity', color = 'white'
+      
+    ) +
+    geom_errorbar(
+      aes(
+        x = distBins,
+        y = n_vehicles,
+        ymin = n_vehicles - n_vehicles_se,
+        ymax = n_vehicles + n_vehicles_se,
+        color = !!myCol
+      ),
+      width = 0
+    ) +
+    scale_fill_manual(values = c(unlist(medcol), 'gray70', 'gray90')) +
+    scale_color_manual(values = c(unlist(litecol), 'gray50', 'gray70')) +
+    theme_minimal() +
+    theme(panel.grid = element_blank()) + 
+    ggtitle("Daily Miles Traveled Per Vehicle") +
+    labs(x = "Daily Distance (miles)", y = "Number of Vehicles") +
+    facet_wrap(vars(...))
+   ggplotly(ggplot2, tooltip = c("text"))
+}
+
+```
+
+
+
+### Thrive Category {.tabset}
+```{r}
+thrive_dist_dat <- get_cuml_distance_dat(thriveCatBroad) %>%
+  # there are some households outside of thrive designations of course
+  filter(!is.na(thriveCatBroad)) %>%
+  mutate(
+    cum_label = sprintf(
+      '<b>%s</b>: %s%% of vehicles<br>travel less than <b>%s</b> miles per day.',
+      paste('In', thriveCatBroad, "communities", sep = " "),
+      round(100 * cuml_pct_vehicles),
+      distBins
+    )
+  ) %>%
+  mutate(
+    hist_label = sprintf(
+      '<b>%s</b>: %s%% of vehicles (~%s vehicles)<br>travel <b>%s</b> miles per day.',
+      paste('In', thriveCatBroad, "communities", sep = " "),
+      round(100 * pct_vehicles),
+      round(n_vehicles, -3),
+      ifelse(
+        distBins == 250,
+        '250+',
+        paste(distBins - 5,
+              'to',
+              distBins))
+    ))
+```
+
+#### Plot
+On any given typical weekday, only `r round(dist_dat$n_vehicles[dist_dat$distBins ==250])` vehicles in the region (or, `r round(dist_dat$pct_vehicles[dist_dat$distBins ==250])`% of all vehicles in the region) travel more than 250 miles per day. Meanwhile, `r round(sum(veh_miles_perday$day_weight[veh_miles_perday$distance == 0]))` vehicles do not travel at all.
+```{r, echo = F, message = FALSE}
+dist_cuml_plot(thriveCatBroad, thrive_dist_dat)
+```
+
+#### Histogram
+```{r}
+dist_hist_plot(thriveCatBroad, thrive_dist_dat, thriveCatBroad)
+```
+
+#### Summary Table
+```{r}
+thrive_dist_dat %>%
+  filter(distBins %in% c(10, 50, 100, 150, 200, 245)) %>%
+  select(thriveCatBroad, distBins, cuml_pct_vehicles) %>%
+  pivot_wider(names_from = thriveCatBroad, id_cols = distBins, values_from = cuml_pct_vehicles) %>%
+  gt::gt() %>%
+  tab_header(
+    title = "Percent of vehicles in each Thrive Community Type that drive less than the specified distance on typical weekdays",
+    subtitle = "E.g., 22% of vehicles in Urban Center communities travel 10 miles or less per day on typical weekdays."
+  ) %>%
+  fmt_percent(
+    columns = c(`Urban Center`, Urban, Suburban, `Suburban Edge`, `Emerging Suburban Edge`,  Rural),
+    decimals = 1
+  )  %>%
+  cols_label(distBins = "Miles Driven") %>%
+    tab_spanner(label = "Thrive Community Type",
+              columns = c(`Urban Center`, Urban, Suburban, `Suburban Edge`, `Emerging Suburban Edge`,  Rural))
+
+```
+
+#### Download Data
+```{r}
+thrive_dist_dat %>%
+ select(-hist_label, -cum_label) %>%
+  DT::datatable(extensions = 'Buttons', 
+                options = list(dom = 'Btrip',
+                               buttons = c('copy', 'excel', 'csv'), 
+                               searching = FALSE, 
+                               pageLength = 10, 
+                               lengthMenu = FALSE)) %>%
+  DT::formatPercentage('pct_vehicles', 1) %>%
+  DT::formatPercentage('cuml_pct_vehicles', 1) %>%
+  DT::formatPercentage('pct_vehicles_se', 1) %>%
+  DT::formatRound('n_vehicles', 0) %>%
+  DT::formatRound('cuml_n_vehicles', 0) %>%
+  DT::formatRound('n_vehicles_se', 0)
+```
+
+### Season {.tabset}
+```{r}
+season_dist_dat <- get_cuml_distance_dat(season) %>%
+  mutate(
+    cum_label = sprintf(
+      '<b>%s</b>: %s%% of vehicles<br>travel less than <b>%s</b> miles per day.',
+      paste('In', season, sep = " "),
+      round(100 * cuml_pct_vehicles),
+      distBins
+    )
+  ) %>%
+  mutate(
+    hist_label = sprintf(
+      '<b>%s</b>: %s%% of vehicles (~%s vehicles)<br>travel <b>%s</b> miles per day.',
+      paste('In', season, sep = " "),
+      round(100 * pct_vehicles),
+      round(n_vehicles, -3),
+      ifelse(
+        distBins == 250,
+        '250+',
+        paste(distBins - 5,
+              'to',
+              distBins))
+    ))
+```
+
+#### Plot
+On any given typical weekday, only `r round(dist_dat$n_vehicles[dist_dat$distBins ==250])` vehicles in the region (or, `r round(dist_dat$pct_vehicles[dist_dat$distBins ==250])`% of all vehicles in the region) travel more than 250 miles per day. Meanwhile, `r round(sum(veh_miles_perday$day_weight[veh_miles_perday$distance == 0]))` vehicles do not travel at all.
+```{r, echo = F, message = FALSE}
+dist_cuml_plot(season, season_dist_dat)
+```
+
+#### Histogram
+```{r}
+dist_hist_plot(season, season_dist_dat, season)
+```
+
+#### Summary Table
+```{r}
+season_dist_dat %>%
+  filter(distBins %in% c(10, 50, 100, 150, 200, 245)) %>%
+  select(season, distBins, cuml_pct_vehicles) %>%
+  pivot_wider(names_from = season, id_cols = distBins, values_from = cuml_pct_vehicles) %>%
+  gt::gt() %>%
+  tab_header(
+    title = "Percent of vehicles in each Thrive Community Type that drive less than the specified distance on typical weekdays",
+    subtitle = "E.g., 22% of vehicles in Urban Center communities travel 10 miles or less per day on typical weekdays."
+  ) %>%
+  fmt_percent(
+    columns = c(Winter, Spring, Summer, Fall),
+    decimals = 1
+  )  %>%
+  cols_label(distBins = "Miles Driven") %>%
+    tab_spanner(label = "Season",
+              columns = c(Winter, Spring, Summer, Fall))
+
+```
+
+#### Download Data
+```{r}
+season_dist_dat %>%
+  select(-hist_label, -cum_label) %>%
+  DT::datatable(extensions = 'Buttons', 
+                options = list(dom = 'Btrip',
+                               buttons = c('copy', 'excel', 'csv'), 
+                               searching = FALSE, 
+                               pageLength = 10, 
+                               lengthMenu = FALSE)) %>%
+  DT::formatPercentage('pct_vehicles', 1) %>%
+  DT::formatPercentage('cuml_pct_vehicles', 1) %>%
+  DT::formatPercentage('pct_vehicles_se', 1) %>%
+  DT::formatRound('n_vehicles', 0) %>%
+  DT::formatRound('cuml_n_vehicles', 0) %>%
+  DT::formatRound('n_vehicles_se', 0)
+```
+
+
+### Number of Children {.tabset}
+```{r}
+kids_dist_dat <- get_cuml_distance_dat(num_kids) %>%
+  mutate(
+    cum_label = sprintf(
+      '<b>%s</b>: %s%% of vehicles<br>travel less than <b>%s</b> miles per day.',
+      paste('In households with', num_kids, sep = " "),
+      round(100 * cuml_pct_vehicles),
+      distBins
+    )
+  ) %>%
+  mutate(
+    hist_label = sprintf(
+      '<b>%s</b>: %s%% of vehicles (~%s vehicles)<br>travel <b>%s</b> miles per day.',
+      paste('In households with', num_kids, sep = " "),
+      round(100 * pct_vehicles),
+      round(n_vehicles, -3),
+      ifelse(
+        distBins == 250,
+        '250+',
+        paste(distBins - 5,
+              'to',
+              distBins))
+    ))
+```
+
+#### Plot
+```{r, echo = F, message = FALSE}
+dist_cuml_plot(num_kids, kids_dist_dat)
+```
+
+#### Histogram
+```{r}
+dist_hist_plot(num_kids, kids_dist_dat, num_kids)
+```
+
+#### Summary Table
+```{r}
+kids_dist_dat %>%
+  filter(distBins %in% c(10, 50, 100, 150, 200, 245)) %>%
+  select(num_kids, distBins, cuml_pct_vehicles) %>%
+  pivot_wider(names_from = num_kids, id_cols = distBins, values_from = cuml_pct_vehicles) %>%
+  gt::gt() %>%
+  tab_header(
+    title = "Percent of vehicles in each households with 0, 1, 2, or 3+ kids that drive less than the specified distance on typical weekdays",
+    subtitle = "E.g., 22% of vehicles in Urban Center communities travel 10 miles or less per day on typical weekdays."
+  ) %>%
+  fmt_percent(
+    columns = c(`0`, `1`, `2`, `3+`),
+    decimals = 1
+  )  %>%
+  cols_label(distBins = "Miles Driven") %>%
+    tab_spanner(label = "Number of Children in Household",
+              columns = c(`0`, `1`, `2`, `3+`))
+
+```
+
+
+
+#### Download Data
+```{r}
+season_dist_dat %>%
+  select(-hist_label, -cum_label) %>%
+  DT::datatable(extensions = 'Buttons', 
+                options = list(dom = 'Btrip',
+                               buttons = c('copy', 'excel', 'csv'), 
+                               searching = FALSE, 
+                               pageLength = 10, 
+                               lengthMenu = FALSE)) %>%
+  DT::formatPercentage('pct_vehicles', 1) %>%
+  DT::formatPercentage('cuml_pct_vehicles', 1) %>%
+  DT::formatPercentage('pct_vehicles_se', 1) %>%
+  DT::formatRound('n_vehicles', 0) %>%
+  DT::formatRound('cuml_n_vehicles', 0) %>%
+  DT::formatRound('n_vehicles_se', 0)
+```
+
+
+
+## How variable (or not) is a given vehicle's daily miles traveled?
+Each point in this graph is a record for a single vehicle. The horizontal (x) axis is the average distance across multiple days. The vertical axis is the maximum distance traveled by that vehicle over the course of the survey. Only vehicle distances < 720 miles (12 hours at 60 miles per hour) are included to eliminate some potentially spurious trips.
+
+```{r}
+g <- 
+veh_miles_perday %>%
+  filter(distance < 720) %>%
+  group_by(veh_id) %>%
+  summarize(mean_dist = mean(distance),
+         min_dist = min(distance),
+         max_dist = max(distance),
+         sd_dist = sd(distance),
+         n = length(distance)) %>%
+    mutate(
+    `>` = sprintf(
+      "This vehicle traveled an average of<br><b>%s±%s</b>and a maximum of <b>%s</b> miles per day<br>over %s days.",
+      round(mean_dist),
+      round(sd_dist),
+      round(max_dist),
+      n
+    )) %>%
+  mutate(max_dist_cat = ifelse(max_dist >=250 | mean_dist >= 250, 'over250', 'under250')) %>%
+  ungroup() %>%
+  # must have at least 5 days of data -- check, does this include zero-mile days?
+  filter(n >= 5) %>%
+  ggplot(aes(x = mean_dist, y = max_dist, label = `>`, color = max_dist_cat))+
+  geom_point(alpha = 0.5, fill = 0.5) +
+  geom_hline(yintercept = 250, linetype = 'longdash', color = medcol$mdPink) + 
+  geom_vline(xintercept = 250, linetype = 'longdash', color = medcol$mdPink) + 
+  scale_color_manual(values = c(medcol$mdPink, medcol$mdTeal)) + 
+  theme_minimal() + 
+  theme(panel.grid = element_line(color = 'gray92'))
+
+ggplotly(g, tooltip = c(">"))
+
+
+# How many vehicles exceed 250 miles ever?
+mi250 <-
+veh_miles_perday %>%
+  filter(distance < 720) %>%
+  group_by(veh_id) %>%
+  summarize(mean_dist = mean(distance),
+         min_dist = min(distance),
+         max_dist = max(distance),
+         sd_dist = sd(distance),
+         n = length(distance)) %>%
+  mutate(max_dist_cat = ifelse(max_dist >=250 | mean_dist >= 250, 'over250', 'under250')) %>%
+  left_join(veh %>% select(veh_id, hh_id)) %>%
+  left_join(hh %>% select(hh_id, hh_weight)) %>%
+  filter(!is.na(hh_weight)) %>%
+  as_survey_design(id = 1, weights = hh_weight) %>%
+  group_by(max_dist_cat) %>%
+  summarize(est_pct = 100 * survey_prop(),
+             est_n = survey_total())
+```
+Only `r round(mi250$est_pct[mi250$max_dist_cat == 'over250'])`% of vehicles (about  `r round(mi250$est_n[mi250$max_dist_cat == 'over250']) %>% as.integer() %>% formatC(big.mark = ",")` vehicles) in the region traveled more than 250 miles per day over the course of 5-7 days (weighted at the household level). The remaining `r round(mi250$est_n[mi250$max_dist_cat == 'under250']) %>% as.integer() %>% formatC(big.mark = ",")` vehicles in the region travel stayed under 250 miles per day over the course of their 5- to 7-day survey period.
+
+# Looking for Charging Opportunities: Idle Time and Location
+## How many cars in the metro sit idle on any given day?
+```{r}
+# On average a vehicle in the metro area travels x days per year (17% of all days in the survey, there’s no movement)
+veh_miles_perday %>%
+  mutate(dist_cat = ifelse(distance ==0, "Vehicle Sits Idle", "Vehicle is Used")) %>%
+  group_by(dist_cat) %>%
+  summarize(n_days = sum(day_weight, na.rm = T)) %>%
+  mutate(pct_days = 100 * n_days/sum(n_days)) %>% 
+  gt() %>%
+  fmt_number(columns = c(n_days), decimals = 0) %>%
+  fmt_number(columns = c(pct_days), decimals = 1) %>%
+  # cols_hide(n_days) %>%
+  gt::cols_label('dist_cat' = "", 'n_days' = "Number of Vehicles", 'pct_days' = "Percent of vehicles")
+```
+
+<!-- ## How many drivers don't drive on any given day? -->
+<!-- ```{r} -->
+<!-- day %>% -->
+<!--   left_join(veh_trips) %>% -->
+<!--   filter() -->
+<!-- ``` -->
+## A day in the life of a car: it's mostly parked
+```{r}
+
+
+zero_days <-
+  veh_miles_perday %>%
+  filter(distance == 0) %>%
+  select(-distance) %>%
+  # assume parked at home: 
+  mutate(d_purpose_category_imputed = 'At home') %>%
+  mutate(duration = 24 * 60) %>%
+  select(veh_id, hh_id, day_num, day_weight, d_purpose_category_imputed, duration)
+  
+  
+drive_time <-
+  veh_trips %>%
+  left_join(trip %>% select(trip_id, duration)) %>%
+  select(veh_id, day_num, duration) %>%
+  group_by(veh_id, day_num) %>%
+  summarize(duration = sum(duration)) %>%
+  mutate(d_purpose_category_imputed = 'Driving') %>%
+  left_join(veh_day) 
+
+park_time <-
+  veh_stops %>%
+  rename(duration = idleTime) %>%
+  left_join(trip %>% select(trip_id, day_num)) %>%
+  left_join(veh_day)
+# get the day weight for the first adult in the survey
+
+# Simple version: 
+drive_time_simple <- 
+  veh_miles_perday %>%
+  left_join(drive_time) %>%
+  select(veh_id, hh_id, day_num, day_weight, duration) %>%
+  replace_na(list(duration = 0)) %>%
+  filter(duration < 24 * 60) %>%
+  arrange(veh_id, day_num) %>%
+  filter(day_weight > 0) %>%
+  as_survey_design(weights = day_weight) %>%
+  summarize(md_time = survey_median(duration),
+            mn_time = survey_mean(duration))
+  
+
+car_days <- 
+zero_days %>%
+  bind_rows(drive_time) %>%
+  bind_rows(park_time) %>%
+  arrange(veh_id, day_num)
+  
+car_day_summary <- 
+car_days %>%
+  group_by(veh_id, day_num) %>%
+  mutate(total_time = sum(duration))%>%
+  mutate(percent_accounted = total_time/(60 * 24)) %>%
+  ungroup() %>%
+  filter(percent_accounted >= 0.75 & percent_accounted <= 1.25) %>%
+  filter(day_weight > 0) %>%
+
+  as_survey_design(id = 1, weights = day_weight) %>%
+   mutate(d_purpose_category_imputed = 
+           recode_factor(d_purpose_category_imputed, 
+                         'Change mode' = 'Other stop',
+                         'Driving' = 'Driving',
+                         'Errand/Other' = 'Other stop',
+                         'Escort' = 'Other stop',
+                         'Home' = 'At home',
+                         'Meal' = 'Other stop',
+                         'Missing: Non-imputable' = 'Other stop',
+                         'School' = 'At work/school',
+                         'School-related' = 'At work/school',
+                         'Shop' = 'Other stop',
+                         'Social/Recreation' = 'Other stop',
+                         'Spent the night at non-home location' = 'At home',
+                         'Work' = 'At work/school',
+                         'Work-related' = 'At work/school')) %>%
+  group_by(d_purpose_category_imputed) %>%
+  summarize(total = survey_total(duration)) %>%
+  ungroup()%>%
+  mutate(grand_total = sum(total)) %>%
+  mutate(pct_time = 100 * total/grand_total) %>%
+  mutate(total_pct = sum(pct_time))
+
+new_purposes <- 
+read.csv('PurposesTable.csv')
+
+car_day_sample <-
+  car_days %>%
+    filter(percent_accounted <= 1.1 & percent_accounted >= 0.9) %>%
+  left_join(trip %>% select(trip_id, d_purpose_category_imputed, d_purpose_imputed)) %>%
+  left_join(new_purposes) %>%
+  group_by(veh_id, day_num, purpose_new) %>%
+  summarize(duration = sum(duration)) %>%
+  ungroup()%>%
+  group_by(veh_id, day_num) %>%
+  mutate(total_time = sum(duration)) %>%
+  mutate(pct_time = 100 * duration/total_time) %>%
+  add_tally() %>%
+  filter(n>=3) %>%
+  group_split() %>%
+  sample(20) %>%
+  combine() %>%
+  mutate(sample_num = paste0(as.character(veh_id), '_', as.character(day_num))) %>%
+  mutate(sample_num = as.numeric(as.factor(sample_num)))
+  
+simple_plot <-
+drive_time_simple %>%
+  mutate(d_purpose_category_imputed = 'Driving') %>%
+  mutate(pct_time =100 * mn_time/(24*60)) %>%
+  bind_rows(drive_time_simple %>% mutate(pct_time = 100 * ((24 * 60) - mn_time)/(24*60)) %>% mutate(d_purpose_category_imputed = 'Parked')) %>%
+  arrange(d_purpose_category_imputed) %>%
+  mutate(ymax = cumsum(pct_time),
+         ymin = cumsum(pct_time) - pct_time) %>%
+  mutate(labelPos = (ymax + ymin)/2,
+         label = paste0(d_purpose_category_imputed, ':\n', round(pct_time),'%')) %>%
+  ggplot(aes(ymax=ymax, ymin=ymin, xmax=4, xmin=2, fill=d_purpose_category_imputed)) +
+  geom_rect() +
+  geom_text( x=5, aes(y=labelPos , label=label, color=d_purpose_category_imputed), size=6) + # x here controls label position (inner / outer)
+  scale_fill_manual(values = c(
+    tencol[6], # driving
+    'gray40', # home,
+    'gray90'), name = '') +
+   scale_color_manual(values = c(
+    tencol[6], # driving
+    'gray40', # home
+    'gray90'), name = '') +
+  coord_polar(theta="y") +
+  xlim(c(-1, 4.5)) +
+  theme_void() +
+  ggtitle("Average vehicle use in a 24-hour weekday", subtitle = "Data are weighted at the day level.\nIncludes vehicles that remain parked for the entire day (27% of records).") + 
+  # coord_cartesian(ylim = c(2002, 2020))+
+  theme(
+        title = element_text(size = 16),
+        plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(size = 12, hjust = 0.5),
+        legend.position = 'none',
+        panel.background = element_rect(fill = 'gray97', color = NA),
+        plot.background = element_rect(fill = 'gray97', color = NA))
+ggsave('Vehicle Use 24 Hour Day - Simple.png', simple_plot + theme(plot.title = element_blank(), plot.subtitle =element_blank()), dpi = 300)
+car_day_summary %>%
+  mutate(d_purpose_category_imputed = 
+           factor(d_purpose_category_imputed, 
+                  levels = c('Driving', 'At home', 'At work/school', 'Other stop'))) %>%
+  arrange(d_purpose_category_imputed) %>%
+  mutate(ymax = cumsum(pct_time),
+         ymin = cumsum(pct_time) - pct_time)%>%
+  mutate(labelPos = (ymax + ymin)/2,
+         label = paste0(d_purpose_category_imputed, ':\n', round(pct_time),'%')) %>%
+  ggplot(aes(ymax=ymax, ymin=ymin, xmax=4, xmin=2, fill=d_purpose_category_imputed)) +
+  geom_rect() +
+  geom_text( x=5, aes(y=labelPos , label=label, color=d_purpose_category_imputed), size=6) + # x here controls label position (inner / outer)
+  scale_fill_manual(values = c(
+    tencol[5], # driving
+    medcol[1], # home,
+    medcol[2], # school
+    medcol[3], # other
+    'gray90'), name = '') +
+   scale_color_manual(values = c(
+    tencol[5], # driving
+    medcol[1], # home,
+    medcol[2], # school
+    medcol[3], # other
+    'gray90'), name = '') +
+  coord_polar(theta="y") +
+  xlim(c(-1, 4.5)) +
+  theme_void() +
+  theme(legend.position = "none") + 
+  theme(panel.background =  element_rect(fill = 'gray97', color = NA))
+
+
+car_day_sample %>%
+  arrange(purpose_new) %>%
+  mutate(ymax = cumsum(pct_time),
+         ymin = cumsum(pct_time) - pct_time)%>%
+  mutate(labelPos = (ymax + ymin)/2,
+         label = paste0(purpose_new, ':\n', round(pct_time),'%')) %>%
+  ggplot(aes(x = 2, y = pct_time, fill=purpose_new)) +
+   geom_bar(position = 'fill', stat = 'identity')  +
+   facet_wrap( ~ sample_num) + 
+  # geom_text( x=5, aes(y=labelPos , label=label, color=purpose_new), size=6) + # x here controls label position (inner / outer)
+  scale_fill_manual(values = c(
+  litecol, medcol, 'gray80'), name = '') +
+ scale_color_manual(values = c(
+  litecol, medcol,'gray80'), name = '') +
+  coord_polar(theta="y") +
+  # xlim(c(-1, 4.5)) +
+  theme_void()
+  # theme(legend.position = "none")
+
+
+```
+
+
+### Looking closer: where do we park?
+```{r}
+we_park<-
+veh_stops %>%
+  left_join(trip %>% select(trip_id, person_id, vehicle_park_loc)) %>%
+  left_join(per %>% select(person_id, hh_id)) %>%
+  left_join(hh %>% select(hh_id, residence_type, thriveCategory)) %>%
+  filter(d_purpose_category_imputed == 'Home') %>%
+  filter(!vehicle_park_loc %in% c("Didn't park (e.g., waited, drop-off, drive-thru)", "Park & ride lot", "Someone else's driveway", "Other")) %>%
+    filter(!is.na(thriveCategory))%>%
+  mutate(thriveCatBroadest = ifelse(thriveCategory == 'Urban Center', 'In Urban Center', 'Outside Urban Center')) %>%
+  as_survey_design(id = 1, weights = trip_weight) %>%
+  group_by(thriveCatBroadest, residence_type, vehicle_park_loc) %>%
+  
+  summarize(n_trips = survey_total(),
+            pct_trips = 100 * survey_prop()) %>%
+  filter(residence_type %in% c("Single-family house (detached house)", "Townhouse (single-family attached)", "Building with 2-4 units (duplexes, triplexes, quads)","Building with 5 or more apartments or condos"))  %>%
+
+   mutate(residence_type = recode_factor(
+     residence_type, 
+     "Single-family house (detached house)" = "Single-family house",
+     "Townhouse (single-family attached)" = "Townhouse", 
+     "Building with 2-4 units (duplexes, triplexes, quads)" = "2-4 Unit Building","Building with 5 or more apartments or condos" = "5+ Unit Building"))  %>%
+  filter(n_trips > 0) %>%
+  mutate(ymax = cumsum(pct_trips),
+         ymin = cumsum(pct_trips) - pct_trips)%>%
+  mutate(labelPos = (ymax + ymin)/2,
+         label = paste0(vehicle_park_loc, ':\n', round(pct_trips),'%')) %>%
+  ggplot(aes(x = 2, y = pct_trips, fill=vehicle_park_loc)) +
+   geom_bar(position = 'fill', stat = 'identity')  +
+  facet_grid(thriveCatBroadest ~ residence_type) + 
+  scale_fill_manual(values = c(
+  tencol[c(3, 6, 9)], 'gray80'), name = '') +
+ scale_color_manual(values = c(
+  tencol, 'gray80'), name = '') +
+  coord_polar(theta="y") +
+  xlim(c(0, 2.5)) +
+  theme_void() + 
+  
+  theme(legend.position = "bottom")+ 
+    theme(
+    # axis.title.y = element_blank(),
+        # axis.text.y = element_blank(),
+        # axis.text.x = element_text(size = 12),
+        panel.grid = element_blank(),
+        axis.title.x = element_blank(),
+        strip.text = element_text(size = 16, margin = margin(b = 4)),
+        strip.background = element_rect(fill = 'gray97', color = NA),
+        title = element_text(size = 16),
+        plot.title = element_text(hjust = 0.5),
+        legend.text = element_text(size = 14),
+        plot.subtitle = element_text(hjust = 0.5),
+        legend.position = 'bottom',
+        panel.background = element_rect(fill = 'gray97', color = NA),
+        plot.background = element_rect(fill = 'gray97', color = NA))
+ggsave('where we park.png', we_park, dpi = 300)
+
+```
+
+
+
+## How Long do Vehicles Stop For? By Stop Type (Destination Type)
+```{r, echo = FALSE, message=FALSE}
+hour_to_truncate_at <-
+  6 # anything more than 6 hours, we'll just lump into "12 hours or more"
+
+stop_dat <-
+  veh_stops %>%
+  left_join(new_purposes) %>%
+  filter(idleTime > 0) %>%
+  # cut into bins:
+  mutate(idleTimeBins = cut(
+    idleTime,
+    breaks = c(seq(from = 0, to = hour_to_truncate_at * 60, by = 30), Inf),
+    labels = c(seq(
+      from = 0, to =  hour_to_truncate_at * 60, by = 30
+    ))
+  )) %>%
+  # weighted data:
+  as_survey_design(ids = 1, weights = trip_weight) %>%
+  group_by(purpose_new, idleTimeBins) %>%
+  summarize(n_trips = survey_total(),
+            pct_trips = 100 * survey_prop()) %>%
+  ungroup() %>%
+  mutate(idleTimeBins = as.numeric(as.character(idleTimeBins))) %>%
+  arrange(desc(idleTimeBins)) %>%
+  group_by(purpose_new) %>%
+  mutate(cuml_n_trips = cumsum(n_trips),
+         cuml_pct_trips = cumsum(pct_trips)) %>%
+  ungroup() %>%
+  # minutes to hours:
+  mutate(idleTimeBins = idleTimeBins / 60) %>%
+  
+  # now get a cumulative sum:
+  mutate(cumlPctLabel = round(cuml_pct_trips)) %>%
+  mutate(purpose_new = factor(
+    purpose_new,
+    levels = c(
+     unique(new_purposes$purpose_new)
+    )
+  )) %>%
+  select(purpose_new,
+         cuml_pct_trips,
+         cumlPctLabel,
+         idleTimeBins) %>%
+  mutate(`>` = paste(
+      cumlPctLabel,
+      "% of stops at ",
+      purpose_new,
+      " are ",
+      idleTimeBins,
+      " hours or longer",
+      sep = ""
+    )) %>%
+  filter(idleTimeBins >= 0.5) %>%
+  filter(purpose_new %in% c("At home",
+                            "At friend's house",
+                            "At store", 
+                            "At doctor's office",
+                            "At restaurant",
+                            "At school",
+                            "At work",
+                            "Gas station",
+                            "At grocery store", 
+                            "At movies",
+                            "At religious services",
+                            "At gym/park"
+                            )) %>%
+  filter(!purpose_new == 'Unknown') %>%
+  mutate(cat = recode_factor(purpose_new,
+                             "At home" = 'Residential',
+                            "At friend's house" = 'Residential',
+                            "At store" = 'Business', 
+                            "At doctor's office" = 'Community centers',
+                            "At restaurant" = 'Business',
+                            "At school" = 'Community centers',
+                            "At work" = 'Business',
+                            "Gas station" = 'Business',
+                            "At grocery store" = 'Business', 
+                            "At movies"= 'Business',
+                            "At religious services" = 'Community centers',
+                            "At gym/park" = 'Community centers'))
+
+resplot <- 
+stop_dat %>%
+  filter(cat == 'Residential') %>% 
+  ggplot(aes(
+    x = idleTimeBins,
+    y = cuml_pct_trips,
+    group = purpose_new,
+    color = purpose_new,
+    text = `>`
+  )) +
+  geom_point(size = 2.5) +
+  geom_line(size = 1) +
+  scale_color_manual(values = c(tencol[c(1, 7)]), name = '') +
+  theme_minimal() +
+  labs(x = "stop duration (hours)", y = "% stops (cumulative)") +
+  scale_x_continuous(breaks = seq(from = 0, to = 6, by = 1)) + 
+   scale_y_continuous(breaks = seq(from = 0, 100, by = 20)) + 
+  ggtitle("Residential") + 
+    theme(
+    # axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.text.x = element_text(size = 12),
+        panel.grid.major = element_line(color = 'gray85'),
+        panel.grid.minor = element_line(color = 'gray85'),
+        axis.title = element_text(size = 14),
+        strip.text = element_text(size = 18),
+        strip.background = element_rect(fill = 'gray90', color = 'white'),
+        title = element_text(size = 16),
+        plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5),
+        legend.text = element_text(size = 14),
+        legend.position = 'bottom',
+        panel.background = element_rect(fill = 'gray97', color = NA),
+        plot.background = element_rect(fill = 'gray97', color = NA))
+
+busplot <-
+stop_dat %>%
+  filter(cat == 'Business') %>% 
+  mutate(purpose_new = factor(purpose_new, levels = c("At work", "At movies", "At restaurant", "At store", "At grocery store", "Gas station"))) %>%
+  filter(purpose_new %in% c("At work", "At store", "At grocery store", "At restaurant")) %>%
+  ggplot(aes(
+    x = idleTimeBins,
+    y = cuml_pct_trips,
+    group = purpose_new,
+    color = purpose_new,
+    text = `>`
+  )) +
+  geom_point(size = 2.5) +
+  geom_line(size = 1) +
+    scale_color_manual(values = c(unlist(medcol[c(1, 2, 4)]), tencol[6], 'white'), name = '') +
+  theme_minimal() +
+  labs(x = "stop duration (hours)", y = "% stops (cumulative)") +
+  scale_x_continuous(breaks = seq(from = 0, to = 6, by = 1)) + 
+   scale_y_continuous(breaks = seq(from = 0, 100, by = 20)) + 
+  ggtitle("Businesses") + 
+    theme(
+    # axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.text.x = element_text(size = 12),
+        panel.grid.major = element_line(color = 'gray85'),
+        panel.grid.minor = element_line(color = 'gray85'),
+        axis.title = element_text(size = 14),
+        strip.text = element_text(size = 18),
+        strip.background = element_rect(fill = 'gray90', color = 'white'),
+        title = element_text(size = 16),
+        plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5),
+        legend.text = element_text(size = 14),
+        legend.position = 'bottom',
+        panel.background = element_rect(fill = 'gray97', color = NA),
+        plot.background = element_rect(fill = 'gray97', color = NA))
+busplot
+
+
+communityplot <-
+stop_dat %>%
+  filter(cat  == 'Community centers') %>% 
+  mutate(purpose_new = factor(purpose_new, levels = c("At school", "At religious services", "At gym/park", "At doctor's office"))) %>%
+  filter(purpose_new %in% c('At school', "At doctor's office", "At gym/park")) %>%
+  ggplot(aes(
+    x = idleTimeBins,
+    y = cuml_pct_trips,
+    group = purpose_new,
+    color = purpose_new,
+    text = `>`
+  )) +
+  geom_point(size = 2.5) +
+  geom_line(size = 1) +
+  scale_color_manual(values = c(unlist(medcol[c(3, 5, 6)]), 'white'), name = '') +
+  theme_minimal() +
+  labs(x = "stop duration (hours)", y = "% stops (cumulative)") +
+  scale_x_continuous(breaks = seq(from = 0, to = 6, by = 1)) + 
+   scale_y_continuous(breaks = seq(from = 0, 100, by = 20)) + 
+  ggtitle("Community centers") + 
+  # guides(color=guide_legend(nrow=2,byrow=TRUE)) + 
+    theme(
+    # axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.text.x = element_text(size = 12),
+        panel.grid.major = element_line(color = 'gray85'),
+        panel.grid.minor = element_line(color = 'gray85'),
+        axis.title = element_text(size = 14),
+        strip.text = element_text(size = 18),
+        strip.background = element_rect(fill = 'gray90', color = 'white'),
+        title = element_text(size = 16),
+        plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5),
+        legend.text = element_text(size = 14),
+        legend.position = 'bottom',
+        panel.background = element_rect(fill = 'gray97', color = NA),
+        plot.background = element_rect(fill = 'gray97', color = NA))
+communityplot
+
+library(cowplot)
+cowplot::plot_grid(communityplot, busplot, resplot, nrow = 1)
+
+```
+
+
+### Looking closer: Idle Times At Social/Recreational and Errand Locations {.tabset}
+#### Errand Stops
+```{r, echo = F, message = FALSE}
+errand_stop_dat <-
+  veh_stops %>%
+  filter(
+    d_purpose_category_imputed %in%
+      c('Shop', 'Errand/Other'
+      )
+  ) %>%
+  filter(
+    !d_purpose_imputed %in% 
+      c('Vacation/traveling', 'Other errand', 'Split loop purpose', 'Other purpose')
+  ) %>%
+  filter(idleTime > 0) %>%
+  # cut into bins:
+  mutate(idleTimeBins = cut(
+    idleTime,
+    breaks = c(seq(from = 0, to = hour_to_truncate_at * 60, by = 30), Inf),
+    labels = c(seq(
+      from = 0, to =  hour_to_truncate_at * 60, by = 30
+    ))
+  )) %>%
+  # weighted data:
+  as_survey_design(ids = 1, weights = trip_weight) %>%
+  group_by(d_purpose_imputed, idleTimeBins) %>%
+  summarize(n_trips = survey_total(),
+            pct_trips = 100 * survey_prop()) %>%
+  ungroup() %>%
+  mutate(idleTimeBins = as.numeric(as.character(idleTimeBins))) %>%
+  arrange(desc(idleTimeBins)) %>%
+  group_by(d_purpose_imputed) %>%
+  mutate(cuml_n_trips = cumsum(n_trips),
+         cuml_pct_trips = cumsum(pct_trips)) %>%
+  ungroup() %>%
+  # minutes to hours:
+  mutate(idleTimeBins = idleTimeBins / 60) %>%
+  
+  # now get a cumulative sum:
+  mutate(cumlPctLabel = round(cuml_pct_trips)) %>%
+  # mutate(d_purpose_imputed = factor(
+  #   d_purpose_imputed,
+  #   levels = c(
+  #     "Work",
+  #     "Home",
+  #     "School",
+  #     "Social/Recreation",
+  #     "Errand/Other",
+  #     "Meal",
+  #     "Shop"
+  #   )
+  # )) %>%
+  select(d_purpose_imputed,
+         cuml_pct_trips,
+         cumlPctLabel,
+         idleTimeBins) %>%
+  mutate(`>` = paste(
+      cumlPctLabel,
+      "% of stops at ",
+      d_purpose_imputed,
+      " are ",
+      idleTimeBins,
+      " hours or longer",
+      sep = ""
+    ))
+
+social_stop_dat <-
+  veh_stops %>%
+  filter(
+    d_purpose_category_imputed %in%
+      c('Social/Recreation', 'Meal'
+      )
+  ) %>%
+  filter(
+    !d_purpose_imputed %in% 
+      c('Vacation/traveling', 'Other errand', 'Split loop purpose', 'Other purpose',
+        'Other social/leisure/vacation activity')
+  ) %>%
+  filter(idleTime > 0) %>%
+  # cut into bins:
+  mutate(idleTimeBins = cut(
+    idleTime,
+    breaks = c(seq(from = 0, to = hour_to_truncate_at * 60, by = 30), Inf),
+    labels = c(seq(
+      from = 0, to =  hour_to_truncate_at * 60, by = 30
+    ))
+  )) %>%
+  # weighted data:
+  as_survey_design(ids = 1, weights = trip_weight) %>%
+  group_by(d_purpose_imputed, idleTimeBins) %>%
+  summarize(n_trips = survey_total(),
+            pct_trips = 100 * survey_prop()) %>%
+  ungroup() %>%
+  mutate(idleTimeBins = as.numeric(as.character(idleTimeBins))) %>%
+  arrange(desc(idleTimeBins)) %>%
+  group_by(d_purpose_imputed) %>%
+  mutate(cuml_n_trips = cumsum(n_trips),
+         cuml_pct_trips = cumsum(pct_trips)) %>%
+  ungroup() %>%
+  # minutes to hours:
+  mutate(idleTimeBins = idleTimeBins / 60) %>%
+  
+  # now get a cumulative sum:
+  mutate(cumlPctLabel = round(cuml_pct_trips)) %>%
+  # mutate(d_purpose_imputed = factor(
+  #   d_purpose_imputed,
+  #   levels = c(
+  #     "Work",
+  #     "Home",
+  #     "School",
+  #     "Social/Recreation",
+  #     "Errand/Other",
+  #     "Meal",
+  #     "Shop"
+  #   )
+  # )) %>%
+  select(d_purpose_imputed,
+         cuml_pct_trips,
+         cumlPctLabel,
+         idleTimeBins) %>%
+  mutate(`>` = paste(
+      cumlPctLabel,
+      "% of stops at ",
+      d_purpose_imputed,
+      " are ",
+      idleTimeBins,
+      " hours or longer",
+      sep = ""
+    ))
+
+errandstopplot<-
+errand_stop_dat %>% filter(idleTimeBins >= 0.5) %>%
+  ggplot(aes(
+    x = idleTimeBins,
+    y = cuml_pct_trips,
+    group = d_purpose_imputed,
+    color = d_purpose_imputed,
+    text = `>`
+  )) +
+  geom_point(size = 2) +
+  geom_line() +
+  scale_color_manual(values = c(unlist(medcol), 'gray70', 'gray90')) +
+  theme_minimal() +
+  labs(x = "Idle Time (hours)", y = "Percent of Stops (cumulative)") +
+  ggtitle("Percent of Vehicle Stops __ Hours or Longer: Errands") +
+  theme(panel.grid = element_blank())
+
+socialstopplot<-
+social_stop_dat %>% filter(idleTimeBins >= 0.5) %>%
+  ggplot(aes(
+    x = idleTimeBins,
+    y = cuml_pct_trips,
+    group = d_purpose_imputed,
+    color = d_purpose_imputed,
+    text = `>`
+  )) +
+  geom_point(size = 2) +
+  geom_line() +
+  scale_color_manual(values = c(unlist(medcol), 'gray70', 'gray90')) +
+  theme_minimal() +
+  labs(x = "Idle Time (hours)", y = "Percent of Stops (cumulative)") +
+  ggtitle("Percent of Vehicle Stops __ Hours or Longer: Social Trips") +
+  theme(panel.grid = element_blank())
+
+
+ggplotly(errandstopplot, tooltip = c(">"))
+
+```
+#### Social Stops
+```{r}
+ggplotly(socialstopplot, tooltip = c(">"))
+```
+
+## Opportunities for Mode Shift? 
+###  Vehicle Trip Distances
+```{r, echo = F, message = FALSE}
+trip_dist_dat <-
+  veh_trips %>%
+  left_join(trip %>% select(trip_id, trip_weight)) %>%
+  filter(distance > 0) %>%
+  # cut into bins:
+  mutate(distBins = cut(distance, breaks = c(0, 0.5, seq(from = 1, to = 15, by = 1)),
+                        labels = c(0.5, seq(from = 1, to = 15, by = 1)))) %>%
+  # weighted data: 
+  as_survey_design(ids = 1, weights = trip_weight) %>%
+  group_by(distBins) %>%
+  summarize(n_trips = survey_total(),
+            pct_trips = survey_prop()) %>%
+  ungroup() %>%
+  mutate(distBins = as.numeric(as.character(distBins))) %>%
+  arrange(distBins) %>%
+  mutate(cuml_n_trips = cumsum(n_trips), 
+         cuml_pct_trips = cumsum(pct_trips))
+
+tripdist_cuml_plot <- 
+trip_dist_dat %>%
+  filter(distBins <=250) %>%
+  mutate(`>` = paste(round(100 * cuml_pct_trips), ' % of vehicle trips are ', distBins, ' miles or less.', sep = "")) %>%
+  ggplot(aes(x = distBins, y = 100 * cuml_pct_trips, label = `>`)) + 
+  geom_line(color = darkcol$daTeal) + 
+  geom_point(color = medcol$mdTeal, size = 5) +
+  theme_minimal() +
+  labs(x = "Trip Distance (miles)", y = "% of trips") + 
+  scale_x_continuous(breaks = seq(from = 0, to = 16, by = 2)) + 
+   scale_y_continuous(breaks = seq(from = -20, to = 105, by = 20)) + 
+  ggtitle("Percent of Vehicle Trips _ Miles or Less") + 
+    theme(
+    # axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.text.x = element_text(size = 12),
+        panel.grid.major = element_line(color = 'gray85'),
+        panel.grid.minor = element_line(color = 'gray85'),
+        axis.title = element_text(size = 14),
+        strip.text = element_text(size = 18),
+        strip.background = element_rect(fill = 'gray90', color = 'white'),
+        title = element_text(size = 16),
+        plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5),
+        legend.position = 'bottom',
+        panel.background = element_rect(fill = 'gray97', color = NA),
+        plot.background = element_rect(fill = 'gray97', color = NA))
+
+tripdist_cuml_plot
+
+
+ggplotly(tripdist_cuml_plot, tooltip = '>')
+```
+
+
+###  Vehicle Trip Distances by Thrive Category
+```{r, echo = F, message = FALSE}
+
+trip_dist_thrive_dat <-
+  veh_trips %>%
+  left_join(trip %>% select(trip_id, trip_weight)) %>%
+  left_join(hh %>% select(hh_id, thriveCatBroad)) %>%
+  filter(!is.na(thriveCatBroad)) %>%
+  filter(distance > 0) %>%
+  filter(!is.na(distance)) %>%
+  
+  # cut into bins:
+  mutate(distBins = cut(distance, breaks = c(0, 0.5, seq(from = 1, to = 25, by = 1)),
+                        labels = c(0.5, seq(from = 1, to = 25, by = 1)))) %>%
+  # weighted data: 
+  as_survey_design(ids = 1, weights = trip_weight) %>%
+  group_by(thriveCatBroad, distBins) %>%
+  summarize(n_trips = survey_total(),
+            pct_trips = 100 * survey_prop()) %>%
+  ungroup() %>%
+  mutate(distBins = as.numeric(as.character(distBins))) %>%
+  arrange(distBins) %>%
+  group_by(thriveCatBroad) %>%
+  mutate(cuml_n_trips = cumsum(n_trips), 
+         cuml_pct_trips = cumsum(pct_trips))
+
+tripdist_cuml_plot_thrive <- 
+trip_dist_thrive_dat %>%
+  filter(distBins <= 5) %>%
+  filter(!is.na(distBins)) %>%
+  mutate(`>` = sprintf('<b>%s%%</b> of vehicle trips made by households in<br><b>%s</b> communities are<br><b>%s</b> miles or less.',
+                         round(cuml_pct_trips), thriveCatBroad, distBins)) %>%
+  ggplot(aes(x = distBins, y = cuml_pct_trips, text = `>`, color = thriveCatBroad, group = thriveCatBroad)) + 
+  geom_line() + 
+  geom_point() +
+  theme_minimal() +
+  scale_color_manual(values = c(unlist(medcol), 'gray70', 'gray90')) +
+  labs(x = "Trip Distance (miles)", y = "Percent of Vehicle Trips") + 
+  scale_x_continuous(breaks = seq(from = 1, to = 25, by = 1)) + 
+  scale_y_continuous(breaks = seq(from = 0, to = 100, by = 10)) + 
+  ggtitle("Percent of Vehicle Trips _ Miles or Less")
+tripdist_cuml_plot_thrive
+
+ggplotly(tripdist_cuml_plot_thrive, tooltip = c('text'))
+```
+
+
+# High-VMT People and Households 
+```{r High-Mileage Drivers}
+
+# we want to look at REGIONAL travel, so let's find people who stay in the MPO during the entire travel day. Probably easier to find people who left the region: 
+person_days_left_region <- 
+  trip %>%
+  filter(trip_o_in_mpo == 'trip_starts_outside_mpo' |
+           trip_d_in_mpo == 'trip_ends_outside_mpo') %>%
+  # think about: people who is spending at least part of their day in the region (has at least one trip_o or trip_d in region), and did not use an airplane (e.g., long-distance commuters)
+  select(person_id, day_num) %>%
+  unique()
+# removing 4706 person-days.
+
+vmt_per_person_day <-
+  # veh trips: hh id, veh id, trip id, distance, day num
+  veh_trips %>%
+  # don't want to double count driving trips -- find the driver trips only
+  left_join(trip %>% 
+              select(trip_id, person_id, day_num, vehicle_driver))%>%
+  filter(vehicle_driver == "Driver") %>%
+  select(-vehicle_driver) %>%
+  # add up all the miles traveled by the driver over the course of a day:
+  group_by(person_id, day_num) %>%
+  summarize(daily_vmt = sum(distance)) %>%
+  ungroup() %>%
+  filter(!is.na(daily_vmt)) %>%
+  # to get zero-mile days, will need to expand to include all 7 days of the survey
+  # we will filter out the non-weighted, non-surveyed days in the next step:
+  complete(person_id, 
+           day_num = 1:7, 
+           fill = list(daily_vmt = 0)) %>%
+  arrange(person_id, day_num) %>%
+  # this will be weighted at the person-day level -- get day weight: 
+  left_join(day %>% select(person_id, day_num, day_weight)) %>%
+  # now, only get completely surveyed days for this person: 
+  filter(day_weight > 0) %>%
+  # next, get rid of people who left MN or WI on their particular travel day:
+  anti_join(person_days_left_region) %>%
+  #optional - remove outliers: 12 hours @ 60 miles per hour
+  filter(daily_vmt < 720)
+
+# Check: about 17% of days, *drivers* do not *drive* at all: 
+# vmt_per_person_day %>% filter(daily_vmt == 0) %>% nrow()
+# [1] 4254
+# 4254/24562
+# [1] 0.1731309
+
+# Get cumulative, running sum of VMT and # of Drivers.
+get_cuml_driving_dat_fun <-
+  function(df) {
+    df %>%
+      select(person_id, day_num, daily_vmt) %>%
+      # arrange largest to smallest:
+      arrange(desc(daily_vmt)) %>%
+      mutate(
+        # total VMT = column sum of VMT
+        total_vmt = sum(daily_vmt),
+        # total person days observations in survey = n rows of this data frame
+        total_drivers = length(daily_vmt),
+        # running sum of VMT, largest to smallest
+        cuml_vmt = cumsum(daily_vmt),
+        # running count of number of person days in survey = row number
+        cuml_drivers = row_number()
+      ) %>%
+      # running cumulative percentages:
+      mutate(
+        cuml_pct_vmt = 100 * cuml_vmt / total_vmt,
+        cuml_pct_drivers = 100 * cuml_drivers / total_drivers
+      )
+  }
+
+cuml_miles_person_raw_all <-
+  vmt_per_person_day %>%
+  get_cuml_driving_dat_fun() %>%
+  mutate(estimate_type = 'raw',
+         driver_population = 'including those who did not drive that day')
+
+cuml_miles_person_raw_nozeros <-
+  vmt_per_person_day %>%
+  filter(daily_vmt > 0) %>%
+  get_cuml_driving_dat_fun() %>%
+  mutate(estimate_type = 'raw',
+         driver_population = 'excluding those who did not drive that day')
+
+cuml_miles_person_wt_all <-
+  vmt_per_person_day %>%
+   # >>>>>>>>> expand table w/ # of rows = day_weight <<<<<<<<<<<<<<<<<
+  uncount(round(day_weight)) %>%
+  get_cuml_driving_dat_fun() %>%
+  mutate(estimate_type = 'weighted',
+         driver_population = 'including those who did not drive that day')%>%
+  # get every 100th row, this is a giant silly dataset: 
+  filter(row_number() %% 100 == 0)
+
+cuml_miles_person_wt_nozeros <-
+  vmt_per_person_day %>%
+   # >>>>>>>>> expand table w/ # of rows = day_weight <<<<<<<<<<<<<<<<<
+  uncount(round(day_weight)) %>%
+  filter(daily_vmt > 0) %>%
+  get_cuml_driving_dat_fun() %>%
+  mutate(estimate_type = 'weighted',
+         driver_population = 'excluding those who did not drive that day') %>%
+  # get every 100th row, this is a giant silly dataset: 
+  filter(row_number() %% 100 == 0)
+
+cuml_milers <-
+  bind_rows(cuml_miles_person_raw_all,
+  cuml_miles_person_raw_nozeros,
+  cuml_miles_person_wt_all,
+  cuml_miles_person_wt_nozeros) %>%
+  mutate(getsyou50 = ifelse(cuml_pct_vmt >= 50, 0, cuml_pct_drivers)) %>%
+  group_by(estimate_type, driver_population) %>%
+  mutate(getsyou50 = max(getsyou50)) %>%
+  ungroup() %>%
+  mutate(driver_pop_shorthand =
+           ifelse(driver_population == 'including those who did not drive that day',
+                  'all drivers, all days', 'excl. zero-mile days')) %>%
+  mutate(type = paste(estimate_type, ' estimate, ', 
+                      driver_pop_shorthand, sep = ''))
+
+getsyou50 <- 
+cuml_milers %>%
+  select(type, getsyou50) %>%
+  unique()
+
+cuml_miler_plot <-
+  cuml_milers %>%
+  filter(type == 'weighted estimate, all drivers, all days') %>%
+  mutate(
+    `>` = sprintf(
+      '<b>%s estimate, %s:</b><br>On any typical weekday, <br></b><b>%s%%</b> of drivers contribute<br><b>%s%%</b> of VMT',
+      estimate_type,
+      driver_population,
+      round(cuml_pct_drivers),
+      round(cuml_pct_vmt)
+    )
+  ) %>%
+  ggplot(aes(
+    x = cuml_pct_drivers,
+    y = cuml_pct_vmt,
+    text = `>`
+  )) +
+  geom_line(size = 1, color = darkcol$daTeal) + 
+  theme_minimal() +
+  labs(x = "Percent of drivers (cumulative)", y = "% of VMT (cumulative)") + 
+  ggtitle("[x]% of drivers contribute [y]% of VMT on any given day") + 
+    theme(
+    # axis.title.y = element_blank(),
+        axis.text.y = element_text(size = 12),
+        axis.text.x = element_text(size = 12),
+        panel.grid.major = element_line(color = 'gray85'),
+        panel.grid.minor = element_line(color = 'gray85'),
+        axis.title = element_text(size = 14),
+        strip.text = element_text(size = 18),
+        strip.background = element_rect(fill = 'gray90', color = 'white'),
+        title = element_text(size = 16),
+        plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5),
+        legend.position = 'bottom',
+        panel.background = element_rect(fill = 'gray97', color = NA),
+        plot.background = element_rect(fill = 'gray97', color = NA)) + 
+  # councilR::council_theme() + indianred2
+  # geom_abline(slope = 1, intercept = 0) +
+  scale_x_continuous(breaks = seq(from = 0, to = 100, by = 10)) +
+  scale_y_continuous(breaks = seq(from = 0, to = 100, by = 10)) +
+  theme(axis.line = element_line(color = 'black'),
+        legend.position = 'bottom', legend.direction = 'vertical')
+cuml_miler_plot
+
+ggplotly(cuml_miler_plot, tooltip = "text")
+```
+
+# What does a 30% reduction in VMT look like per capita? 
+```{r}
+odlines1 <- 
+vmt_per_person_day %>%
+  mutate(reduced_vmt = 0.8 * daily_vmt) %>%
+  left_join(trip %>% select(person_id, trip_id, 
+                            day_num, linked_trip_num, distance, o_lat, o_lon, d_lat, d_lon)) %>%
+  left_join(trip_purpose %>% select(person_id, 
+                                    day_num, linked_trip_num, PurposeCat)) %>%
+ na.omit() %>%
+ select(o_lon, o_lat, d_lon, d_lat, trip_id) %>%
+ stplanr::od_coords2line() %>%
+  select(trip_id, geometry)
+ 
+
+odlines <- 
+  odlines1 %>%
+  left_join(trip %>% select(person_id, trip_id, 
+                            day_num, linked_trip_num, distance)) %>%
+  left_join(vmt_per_person_day) %>%
+  mutate(reduced_vmt = 0.2 * daily_vmt) %>%
+  group_by(person_id)
+  
+View(odlines)
+  
+```
+
+<!-- ### Examples of High-Mileage Days: Map -->
+<!-- ```{r} -->
+<!-- suppressMessages(library(sf, quietly = T)) -->
+<!-- suppressMessages(library(stplanr, quietly = T)) -->
+<!-- suppressMessages(library(leaflet, quietly = T)) -->
+
+
+<!-- db <- DBI::dbConnect(odbc::odbc(), "GISLibrary") -->
+<!-- metroShp <- DBI::dbGetQuery( -->
+<!--   db, -->
+<!--   "SELECT -->
+<!--                         *, -->
+<!--                         SHAPE.STAsText() as geometry -->
+<!--                         FROM GISLibrary.DBO.MetropolitanPlanningOrganizationArea;" -->
+<!-- ) %>% -->
+<!--   st_as_sf(wkt = "geometry", crs = "+init=epsg:26915") %>% -->
+<!--   st_transform('+proj=longlat +datum=WGS84') -->
+<!-- rm(db) -->
+
+<!-- cuml_milers %>% -->
+<!--   filter(cuml_pct_vmt < 50) %>% -->
+<!--   select(person_id, day_num) %>% -->
+<!--   unique() %>% -->
+<!--   left_join(loc) %>% -->
+<!--   filter(!is.na(lat)) %>% -->
+<!--   slice_head(n = 10000) %>% -->
+<!--   sf::st_as_sf(coords = c('lon', 'lat'), crs = 4326) %>% -->
+<!--   group_by(person_id, day_num) %>% -->
+<!--   st_combine() %>% -->
+<!--   st_cast("LINESTRING") %>% -->
+<!--   st_crop(mpo_boundary) -->
+<!--   plot() -->
+<!--   summarize(n_pings = length(day_num))   -->
+<!--   left_join(trip %>% select(trip_id, person_id, day_num, o_purpose_imputed, d_purpose_imputed, o_lat, o_lon, d_lat, d_lon, distance)) -->
+
+<!-- ``` -->
+
+
+<!-- ### Where do people who contribute 50% of VMT live? -->
+<!-- ```{r} -->
+<!-- # where do these hypermilers live?  -->
+<!-- cuml_milers_where <-  -->
+<!-- cuml_milers %>% -->
+<!--   select(person_id, estimate_type, driver_pop_shorthand, cuml_pct_vmt) %>% -->
+<!--   filter(estimate_type  == 'weighted' &  -->
+<!--            driver_pop_shorthand == 'all drivers, all days' &  -->
+<!--            cuml_pct_vmt <= 50) %>% -->
+<!--   select(person_id) %>% -->
+<!--   unique() %>% -->
+<!--   left_join(per %>% select(person_id, hh_id)) %>% -->
+<!--   left_join(hh %>% select(hh_id, home_lat, home_lon)) %>% -->
+<!--   sf::st_as_sf(coords = c('home_lon', 'home_lat'), crs = 4326) -->
+
+
+
+<!-- leaflet() %>% -->
+<!--   leaflet::addTiles() %>% -->
+<!--   leaflet::addCircleMarkers(data = cuml_milers_where, -->
+<!--                             clusterOptions = markerClusterOptions()) -->
+<!-- ``` -->
+
+### Where (on the map) are the highest-mileage people traveling?
+```{r}
+# where do these hypermilers live? 
+cuml_milers_where <- 
+cuml_milers %>%
+  select(person_id, estimate_type, driver_pop_shorthand, cuml_pct_vmt) %>%
+  filter(estimate_type  == 'weighted' & 
+           driver_pop_shorthand == 'all drivers, all days' & 
+           cuml_pct_vmt <= 50) %>%
+  select(person_id) %>%
+  unique() %>%
+  left_join(per %>% select(person_id, hh_id)) %>%
+  left_join(hh %>% select(hh_id, home_lat, home_lon)) %>%
+  sf::st_as_sf(coords = c('home_lon', 'home_lat'), crs = 4326)
+
+suppressMessages(library(sf, quietly = T))
+suppressMessages(library(stplanr, quietly = T))
+suppressMessages(library(leaflet, quietly = T))
+
+leaflet() %>%
+  leaflet::addTiles() %>%
+  leaflet::addCircleMarkers(data = cuml_milers_where,
+                            clusterOptions = markerClusterOptions())
+```
+
+## Check: Miles Driven vs. Place in Curve
+```{r}
+cuml_milers %>%
+  filter(estimate_type  == 'weighted' & 
+           driver_pop_shorthand == 'excl. zero-mile days') %>%
+  select(person_id, day_num, daily_vmt, cuml_pct_vmt, cuml_pct_drivers) %>%  
+  # >>>>>>>> this undoes the work of expanding the dataset to all drivers: 
+  group_by(person_id, day_num, daily_vmt) %>%
+  summarize(cuml_pct_vmt = max(cuml_pct_vmt),
+            cuml_pct_drivers = max(cuml_pct_drivers)) %>%
+  ggplot() + 
+    geom_point(aes(x = cuml_pct_drivers, y = cuml_pct_vmt)) + 
+  geom_point(aes(x = cuml_pct_drivers, y = daily_vmt), color = 'red')
+
+
+cuml_milers %>%
+  filter(estimate_type  == 'weighted' & 
+           driver_pop_shorthand == 'excl. zero-mile days') %>%
+  select(person_id, day_num, daily_vmt, cuml_pct_vmt, cuml_pct_drivers) %>%  
+  # >>>>>>>> this undoes the work of expanding the dataset to all drivers: 
+  group_by(person_id, day_num, daily_vmt) %>%
+    summarize(cuml_pct_vmt = max(cuml_pct_vmt),
+            cuml_pct_drivers = max(cuml_pct_drivers)) %>%
+  filter(round(cuml_pct_vmt) == 20)
+# looks like 89 miles is the cutoff
+
+# Jonathan likes this graph a lot
+cuml_milers %>%
+  filter(estimate_type  == 'weighted' & 
+           driver_pop_shorthand == 'excl. zero-mile days') %>%
+  select(person_id, day_num, daily_vmt, cuml_pct_vmt, cuml_pct_drivers) %>%  
+  # >>>>>>>> this undoes the work of expanding the dataset to all drivers: 
+  group_by(person_id, day_num, daily_vmt) %>%
+  summarize(cuml_pct_vmt = max(cuml_pct_vmt),
+            cuml_pct_drivers = max(cuml_pct_drivers)) %>%
+  group_by(person_id) %>%
+  summarize(n_days = length(day_num), 
+            min_vmt = min(daily_vmt),
+            max_vmt = max(daily_vmt),
+            min_cuml_pctile = min(cuml_pct_vmt),
+            max_cuml_pctile = max(cuml_pct_vmt)) %>%
+    filter(n_days > 3) %>%
+  ggplot(aes(x = min_cuml_pctile, y = max_cuml_pctile)) + 
+  geom_point()
+```
+
+## Who are the outliers, greater than ~300 miles per day?
+
+
+
+## Where are these super-drivers going (purpose)?
+```{r}
+# cuml_milers %>%
+#   filter(estimate_type  == 'weighted' & 
+#            driver_pop_shorthand == 'excl. zero-mile days') %>%
+#   select(person_id, day_num, daily_vmt, cuml_pct_vmt, cuml_pct_drivers) %>%  
+#   # >>>>>>>> this undoes the work of expanding the dataset to all drivers: 
+#   group_by(person_id, day_num, daily_vmt) %>%
+#   summarize(cuml_pct_vmt = max(cuml_pct_vmt),
+#             cuml_pct_drivers = max(cuml_pct_drivers)) %>%
+#   group_by(person_id) %>%
+#   summarize(n_days = length(day_num), 
+#             min_vmt = min(daily_vmt),
+#             max_vmt = max(daily_vmt),
+#             min_cuml_pctile = min(cuml_pct_vmt),
+#             max_cuml_pctile = max(cuml_pct_vmt)) %>%
+#     filter(n_days > 3) %>%
+#   filter(min_cuml_pctile < 30 & 
+#            max_cuml_pctile < 30)
+#   
+# 
+#   ggplot(aes(x = min_cuml_pctile, y = max_cuml_pctile)) + 
+#   geom_point()
+# 
+#   
+#  
+#   select(person_id) %>%
+#   unique() %>%
+#   filter(estimate_type == 'weighted' 
+#          & driver_population == "excluding those who did not drive that day")%>%
+#   left_join(trip_purpose) %>%
+#   filter(!is.na(distance)) %>%
+#   filter(!PurposeCat %in% c('Home', 'Missing: Non-imputable', 'Change mode')) %>%
+#   droplevels() %>%
+#   group_by(person_id, day_num, cuml_pct_drivers, PurposeCat) %>%
+#   # weighted by trip -- sum of the distance, times the trip weight.
+#   summarize(category_dist = sum(distance * trip_weight)) %>%
+#   ungroup() %>%
+#   group_by(person_id, day_num) %>%
+#   mutate(total_dist = sum(category_dist)) %>%
+#   ungroup()%>%
+#   mutate(dist_pct = 100 * category_dist/total_dist) %>%
+#   arrange(desc(cuml_pct_drivers, total_dist)) %>%
+#   mutate(cuml_pct_drivers = as.factor(cuml_pct_drivers)) %>%
+#   ggplot(aes(x = cuml_pct_drivers, y = dist_pct, fill = PurposeCat)) +
+#   geom_bar(stat = 'identity', position = 'stack', width = 1) +
+#   theme_void() +
+#   theme(axis.text.x = element_blank(),
+#         legend.text = element_text(size = 16),
+#         legend.title = element_blank()) +
+#   scale_fill_manual(values = c(medcol, 'gray80'))
+
+
+# Who are they?
+# cuml_milers_demo <-
+# cuml_milers %>%
+#   select(person_id, cuml_pct_vmt, cuml_pct_drivers) %>%
+#   group_by(person_id) %>%
+#   summarize(cuml_pct_vmt = max(cuml_pct_vmt), cuml_pct_drivers = max(cuml_pct_drivers)) %>%
+#   ungroup() %>%
+#   mutate(hypermiler = ifelse(cuml_pct_drivers <= 15, "HyperMiler", "TheRest")) %>%
+#   left_join(per %>% select(person_id, person_weight, age, hh_id, num_jobs, job_type)) %>%
+#   left_join(hh %>% select(hh_id, hh_in_mpo, num_kids, income_broad, thriveCategory))
+# 
+# cuml_milers_demo %>%
+#   mutate(num_kids = as.character(num_kids))%>%
+#   pivot_longer(cols = c(age, num_jobs, num_kids, job_type, income_broad, thriveCategory)) %>%
+#   select(person_weight, name, value, hypermiler) %>%
+#   group_by(hypermiler, name, value) %>%
+#   summarize(pop = sum(person_weight)) %>%
+#   ungroup() %>%
+#   group_by(hypermiler, name) %>%
+#   mutate(totalpop = sum(pop)) %>%
+#   mutate(pct = 100 * pop/totalpop) %>%
+#   ggplot(aes(x = hypermiler, y = pct, fill = value)) +
+#   geom_bar(position = 'stack', stat = 'identity') +
+#   facet_wrap(~name, nrow = 2) +
+#   geom_text(aes(label = value), position = position_stack(vjust = 0.5)) +
+#   theme_minimal() +
+#   theme(panel.grid = element_blank(),
+#         strip.text = element_text(size = 16),
+#         axis.text = element_text(size = 14),
+#         legend.position = "none")
+# 
+# cuml_milers_demo
+# 
+# 
+# # Do any of these people drive more than 250 miles per day?
+# cuml_milers %>%
+#   left_join(per %>% select(person_id)) %>%
+#   mutate(hypermiler = ifelse(cuml_pct_drivers <= 15, "HyperMiler", "TheRest")) %>%
+#   select(person_id, hypermiler) %>%
+#   unique() %>%
+#   # left_join(cuml_milers_simple) %>%
+#   mutate(dist_cat = ifelse(daily_vmt >= 250, "250+ Miles", "Under 250 Miles")) %>%
+#   group_by(hypermiler, dist_cat) %>%
+#   summarize(pop = sum(day_weight)) %>%
+#   ungroup() %>%
+#   group_by(hypermiler) %>%
+#   mutate(totalpop = sum(pop)) %>%
+#   ungroup() %>%
+#   mutate(pct = 100 * pop/totalpop)
+# 
+# cuml_milers %>%
+#   left_join(per %>% select(person_id)) %>%
+#   mutate(hypermiler = ifelse(cuml_pct_drivers <= 15, "HyperMiler", "TheRest")) %>%
+#   select(person_id, hypermiler) %>%
+#   unique() %>%
+#   left_join(cuml_milers_simple) %>%
+#   mutate(dist_cat = ifelse(daily_vmt >= 250, "250+ Miles", "Under 250 Miles")) %>%
+#   group_by(hypermiler, dist_cat) %>%
+#   summarize(avg_miles = weighted.mean(daily_vmt, w = day_weight),
+#             median_miles = matrixStats::weightedMedian(daily_vmt, w = day_weight))
+```
+
+
+### Diving Deeper: What predicts VMT? A person-level analysis
+This is a vehicle-level analysis of VMT, that looks at the characteristics of households that own vehicles and how far they drive. Weights are day weights.
+```{r Analysis of VMT, echo = F, message = F}
+# find drivers:
+drivers <- 
+  veh_trips %>%
+  left_join(trip %>% select(trip_id, person_id, vehicle_driver)) %>%
+  filter(vehicle_driver == "Driver")
+
+# find all the drivers' days:
+driver_days <- day %>%
+  filter(person_id %in% drivers$person_id)
+  
+
+# find drivers' daily distances:
+driver_vmt <- 
+  veh_trips %>%  
+  select(trip_id, day_num, distance) %>%
+  left_join(trip %>% select(trip_id, person_id)) %>%
+  # right join = get zero-mile days as well.
+  right_join(driver_days) %>%
+  # add up daily distance traveled by person/day: 
+  group_by(hh_id, person_id, day_num, day_weight, travel_date, num_trips, season) %>%
+  summarize(daily_vmt = sum(distance)) %>%
+  # daily distances = 0 when NA , result from right join: 
+  mutate(daily_vmt = replace_na(daily_vmt, 0)) %>%
+  ungroup() 
+
+# regionl weighted averag
+
+# Get drivers' demographic characteristics: 
+driver_vmt_demo <- 
+  driver_vmt %>%
+  filter(daily_vmt < 720) %>%
+  # get person characteristics: 
+  left_join(per %>% select(person_id, employment_status, age, gender, person_weight)) %>%
+  filter(gender %in% c('Male', 'Female')) %>%
+  # get hh caracteristics: 
+  left_join(veh_income_race %>% select(-own_car)) %>%
+  left_join(hh %>% select(hh_id, hh_in_mpo, thriveCategory, num_workers)) %>%
+  # restrict to HHs in MPO: 
+  filter(hh_in_mpo == 'in_mpo') %>%
+  select(-hh_in_mpo) %>%
+  filter(!is.na(daily_vmt) & !is.na(day_weight)) %>%
+  filter(!thriveCategory == "Non-Council Area") %>%
+  mutate(thriveCategory = recode_factor(thriveCategory, 
+                                        "Urban Center" = "Urban Center",
+                                        "Urban" = "Urban\nv. Urban Ctr",
+                                        "Suburban" = "Suburban\nv. Urban Ctr",
+                                        "Suburban Edge" = "Sub Edge\nv. Urban Ctr", 
+                                        "Emerging Suburban Edge" = "Em Sub Edge\nv. Urban Ctr",
+                                        "Rural Center" = "Rural Ctr\nv. Urban Ctr",
+                                        "Rural Residential" = "Rural Res\nv. Urban Ctr", 
+                                        "Diversified Rural" = "Div Rural\nv. Urban Ctr",  
+                                        "Agricultural" = "Ag\nv. Urban Ctr")) %>%
+  mutate(employment_status = recode_factor(employment_status,
+                                           "Not employed" = "Not employed",
+                                           "Unpaid volunteer or intern" = "Unpaid\nvs.Not employed",
+                                           "Self-employed" = "Self-Employed\nvs.Not employed",
+                                           "Part-time" = "Part-Time\nvs.Not employed",
+                                           "Full-time " = "Full-Time\nvs.Not employed"
+                                           )) %>%
+  mutate(age_midpoint = recode_factor(age,
+                                      "18-24" = 20,
+                             "25-34" = 30,
+                             "35-44" = 40,
+                             "45-54" = 50,
+                             "55-64" = 60,
+                             "65-74" = 70,
+                             "75 or older" = 80)) %>%
+  mutate(age_midpoint = as.numeric(as.character(age_midpoint)))
+
+                                      
+
+
+weighted_glm_vmt <- 
+with(driver_vmt_demo,
+     lm(daily_vmt ~ 
+           income_midpoint + thriveCategory + num_kids + employment_status + age_midpoint,
+         w = day_weight))
+
+
+
+std_vmt_params <-
+standardize_parameters(weighted_glm_vmt, two_sd = TRUE)
+
+
+std_vmt_params_recode <- 
+  std_vmt_params %>%
+  filter(!Parameter == "(Intercept)") %>%
+  mutate(Parameter = str_replace_all(Parameter, 'thriveCategory', '')) %>%
+  mutate(Parameter = str_replace_all(Parameter, 'employment_status', '')) %>%
+  mutate(Parameter = recode_factor(Parameter,
+                                   "income_midpoint" = "Income",
+                                   "age_midpoint" = "Age",
+                                   "num_kids" = "Number of\nchildren",
+                                   "num_workers" = "Number of\nworkers",
+                                   "hh_with_poc" = "1+ People of Color\nin Household")) %>%
+  as.data.frame() %>%
+  select(-CI)
+
+coefplot_vmt <- 
+std_vmt_params_recode %>%
+  mutate(myLab = recode_factor(Parameter,
+                                   "Income" = "Higher income is associated with higher rates of vehicle ownership",
+                                    "Urban\nvs. Urban Core" = "Relative to households in the Urban Core, households in Urban areas are more likely to own a vehicle",
+                               "Suburban\nvs. Urban Core" = "Relative to households in the Urban Core, households in Suburban areas are more likely to own a vehicle",
+                               "Rural\nvs. Urban Core" = "Relative to households in the Urban Core, households in Rural areas are more likely to own a vehicle",
+                               
+                                   "Number of\nchildren" = "Having a child has a marginal, non-significant increases the likelihood of owning a vehicle.",
+                               
+                                    "Number of\nworkers" = "Households with more workers are more likely to own a vehicle than those with fewer workers",
+                                   "1+ People of Color\nin Household" = "Households with 1+ POC are less likely to own a vehicle than all-white households")) %>%
+  ggplot(aes(x = Parameter, y = Std_Coefficient, color = Std_Coefficient, group = Parameter, label = myLab)) + 
+    geom_hline(yintercept = 0, color = 'gray90', lwd = 10) + 
+      geom_hline(yintercept = 0, linetype = 'dashed') + 
+  geom_errorbar(aes(ymin = CI_low, ymax = CI_high), width = 0, lwd = 1) + 
+  geom_point(size = 5) + 
+  geom_text(aes(label = round(Std_Coefficient, 2)), 
+            nudge_x = .25, nudge_y = .01, size = 6, fontface = 'italic') + 
+  theme_minimal() + 
+  guides(color =F)+
+  theme(panel.grid = element_blank()) +  
+  theme(axis.title.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.x = element_text(size = 12)) + 
+  ggtitle("Effects of Demographic Variables on Per-Driver VMT")
+
+ggplotly(coefplot_vmt, tooltip = 'myLab')
+```
+
+
+
+### Diving Deeper: What predicts VMT? A HH-level analysis
+This is a vehicle-level analysis of VMT, that looks at the characteristics of households that own vehicles and how far they drive. Weights are day weights.
+```{r Analysis of VMT, echo = F, message = F}
+
+weighted_glm_hhvmt <- 
+with(hh_vmt_days,
+     lm(hh_vmt ~ 
+           income_detailed + thriveCategory + num_kids + num_workers,
+         w = day_weight))
+
+
+weighted_glm_hhvmt <- 
+with(hh_vmt_days,
+     lm(hh_vmt ~ 
+           income_detailed + thriveCategory + num_kids + num_workers,
+         w = day_weight))
+
+
+
+jtools::summ(weighted_glm_hhvmt)
+
+tidyterms <- 
+broom::tidy(weighted_glm_hhvmt, conf.int = TRUE) %>%
+  mutate(predictor = case_when(str_detect(term, 'income') ~ 'Income', 
+                               str_detect(term, 'kids') ~ 'Number of kids', 
+                               str_detect(term, 'workers') ~ 'Number of workers',
+                               str_detect(term, 'thrive') ~ 'Community type',
+                               TRUE ~ term)) %>%
+  mutate(term = str_remove(term, 'income_detailed')) %>%
+  mutate(term = str_remove(term, 'num_kids')) %>%
+  mutate(term = str_remove(term, 'num_workers')) %>%
+  mutate(term = str_remove(term, 'thriveCategory')) %>%
+  mutate(ref = case_when(predictor == 'Income' ~ '$50-75K',
+                         predictor == 'Number of kids' ~ '0 kids',
+                         predictor == 'Number of workers' ~ '0 workers',
+                         predictor == 'Community type' ~ 'Urban Center',
+                         TRUE ~ '?')) %>%
+  filter(!predictor == '(Intercept)') %>%
+  mutate(text = paste0(
+    ifelse(estimate>0, "+", ""), 
+    round(estimate), 
+    " miles\n",
+    ifelse(estimate>0, "more", "less")
+  )) %>%
+  mutate(labelpos = ifelse(estimate>0, estimate + 4, estimate - 4)) %>%
+  group_split(predictor)
+
+tidyterms %>% View()
+
+tidyterms[[1]] %>%
+  mutate(term = factor(term, levels = levels(hh_vmt_days$thriveCategory))) %>%
+  ggplot(aes(x = term, y = 0, xend = term, yend = estimate, color = term, label = text)) + 
+  geom_point() + 
+  geom_segment(
+    lineend = "butt", # See available arrow types in example above
+    linejoin = "mitre",
+    size = 2, 
+    
+    arrow = arrow(angle = 25, length = unit(0.2, "inches"),
+                  type="open")) + 
+  guides(color = FALSE) + 
+    geom_text(aes(y = estimate + 8), size = 4.5)+
+  geom_hline(yintercept = 0, color = 'gray90', lwd = 10) + 
+  annotate("text", y = 0, x = 4.5, label = 'daily VMT in urban center households', fontface = 'italic', size = 4.5, color = 'gray50') + 
+  scale_color_manual(values = c(tencol[c(1, 2, 3, 4, 6, 7, 8, 9, 10)], 'white')) + 
+  scale_y_continuous(limits = c(0, 105)) + 
+ ggtitle("Effects of community type on\nvehicle miles traveled per household, per day", subtitle = "Estimates are relative to Urban Center households. Only households that report income are shown.\nEstimates account for income and household structure (number of workers and children).") +     
+  theme(
+    axis.title.y = element_blank(),
+      axis.ticks = element_blank(), 
+        axis.text.y = element_blank(),
+        axis.text.x = element_text(size = 12),
+        panel.grid = element_blank(),
+        axis.title.x = element_blank(),
+        strip.text = element_text(size = 18),
+        strip.background = element_rect(fill = 'gray97', color = NA),
+        title = element_text(size = 16),
+        plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(size = 12, hjust = 0.5),
+        legend.position = 'bottom',
+                panel.background = element_rect(fill = 'gray97', color = NA),
+        plot.background = element_rect(fill = 'gray97', color = NA))
+
+### Income Arrows
+tidyterms[[2]] %>%
+  mutate(term = factor(term, levels = c('<$15K', '$15-\n25K', '$25-\n35K', '$35-\n50K', '$50-\n$75K', '$75-\n100K', '$100-\n150K', '$150-\n200K', '$200-\n250K', '$250K+'))) %>%
+  arrange(term) %>%
+  ggplot(aes(
+    x = term,
+    y = 0,
+    xend = term,
+    yend = estimate,
+    color = term,
+    label = text
+  )) +
+  geom_point() +
+  geom_segment(
+    lineend = "butt",
+    # See available arrow types in example above
+    linejoin = "mitre",
+    size = 2,
+    
+    arrow = arrow(
+      angle = 25,
+      length = unit(0.2, "inches"),
+      type = "open"
+    )
+  ) +
+  scale_x_discrete()  + 
+  guides(color = FALSE) +
+  geom_text(aes(y = labelpos), size = 4.5) +
+  geom_hline(yintercept = 0,
+             color = 'gray90',
+             lwd = 10) +
+  annotate(
+    "text",
+    y = 0,
+    x = 5.5,
+    label = 'daily VMT in households making $50-75,000 per year',
+    fontface = 'italic',
+    size = 4.5,
+    color = 'gray50'
+  ) +
+  scale_color_manual(values = c(tencol[c(1, 2, 3, 4, 6, 7, 8, 9, 10)], 'white')) +
+  ggtitle("Effects of income on vehicle miles traveled\nper household, per day",
+          subtitle = "Estimates are relative to households with incomes between $50,000 and $75,000 per year.\nOnly households that report income are shown.Estimates account for\ncommunity type and household structure (number of workers and children).") +
+  theme(
+    axis.title.y = element_blank(),
+    axis.ticks = element_blank(),
+    axis.text.y = element_blank(),
+    axis.text.x = element_text(size = 14),
+    panel.grid = element_blank(),
+    axis.title.x = element_blank(),
+    strip.text = element_text(size = 18),
+    strip.background = element_rect(fill = 'gray97', color = NA),
+    title = element_text(size = 16),
+    plot.title = element_text(hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5),
+    legend.position = 'bottom',
+    panel.background = element_rect(fill = 'gray97', color = NA),
+    plot.background = element_rect(fill = 'gray97', color = NA)
+  )
+
+
+## Children arrows
+tidyterms[[3]] %>%
+  mutate(term = factor(term, levels = levels(hh_vmt_days$num_kids))) %>%
+  ggplot(aes(
+    x = term,
+    y = 0,
+    xend = term,
+    yend = estimate,
+    color = term,
+    label = text
+  )) +
+  geom_point() +
+  geom_segment(
+    lineend = "butt",
+    # See available arrow types in example above
+    linejoin = "mitre",
+    size = 2,
+    
+    arrow = arrow(
+      angle = 25,
+      length = unit(0.2, "inches"),
+      type = "open"
+    )
+  ) +
+  guides(color = FALSE) +
+  geom_text(aes(y = labelpos), size = 4) +
+  geom_hline(yintercept = 0,
+             color = 'gray90',
+             lwd = 10) +
+  annotate(
+    "text",
+    y = 0,
+    x = 2.5,
+    label = 'daily VMT in households with no children',
+    fontface = 'italic',
+    size = 4,
+    color = 'gray50'
+  ) +
+  scale_color_manual(values = c(tencol[c(2, 4, 6, 8)], 'white')) +
+  ggtitle("Effects of number of kids on\nvehicle miles traveled per household, per day",
+          subtitle = "Estimates are relative to households with no children. Only households that report income are shown.\nEstimates account for income, community type and number of workers in the household.") +
+  theme(
+    axis.title.y = element_blank(),
+    axis.ticks = element_blank(),
+    axis.text.y = element_blank(),
+    axis.text.x = element_text(size = 12),
+    panel.grid = element_blank(),
+    axis.title.x = element_blank(),
+    strip.text = element_text(size = 18),
+    strip.background = element_rect(fill = 'gray97', color = NA),
+    title = element_text(size = 16),
+    plot.title = element_text(hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5),
+    legend.position = 'bottom',
+    panel.background = element_rect(fill = 'gray97', color = NA),
+    plot.background = element_rect(fill = 'gray97', color = NA)
+  )
+
+
+## Children arrows
+tidyterms[[4]] %>%
+  mutate(term = factor(term, levels = levels(hh_vmt_days$num_workers))) %>%
+  ggplot(aes(
+    x = term,
+    y = 0,
+    xend = term,
+    yend = estimate,
+    color = term,
+    label = text
+  )) +
+  geom_point() +
+  geom_segment(
+    lineend = "butt",
+    # See available arrow types in example above
+    linejoin = "mitre",
+    size = 2,
+    
+    arrow = arrow(
+      angle = 25,
+      length = unit(0.2, "inches"),
+      type = "open"
+    )
+  ) +
+  guides(color = FALSE) +
+  geom_text(aes(y = labelpos), size = 4) +
+  geom_hline(yintercept = 0,
+             color = 'gray90',
+             lwd = 10) +
+  annotate(
+    "text",
+    y = 0,
+    x = 2,
+    label = 'daily VMT in households with one worker',
+    fontface = 'italic',
+    size = 4,
+    color = 'gray50'
+  ) +
+  scale_color_manual(values = c(tencol[c(2, 4, 6, 8)], 'white')) +
+  ggtitle("Effects of number of workers on\nvehicle miles traveled per household, per day",
+          subtitle = "Estimates are relative to households with one worker. Only households that report income are shown.\nEstimates account for income, community type and number of children in the household.") +
+  theme(
+    axis.title.y = element_blank(),
+    axis.ticks = element_blank(),
+    axis.text.y = element_blank(),
+    axis.text.x = element_text(size = 12),
+    panel.grid = element_blank(),
+    axis.title.x = element_blank(),
+    strip.text = element_text(size = 18),
+    strip.background = element_rect(fill = 'gray97', color = NA),
+    title = element_text(size = 16),
+    plot.title = element_text(hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5),
+    legend.position = 'bottom',
+    panel.background = element_rect(fill = 'gray97', color = NA),
+    plot.background = element_rect(fill = 'gray97', color = NA)
+  )
+
+```
+
+
+### VMT Model predictions
+```{r}
+# Regional median value: 
+# av_vmt <- weighted.mean(hh_vmt_days$hh_vmt, hh_vmt_days$day_weight)
+av_vmt <- matrixStats::weightedMedian(hh_vmt_days$hh_vmt, hh_vmt_days$day_weight)
+
+# Geography:
+geog_plot <- 
+make_predictions(weighted_glm_hhvmt, pred = 'thriveCategory') %>%
+
+  mutate(label = paste0(round(hh_vmt), ' miles')) %>%
+  arrange(thriveCategory) %>%
+  mutate(thrivecat = factor(thriveCategory, levels = unique(thriveCategory))) %>%
+  ggplot(aes(x = thrivecat, y = hh_vmt, ymin = ymin, ymax = ymax, color = thrivecat, label = label)) + 
+  geom_hline(aes(yintercept = av_vmt), color = 'gray90', lwd = 4) + 
+  
+  geom_point(size = 4) + 
+  geom_errorbar(width = 0, lwd = 1.5) + 
+  scale_color_manual(values = c(tencol, 'white')) +
+  guides(color = F) +
+    annotate("text", x = 'Emerging\nSuburban\nEdge', y = av_vmt - 5.5, label = "Region median:\n36 miles per day, per household", color = 'gray70', fontface = 'italic', size = 4) + 
+  geom_text(aes(y = ymax + 2))+
+   ggtitle("Daily miles driven per household by community type,\nafter adjusting for income, employment and household structure", subtitle = "Data are weighted at the household level. Only households that report income are shown.\nEstimates are standardized against total income, number of workers and children in the household, and community type.") + 
+  # geom_text() + 
+    theme(
+    axis.title.y = element_blank(),
+      axis.ticks = element_blank(), 
+        axis.text.y = element_blank(),
+        axis.text.x = element_text(size = 12),
+        panel.grid = element_blank(),
+        axis.title.x = element_blank(),
+        strip.text = element_text(size = 18),
+        strip.background = element_rect(fill = 'gray90', color = 'white'),
+        title = element_text(size = 16),
+        plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(size = 12, hjust = 0.5),
+        legend.position = 'bottom',
+                panel.background = element_rect(fill = 'gray97', color = NA),
+        plot.background = element_rect(fill = 'gray97', color = NA))
+
+geog_plot
+
+## Income: 
+# income_plot <- 
+make_predictions(weighted_glm_hhvmt, pred = 'income_detailed') %>%
+  mutate(label = paste0(round(hh_vmt), ' miles')) %>%
+  mutate(income_detailed = factor(income_detailed, 
+                                  levels = rev(levels(veh_income$income_detailed)))) %>%
+  droplevels() %>%
+  ggplot(aes(x = income_detailed, color = income_detailed, y = hh_vmt, ymin = ymin, ymax = ymax, label = label)) + 
+  geom_hline(aes(yintercept = av_vmt), color = 'gray90', lwd = 4) + 
+  geom_point(size = 4) + 
+  geom_errorbar(width = 0, lwd = 1.5) + 
+  scale_color_manual(values = c(tencol, 'white')) +
+  guides(color = F) +
+    annotate("text", x = '$15-25K', y = av_vmt - 5, label = "Region median:\n52 miles/household", color = 'gray70', fontface = 'italic', size = 4) +
+  geom_text(aes(y = ymax + 2))+
+   ggtitle("Daily miles driven per household by income,\nafter adjusting for community type and household structure", subtitle = "Data are weighted at the household level. Only households that report income are shown.\nEstimates are standardized against community type, number of children, and number of workers in the household.") + 
+  # geom_text() + 
+    theme(
+    axis.title.y = element_blank(),
+      axis.ticks = element_blank(), 
+        axis.text.y = element_blank(),
+        axis.text.x = element_text(size = 12),
+        panel.grid = element_blank(),
+        axis.title.x = element_blank(),
+        strip.text = element_text(size = 18),
+        strip.background = element_rect(fill = 'gray90', color = 'white'),
+        title = element_text(size = 16),
+        plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(size = 12, hjust = 0.5),
+        legend.position = 'bottom',
+                panel.background = element_rect(fill = 'gray97', color = NA),
+        plot.background = element_rect(fill = 'gray97', color = NA))
+
+## Nubmer of workers: 
+# income_plot <- 
+make_predictions(weighted_glm_hhvmt, pred = 'num_workers') %>%
+  mutate(label = paste0(round(hh_vmt), ' miles')) %>%
+  ggplot(aes(x = num_workers, color = num_workers, y = hh_vmt, ymin = ymin, ymax = ymax, label = label)) + 
+  geom_hline(aes(yintercept = av_vmt), color = 'gray90', lwd = 4) + 
+  geom_point(size = 4) + 
+  geom_errorbar(width = 0, lwd = 1.5) + 
+  scale_color_manual(values = c(tencol[c(1, 3, 5, 7, 9)], 'white')) +
+  guides(color = F) +
+    annotate("text", x = '3+', y = av_vmt - 5, label = "Region median:\n52 miles/household", color = 'gray70', fontface = 'italic', size = 4) +
+  geom_text(aes(y = ymax + 2))+
+   ggtitle("Daily miles driven per household by number of workers,\nafter adjusting for community type and household structure", subtitle = "Data are weighted at the household level. Only households that report income are shown.\nEstimates are standardized against community type, income and number of children in the household.") + 
+  # geom_text() + 
+    theme(
+    axis.title.y = element_blank(),
+      axis.ticks = element_blank(), 
+        axis.text.y = element_blank(),
+        axis.text.x = element_text(size = 12),
+        panel.grid = element_blank(),
+        axis.title.x = element_blank(),
+        strip.text = element_text(size = 18),
+        strip.background = element_rect(fill = 'gray90', color = 'white'),
+        title = element_text(size = 16),
+        plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(size = 12, hjust = 0.5),
+        legend.position = 'bottom',
+                panel.background = element_rect(fill = 'gray97', color = NA),
+        plot.background = element_rect(fill = 'gray97', color = NA))
+
+## Nubmer of kids: 
+# income_plot <- 
+make_predictions(weighted_glm_hhvmt, pred = 'num_kids') %>%
+  mutate(label = paste0(round(hh_vmt), ' miles')) %>%
+  ggplot(aes(x = num_kids, color = num_kids, y = hh_vmt, ymin = ymin, ymax = ymax, label = label)) + 
+  geom_hline(aes(yintercept = av_vmt), color = 'gray90', lwd = 4) + 
+  geom_point(size = 4) + 
+  geom_errorbar(width = 0, lwd = 1.5) + 
+  scale_color_manual(values = c(tencol[c(1, 3, 5, 7, 9)], 'white')) +
+  guides(color = F) +
+    annotate("text", x = '3', y = av_vmt - 5, label = "Region median:\n52 miles/household", color = 'gray70', fontface = 'italic', size = 4) +
+  geom_text(aes(y = ymax + 2))+
+   ggtitle("Daily miles driven per household by number of kids,\nafter adjusting for community type and household structure", subtitle = "Data are weighted at the household level. Only households that report income are shown.\nEstimates are standardized against community type, number of children, and number of workers in the household.") + 
+  # geom_text() + 
+    theme(
+    axis.title.y = element_blank(),
+      axis.ticks = element_blank(), 
+        axis.text.y = element_blank(),
+        axis.text.x = element_text(size = 12),
+        panel.grid = element_blank(),
+        axis.title.x = element_blank(),
+        strip.text = element_text(size = 18),
+        strip.background = element_rect(fill = 'gray90', color = 'white'),
+        title = element_text(size = 16),
+        plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(size = 12, hjust = 0.5),
+        legend.position = 'bottom',
+                panel.background = element_rect(fill = 'gray97', color = NA),
+        plot.background = element_rect(fill = 'gray97', color = NA))
+```

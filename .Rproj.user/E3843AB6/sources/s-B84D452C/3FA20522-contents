@@ -59,6 +59,11 @@ raw_variant_data <- read_excel(
 
 ### case load from MDH
 ```{r}
+case_data <- read_excel("data/raw-case-data.xlsx", 
+    sheet = "Metro area new cases") %>%
+  janitor::clean_names() %>%
+  mutate(date_reported = as.Date(date_reported)) %>%
+  rename(date = date_reported, covid_cases_7day = x7_day_moving_avg)
 ```
 
 
@@ -144,5 +149,18 @@ ggplotly(variant_plot)
 ## Write to .csv
 ```{r}
 write.csv(variant_data, 'data/clean_variant_data.csv', row.names = F)
+write.csv(variant_data, 'metc-wastewater-covid-monitor/clean_variant_data.csv', row.names = F)
 write.csv(load_data, 'data/clean_load_data.csv', row.names = F)
+write.csv(load_data, 'metc-wastewater-covid-monitor/clean_load_data.csv', row.names = F)
+
+# master dataset:
+combined_data <- 
+case_data %>%
+  left_join(load_data) %>%
+  left_join(variant_data)
+
+write.csv(combined_data, 'data/combined_data.csv', row.names = F)
+
+write.csv(combined_data, 'metc-wastewater-covid-monitor/combined_data.csv', row.names = F)
+
 ```

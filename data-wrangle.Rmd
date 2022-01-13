@@ -14,9 +14,9 @@ library(plotly)
 ```
 
 ## Read in raw data from Excel
-
-```{r counts}
-raw_count_data <- read_excel("data/raw-count-data.xlsx", 
+### copy data
+```{r load}
+raw_load_data <- read_excel("data/raw-load-data.xlsx", 
     col_types = c("text", "skip", "skip", 
         "date", "skip", "numeric", "numeric", 
         "skip", "skip", "skip", "numeric", 
@@ -27,6 +27,7 @@ raw_count_data <- read_excel("data/raw-count-data.xlsx",
   mutate(sample_start_date = as.Date(sample_start_date))
 ```
 
+### variant data
 ```{r variants}
 raw_variant_data <- read_excel(
   "data/raw-variant-data.xlsx",
@@ -56,13 +57,23 @@ raw_variant_data <- read_excel(
   mutate(date = as.Date(date))
 ```
 
-## Cacluate counts
-```{r count reshape}
-seq_date <- function(x) seq(min(x, na.rm = T), max(x, na.rm = T), by = "day")
-all_dates <- seq_date(raw_count_data$sample_start_date)
+### case load from MDH
+```{r}
+case_data <- read_excel("data/raw-case-data.xlsx", 
+    sheet = "Metro area new cases") %>%
+  janitor::clean_names() %>%
+  mutate(date_reported = as.Date(date_reported)) %>%
+  rename(date = date_reported, covid_cases_7day = x7_day_moving_avg)
+```
 
-count_data <-
-raw_count_data %>%
+
+## Cacluate load
+```{r load reshape}
+seq_date <- function(x) seq(min(x, na.rm = T), max(x, na.rm = T), by = "day")
+all_dates <- seq_date(raw_load_data$sample_start_date)
+
+load_data <-
+raw_load_data %>%
   mutate(flow_l_day = metro_flow_rate_mgd_on_sample_start_date * 3785411.8) %>%
   select(-metro_flow_rate_mgd_on_sample_start_date) %>%
   pivot_longer(cols = c("copies_l_3", "copies_l_4"), names_to = "run_num", names_prefix = "copies_l_", 
@@ -88,23 +99,25 @@ raw_count_data %>%
   complete(date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by="days")) %>%
   arrange(date)
 
-head(count_data)
+head(load_data)
 ```
 
 
-```{r count graph}
-# Graph of counts
-count_plot <- 
-ggplot(count_data, aes(x = date, y = copies_day_person_M_mn))+ 
+## Graph of load
+```{r load graph}
+# Graph of load
+load_plot <- 
+ggplot(load_data, aes(x = date, y = copies_day_person_M_mn))+ 
   geom_point() + 
   geom_errorbar(aes(ymin = copies_day_person_M_mn - copies_day_person_M_se, ymax = copies_day_person_M_mn + copies_day_person_M_se)) + 
   geom_line(linetype = 'dashed', color = 'gray50') + 
   councilR::council_theme()
-ggplotly(count_plot)
+ggplotly(load_plot)
 ```
 
 
-```{r variant count}
+## Reshape variant data
+```{r variant proportion}
 variant_data <-
 raw_variant_data %>%
   # average by date
@@ -121,6 +134,7 @@ head(variant_data)
 ```
 
 
+## Graph of variants
 ```{r variant graph}
 variant_plot<-
 variant_data %>%
@@ -132,8 +146,21 @@ variant_data %>%
 ggplotly(variant_plot)  
 ```
 
-
+## Write to .csv
 ```{r}
 write.csv(variant_data, 'data/clean_variant_data.csv', row.names = F)
-write.csv(count_data, 'data/clean_count_data.csv', row.names = F)
+write.csv(variant_data, 'metc-wastewater-covid-monitor/clean_variant_data.csv', row.names = F)
+write.csv(load_data, 'data/clean_load_data.csv', row.names = F)
+write.csv(load_data, 'metc-wastewater-covid-monitor/clean_load_data.csv', row.names = F)
+
+# master dataset:
+combined_data <- 
+case_data %>%
+  left_join(load_data) %>%
+  left_join(variant_data)
+
+write.csv(combined_data, 'data/combined_data.csv', row.names = F)
+
+write.csv(combined_data, 'metc-wastewater-covid-monitor/combined_data.csv', row.names = F)
+
 ```
