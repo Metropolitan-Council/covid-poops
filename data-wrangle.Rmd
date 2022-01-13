@@ -87,6 +87,8 @@ raw_count_data %>%
   # (fill in for missing dates)
   complete(date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by="days")) %>%
   arrange(date)
+
+head(count_data)
 ```
 
 
@@ -115,7 +117,7 @@ raw_variant_data %>%
                              mutation == 'k417n' ~  'Omicron', 
                              TRUE ~ 'Other')) %>%
   mutate(mutation = toupper(mutation))
-  
+head(variant_data)
 ```
 
 
@@ -128,4 +130,10 @@ variant_data %>%
   councilR::council_theme()
 
 ggplotly(variant_plot)  
+```
+
+
+```{r}
+write.csv(variant_data, 'data/clean_variant_data.csv', row.names = F)
+write.csv(count_data, 'data/clean_count_data.csv', row.names = F)
 ```
