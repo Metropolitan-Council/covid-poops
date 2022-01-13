@@ -68,15 +68,24 @@ ui <- fluidPage(
 
 # Server
 server <- function(input, output) {
-
     output$loadPlot <- renderPlotly({
+        
+        ay <- list(
+            tickfont = list(color = colors$metrostatsDaPurp),
+            overlaying = "y",
+            side = "right",
+            title = "<b>Reported COVID-19 cases,</b> 7-day average")
+        
         load_plot <- 
-            ggplot(load_data, aes(x = date, y = copies_day_person_M_mn))+ 
-            geom_point() + 
-            geom_errorbar(aes(ymin = copies_day_person_M_mn - copies_day_person_M_se, ymax = copies_day_person_M_mn + copies_day_person_M_se)) + 
-            geom_line(linetype = 'dashed', color = 'gray50') + 
-            councilR::council_theme()
-        ggplotly(load_plot)
+            load_data %>%
+            left_join(case_data) %>%
+            plot_ly(type = 'scatter', mode = 'lines', fill = 'tozeroy',
+                    fillcolor = 'rgba(0, 154, 199, 0.5)',
+                    line = list(width = 0.5, color = colors$esBlue))%>%
+            add_trace(x = ~date, y = ~copies_day_person_M_mn, name = 'Viral load',
+                      size = 1)%>%
+            add_trace(x = ~date, y = ~covid_cases_7day) %>%
+            layout(showlegend = F)
     })
     
     
@@ -98,11 +107,14 @@ server <- function(input, output) {
     
     output$casesVload <- renderPlotly({
         cases_vs_load_plot<-
+            # aggregate data to week:
             combined_data %>%
             mutate(weekof = lubridate::floor_date(date, unit="week", week_start = 7)) %>%
             select(weekof, covid_cases_7day, copies_day_person_M_mn) %>%
             group_by(weekof) %>%
             summarize(across(c(covid_cases_7day, copies_day_person_M_mn), ~mean(., na.rm = T))) %>%
+            
+            # scatterplot: 
             ggplot(aes(x = covid_cases_7day, y = copies_day_person_M_mn, text = weekof)) + 
             geom_point() + 
             geom_smooth(method = 'lm', se = F, color = colors$esBlue, fill = colors$esBlue)+
