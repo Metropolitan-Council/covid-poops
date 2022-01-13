@@ -83,9 +83,14 @@ server <- function(input, output) {
                     fillcolor = 'rgba(0, 154, 199, 0.5)',
                     line = list(width = 0.5, color = colors$esBlue))%>%
             add_trace(x = ~date, y = ~copies_day_person_M_mn, name = 'Viral load',
-                      size = 1)%>%
-            add_trace(x = ~date, y = ~covid_cases_7day) %>%
-            layout(showlegend = F)
+                      size = 1)%>%            
+            add_trace(x = ~date, y = ~covid_cases_7day, yaxis = "y2") %>%
+            layout(showlegend = F) %>%
+            layout(
+                yaxis2 = ay,
+                xaxis = list(title="xaxis title "),
+                yaxis = list(title="<b>primary</b> yaxis title")
+            )
     })
     
     
