@@ -23,7 +23,7 @@ ui <- fluidPage(
     h1("Wastewater Treatment COVID-19 Monitoring Dashboard"),
     h3('App Subtitle'),
     # Show a plot of the generated distribution
-    tabsetPanel(
+    div(style = 'width:1200px;', tabsetPanel(
         tabPanel(
             "COVID-19 Variants",
             h4(),
@@ -63,7 +63,7 @@ ui <- fluidPage(
                  h3("Cases"),
                  p("Data updated ... Data source ... "),
                  DTOutput("caseData"))
-    )
+    ))
 )
 
 # Server
@@ -71,10 +71,11 @@ server <- function(input, output) {
     output$loadPlot <- renderPlotly({
         
         ay <- list(
-            tickfont = list(color = colors$suppGray),
+            tickfont = list(color = colors$esBlue),
             overlaying = "y",
             side = "right",
-            title = list(text = "<b>Reported COVID-19 cases,</b> 7-day average", standoff = 25),
+            title = list(text = "<b>Viral load in wastewater,</b> M copies/person/day", standoff = 25,
+                         font = list(color = colors$esBlue)),
             zerolinewidth = 2,
             zerolinecolor = '#ffff',
             gridcolor = 'ffff'
@@ -106,7 +107,7 @@ server <- function(input, output) {
             ) %>%
             layout(showlegend = F) %>%
             layout(
-                margin = list(l = 100, r = 100, b = 100),
+                margin = list(l = 50, r = 100, b = 50, pad = 10),
                 yaxis2 = ay,
                 xaxis = list(
                     title = list(text = "Date", standoff = 25),
@@ -115,8 +116,10 @@ server <- function(input, output) {
                     zerolinecolor = '#ffff'
                 ),
                 yaxis = list(
-                    title = list(text = "<b>Viral load</b>in wastewater", standoff = 25),
+                    title = list(text = "<b>Reported COVID-19 cases,</b> 7-day average", standoff = 25,
+                                 font = list(color = colors$suppGray)),
                     zerolinewidth = 2,
+                    tickfont = list(color = colors$suppGray),
                     gridcolor = 'ffff',
                     zerolinecolor = '#ffff'
                 )
