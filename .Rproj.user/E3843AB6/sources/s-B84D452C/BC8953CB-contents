@@ -2,10 +2,11 @@
 combined_data <- read.csv('combined_data.csv') %>% mutate(date = as.Date(date))
 load_data <- read.csv('clean_load_data.csv') %>% mutate(date = as.Date(date))
 variant_data <- read.csv('clean_variant_data.csv') %>% mutate(date = as.Date(date))
-
+case_data <- read.csv('case_data.csv') %>% mutate(date = as.Date(date))
 
 library(shiny)
 library(tidyverse)
+library(lubridate)
 library(plotly)
 library(councilR)
 library(DT)
@@ -13,31 +14,55 @@ library(DT)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
+    tags$head(
+        tags$link(rel = "stylesheet", type = "text/css", href = "style.css"),
+        tags$link(rel = "stylesheet", type = "text/css", href = "font.css"),
+        tags$link(rel = "stylesheet", type = "text/css", href = "colors.css")
+    ),
     # Application title
-    titlePanel("Wastewater Treatment COVID-19 Monitoring Dashboard"),
-    h3('Some general text here'),
+    h1("Wastewater Treatment COVID-19 Monitoring Dashboard"),
+    h3('App Subtitle'),
     # Show a plot of the generated distribution
     tabsetPanel(
         tabPanel(
             "COVID-19 Variants",
-            h3('Plot title'),
-            h4('Plot subtitle'),
-            plotlyOutput("variantPlot")
+            h4(),
+            h3('Tracking COVID-19 Variants in Metro Plant influent'),
+            h4('N501Y (Alpha, Beta, and Gamma), L452R (Delta) and K417N (Omicron) mutation frequencies in Metro Plant influent'),
+            p("Here is some text to explain what is going on."),
+            plotlyOutput("variantPlot", height = "auto"),
+            p("Data updated ... Data source ... ")
         ),
         tabPanel(
             "COVID-19 Load",
+            h4(),
             h3('Plot title'),
             h4('Plot subtitle'),
-            plotlyOutput("loadPlot")
+            p("Here is some text to explain what is going on."),
+            plotlyOutput("loadPlot", height = "auto"),
+            p("Data updated ... Data source ... ")
         ),
         tabPanel(
             "Load vs. Reported Cases",
-            h3('Plot title'),
-            h4('Plot subtitle'),
-            plotlyOutput("casesVload")
+            h4(),
+            h3('A strong relationship between SARS-CoV-2 daily load and reported COVID-19 cases'),
+            h4('Metro Plant influent SARS-CoV-2 daily load versus new cases in the sewered service area, weekly mean values from 11 April 2021 to present.'),
+            p("Here is some text to explain what is going on."),
+            plotlyOutput("casesVload", height = "auto"),
+            p("Data updated ... Data source ... ")
         ),
         tabPanel("Download Data",
-                 DTOutput("loadData"))
+                 h4(),
+                 p("Data are divided in three sections: load, the variant frequencies, and the number of cases in the sewered service area."),
+                 h3('Load'),
+                 p("Data updated ... Data source ... "),
+                 DTOutput("loadData"),
+                 h3('Variants'),
+                 p("Data updated ... Data source ... "),
+                 DTOutput("variantData"),
+                 h3("Cases"),
+                 p("Data updated ... Data source ... "),
+                 DTOutput("caseData"))
     )
 )
 
@@ -54,7 +79,39 @@ server <- function(input, output) {
         ggplotly(load_plot)
     })
     
-    output$loadData <- renderDT({
+    
+    
+    
+    output$variantPlot <- renderPlotly({
+        variant_plot<-
+            variant_data %>%
+            filter(!variant == "Other") %>%
+            ggplot(aes(x = date, y = frequency, color = variant)) + 
+            scale_color_manual(values = c(colors$metrostatsMePurp, colors$esBlue, colors$cdGreen)) + 
+            geom_line(alpha = 0.5, lwd = 1.5) + 
+            geom_point(size =2.5) + 
+            councilR::council_theme()
+        
+        ggplotly(variant_plot)  
+    })
+    
+    
+    output$casesVload <- renderPlotly({
+        cases_vs_load_plot<-
+            combined_data %>%
+            mutate(weekof = lubridate::floor_date(date, unit="week", week_start = 7)) %>%
+            select(weekof, covid_cases_7day, copies_day_person_M_mn) %>%
+            group_by(weekof) %>%
+            summarize(across(c(covid_cases_7day, copies_day_person_M_mn), ~mean(., na.rm = T))) %>%
+            ggplot(aes(x = covid_cases_7day, y = copies_day_person_M_mn, text = weekof)) + 
+            geom_point() + 
+            geom_smooth(method = 'lm', se = F, color = colors$esBlue, fill = colors$esBlue)+
+            councilR::council_theme()
+        
+        ggplotly(cases_vs_load_plot, label = "text")  
+    })
+    
+    output$loadData<- renderDT(server = FALSE, {
         load_data %>%
             DT::datatable(extensions = 'Buttons', 
                           options = list(dom = 'Btrip',
@@ -66,27 +123,23 @@ server <- function(input, output) {
     })
     
     
-    output$variantPlot <- renderPlotly({
-        variant_plot<-
-            variant_data %>%
-            filter(!variant == "Other") %>%
-            ggplot(aes(x = date, y = frequency, color = variant)) + 
-            geom_line() + 
-            councilR::council_theme()
-        
-        ggplotly(variant_plot)  
+    output$variantData<- renderDT(server = FALSE, {
+        variant_data %>%
+            DT::datatable(extensions = 'Buttons', 
+                          options = list(dom = 'Btrip',
+                                         buttons = c('copy', 'excel', 'csv'), 
+                                         searching = FALSE, 
+                                         lengthMenu = FALSE)) %>%
+            DT::formatRound('frequency', 2)
     })
     
-    
-    output$casesVload <- renderPlotly({
-        cases_vs_load_plot<-
-            combined_data %>%
-            ggplot(aes(x = covid_cases_7day, y = copies_day_person_M_mn)) + 
-            geom_point() + 
-            geom_smooth(method = 'lm', se = F, color = 'blue')+
-            councilR::council_theme()
-        
-        ggplotly(cases_vs_load_plot)  
+    output$caseData<- renderDT(server = FALSE, {
+        case_data %>%
+            DT::datatable(extensions = 'Buttons', 
+                          options = list(dom = 'Btrip',
+                                         buttons = c('copy', 'excel', 'csv'), 
+                                         searching = FALSE, 
+                                         lengthMenu = FALSE)) 
     })
     
 }

@@ -76,7 +76,8 @@ load_data <-
 raw_load_data %>%
   mutate(flow_l_day = metro_flow_rate_mgd_on_sample_start_date * 3785411.8) %>%
   select(-metro_flow_rate_mgd_on_sample_start_date) %>%
-  pivot_longer(cols = c("copies_l_3", "copies_l_4"), names_to = "run_num", names_prefix = "copies_l_", 
+  rename(N1_gene_l = copies_l_3,  N2_gene_l = copies_l_4) %>%
+  pivot_longer(cols = c("N1_gene_l", "N2_gene_l"), names_to = "gene_num", 
                values_to = "n_l") %>%
   # calculate n per day, per person, per person in millions
   mutate(copies_day = n_l * flow_l_day) %>%
@@ -148,6 +149,10 @@ ggplotly(variant_plot)
 
 ## Write to .csv
 ```{r}
+
+write.csv(case_data, 'metc-wastewater-covid-monitor/case_data.csv', row.names = F)
+
+
 write.csv(variant_data, 'data/clean_variant_data.csv', row.names = F)
 write.csv(variant_data, 'metc-wastewater-covid-monitor/clean_variant_data.csv', row.names = F)
 write.csv(load_data, 'data/clean_load_data.csv', row.names = F)
