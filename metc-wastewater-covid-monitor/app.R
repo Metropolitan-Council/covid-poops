@@ -71,25 +71,35 @@ server <- function(input, output) {
     output$loadPlot <- renderPlotly({
         
         ay <- list(
-            tickfont = list(color = colors$metrostatsDaPurp),
+            tickfont = list(color = colors$suppGray),
             overlaying = "y",
             side = "right",
-            title = "<b>Reported COVID-19 cases,</b> 7-day average")
+            title = list(text = "<b>Reported COVID-19 cases,</b> 7-day average", standoff = 25L),
+            zerolinewidth = 2, zerolinecolor = '#ffff',
+            gridcolor = 'ffff')
+        
+
         
         load_plot <- 
             load_data %>%
             left_join(case_data) %>%
-            plot_ly(type = 'scatter', mode = 'lines', fill = 'tozeroy',
-                    fillcolor = 'rgba(0, 154, 199, 0.5)',
-                    line = list(width = 0.5, color = colors$esBlue))%>%
+            plot_ly(type = 'scatter', mode = 'lines')%>%
             add_trace(x = ~date, y = ~copies_day_person_M_mn, name = 'Viral load',
-                      size = 1)%>%            
-            add_trace(x = ~date, y = ~covid_cases_7day, yaxis = "y2") %>%
+                      size = 1, 
+                      yaxis = "y2", 
+                      fill = 'tozeroy',
+                      fillcolor = 'rgba(0, 154, 199, .5)', 
+                      line = list(width = 0.5, color = colors$esBlue))%>%
+            add_trace(x = ~date, y = ~covid_cases_7day, 
+                      name = "Cases per 100,000",
+                      fill = 'tozeroy',
+                      fillcolor = 'rgba(140, 140, 140, .8)', 
+                      line = list(width = 0.5, color = "gray50")) %>%
             layout(showlegend = F) %>%
             layout(
                 yaxis2 = ay,
-                xaxis = list(title="xaxis title "),
-                yaxis = list(title="<b>primary</b> yaxis title")
+                xaxis = list(title= list(text = "Date", standoff = 25), zerolinewidth = 2, gridcolor = 'ffff', zerolinecolor = '#ffff'),
+                yaxis = list(title= list(text = "<b>Viral load</b>in wastewater", standoff = 25), zerolinewidth = 2, gridcolor = 'ffff', zerolinecolor = '#ffff')
             )
     })
     
