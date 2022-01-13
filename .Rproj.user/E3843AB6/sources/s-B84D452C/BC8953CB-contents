@@ -1,15 +1,18 @@
-# data:
-combined_data <- read.csv('combined_data.csv') %>% mutate(date = as.Date(date))
-load_data <- read.csv('clean_load_data.csv') %>% mutate(date = as.Date(date))
-variant_data <- read.csv('clean_variant_data.csv') %>% mutate(date = as.Date(date))
-case_data <- read.csv('case_data.csv') %>% mutate(date = as.Date(date))
-
+# toolbox: 
 library(shiny)
 library(tidyverse)
 library(lubridate)
 library(plotly)
 library(councilR)
 library(DT)
+
+# data:
+combined_data <- read.csv('combined_data.csv') %>% mutate(date = as.Date(date))
+load_data <- read.csv('clean_load_data.csv') %>% mutate(date = as.Date(date))
+variant_data <- read.csv('clean_variant_data.csv') %>% mutate(date = as.Date(date))
+case_data <- read.csv('case_data.csv') %>% mutate(date = as.Date(date))
+
+
 
 
 # Define UI for application that draws a histogram
