@@ -5,9 +5,9 @@ account: metrotransitmn
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 5437936
-bundleId: 5465405
+bundleId: 5465746
 url: https://metrotransitmn.shinyapps.io/metc-wastewater-covid-monitor/
-when: 1642096501.35757
-lastSyncTime: 1642096501.35757
+when: 1642103512.43725
+lastSyncTime: 1642103512.43725
 asMultiple: FALSE
 asStatic: FALSE

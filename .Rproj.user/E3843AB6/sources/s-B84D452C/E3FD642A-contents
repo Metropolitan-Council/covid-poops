@@ -1,0 +1,249 @@
+tictoc::tic()
+
+#Opening the toolbox-------------------------------
+
+library(devtools)
+# install_github("Metropolitan-Council/tc.sensors", ref = "ashley")
+library(tc.sensors)
+# Data manipulation packages:
+library(data.table)
+library(tidyverse)
+# Database packages:
+library(DBI)
+library(rstudioapi) # this package allows us to type in a password when connecting to the database.
+library(ROracle)
+
+library(ggplot2)
+load('councilcolors.Rdata')
+# ampo_theme <- source('N:/MTS/Working/Modeling/MetroLoopDetectors/loop-sensor-trends/ampo_theme.R')
+##########################
+
+# Pull Configuration ---------------------------------------------
+raw_sensor_config <- pull_configuration()
+sensor_config <- pull_configuration() %>%
+  # match names to database names:
+  rename_all(toupper) %>%
+  rename_all(~ gsub("R_NODE", "NODE", .))
+
+#Connecting to the database -------------------------------
+connect.string = '(DESCRIPTION=(ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = fth-exa-scan.mc.local  )(PORT = 1521)))(CONNECT_DATA = (SERVER = DEDICATED)(SERVICE_NAME =  com4te.mc.local)))'
+tbidb = ROracle::dbConnect(
+  dbDriver("Oracle"),
+  dbname = connect.string,
+  username = 'mts_planning_data',
+  # mts_planning_view for viewing data only, no write privileges. 
+  # mts_planning_data is the username for write privileges.
+  password = rstudioapi::askForPassword("database password")
+)
+
+
+#Configure database time zone -------------------------------
+Sys.setenv(TZ = "America/Chicago")
+Sys.setenv(ORA_SDTZ = "America/Chicago")
+
+# Get Nodes Without Data -------------------------------------
+# Either fill in from sensors with no data at all -- 
+need_data1 <- ROracle::dbReadTable(tbidb, 'RTMC_SENSORS_WITHOUT_DATA') # 284,117
+need_data1 <- data.table(need_data1)
+need_data1 <- need_data1[,.(PREDICT_DATE, DETECTOR_NAME, NODE_NAME)]
+need_data1[,PREDICT_DATE:=as.Date(PREDICT_DATE)]
+# some missing detector names -- no longer in config file? 
+uniqueN(need_data1$NODE_NAME[is.na(need_data1$DETECTOR_NAME)]) # just 1, rnd 46
+need_data1 <- need_data1[!is.na(DETECTOR_NAME),]
+# And/or fill in the gaps from sensors that have some data for a date, but it's incomplete -- 
+need_data2 <- ROracle::dbReadTable(tbidb, 'RTMC_SENSORS_MISSING_HOURS') # 36,889
+need_data2 <- data.table(need_data2)
+need_data2[,PREDICT_DATE:=as.Date(PREDICT_DATE)]
+need_data2 <- need_data2[,.(PREDICT_DATE, DETECTOR_NAME, NODE_NAME)]
+
+need_data <- merge(need_data1, need_data2, all = T)
+
+need_data_raw <- need_data  # making a copy
+# need_data <- need_data_raw???
+
+
+# anything missing from yesterday, and the past two weeks:
+need_data <- need_data[need_data$PREDICT_DATE >= Sys.Date()-7 & need_data$PREDICT_DATE < Sys.Date(),]
+
+
+# need_data %>% 
+#   group_by(PREDICT_DATE) %>%
+#   summarize(n = length(unique(DETECTOR_NAME))) %>%
+#   ungroup() %>%
+#   ggplot(aes(x = PREDICT_DATE, y = n)) + 
+#   geom_point() + 
+#   geom_text(aes(label = format(PREDICT_DATE, '%d'))) + 
+#   theme_minimal()
+# 
+# need_data %>% 
+#   filter(PREDICT_DATE <= '2021-05-16') %>%
+#   left_join(sensor_config) %>%
+#   group_by(PREDICT_DATE, CORRIDOR_ROUTE) %>%
+#   summarize(n = length(unique(DETECTOR_NAME))) %>%
+#   ungroup() %>%
+#   group_by(CORRIDOR_ROUTE) %>%
+#   mutate(max_n = max(n)) %>%
+#   ungroup()%>%
+#   filter(max_n > 10) %>%
+#   ggplot(aes(x = PREDICT_DATE, y = n)) + 
+#   geom_point() + 
+#   geom_text(aes(label = format(PREDICT_DATE, '%d'))) + 
+#   theme_minimal() + 
+#   facet_wrap(~CORRIDOR_ROUTE, scales = 'free_y')
+# 
+
+# for a month (overnight data downloads): 
+# need_data <- need_data[need_data$PREDICT_DATE >= '2020-02-01' & 
+#                          need_data$PREDICT_DATE < '2020-03-01']
+# 31707/(60 * 60) = 8.8 hours/month of data, = 4.4 days per year of data!
+
+pb <-
+  txtProgressBar(
+    min = 0,
+    max = nrow(need_data),
+    style = 3
+  )
+k <- 0
+
+
+for (s in 1:nrow(need_data)) {
+    k <- k + 1
+    setTxtProgressBar(pb, k)
+    sensor_day_dat <-
+      pull_sensor(
+        sensor = need_data$DETECTOR_NAME[[s]],
+        pull_date = need_data$PREDICT_DATE[[s]],
+        fill_gaps = T,
+        .quiet = T
+      ) %>%
+      scrub_sensor() %>%
+      aggregate_sensor(
+        config = raw_sensor_config,
+        interval_length = (15 / 60),
+        # pull every 15 minutes
+        replace_impossible = T,
+        interpolate_missing =  T,
+        occupancy_pct_threshold = 0.002
+      ) %>%
+      filter(volume.pct.null < 100 | occupancy.pct.null < 100)
+    
+    if (nrow(sensor_day_dat) == 0) {
+    } else{
+      sensor_day_dat %>%
+        select(
+          sensor,
+          volume.pct.null,
+          volume.sum,
+          occupancy.pct.null,
+          occupancy.sum,
+          start_datetime,
+          volume.mean,
+          occupancy.mean,
+          occupancy.pct,
+          speed
+        ) %>%
+        filter(!is.na(start_datetime)) %>%
+        filter(!start_datetime == "") %>%
+        rename(
+          detector_name = sensor,
+          volume_sum = volume.sum,
+          volume_mean = volume.mean,
+          volume_pctnull = volume.pct.null,
+          occupancy_sum = occupancy.sum,
+          occupancy_mean = occupancy.mean,
+          occupancy_pct = occupancy.pct,
+          occupancy_pctnull = occupancy.pct.null
+        ) %>%
+        mutate(
+          # detector_name = as.integer(detector_name),
+          start_datetime = as.POSIXct(start_datetime),
+          volume_pctnull = as.integer(round(volume_pctnull)),
+          volume_sum = as.integer(round(volume_sum)),
+          occupancy_pctnull = as.integer(round(occupancy_pctnull)),
+          occupancy_sum = as.integer(round(occupancy_sum)),
+          
+          volume_mean = round(volume_mean, digits = 1),
+          occupancy_mean = round(occupancy_mean, digits = 1),
+          occupancy_pct = round(occupancy_pct, digits = 3),
+          speed = round(speed, digits = 1)
+        ) %>%
+        rename_all(toupper) %>%
+        mutate_all( ~ case_when(!is.nan(.x) ~ .x)) %>%
+        ROracle::dbWriteTable(
+          conn = tbidb,
+          name = "RTMC_5MIN_TEMP",
+          row.names = FALSE,
+          append = TRUE
+        )
+    }
+    
+  }
+
+
+
+# # Delete data in permanent table where more complete data are now available -------------------
+ROracle::dbSendQuery(
+  tbidb,
+  paste0(
+    "delete from rtmc_5min where rowid in (",
+    " select rtmc_5min.rowid from rtmc_5min",
+    " inner join rtmc_5min_temp on",
+    " (rtmc_5min_temp.start_datetime = rtmc_5min.start_datetime",
+    " and rtmc_5min_temp.detector_name = rtmc_5min.detector_name)",
+    " where rtmc_5min_temp.volume_sum <> rtmc_5min.volume_sum",
+    " and rtmc_5min.volume_pctnull> rtmc_5min_temp.volume_pctnull)"
+  )
+)
+
+ROracle::dbSendQuery(tbidb, "commit")
+
+
+# # Insert new data from temporary -> permanent table ---------------------------------------------
+ROracle::dbSendQuery(tbidb,
+                     paste0(
+                       "insert into rtmc_5min",
+                       " select * from rtmc_5min_temp",
+                       " where",
+                       " not exists (",
+                       " select * from rtmc_5min",
+                       " where  rtmc_5min_temp.start_datetime = rtmc_5min.start_datetime",
+                       " and rtmc_5min_temp.detector_name = rtmc_5min.detector_name",
+                       ") and",
+                       " rowid in (",
+                       "select max(rowid)",
+                       " from   rtmc_5min_temp",
+                       " group  by detector_name, start_datetime)"
+                     )
+)
+
+ROracle::dbSendQuery(tbidb, "commit")
+
+# Truncate Temporary Table Here ---------------------------------------------
+# # ??????????
+ROracle::dbSendQuery(tbidb,
+                     "delete from rtmc_5min_temp where extract(year from start_datetime) <= 2021"
+)
+
+ROracle::dbSendQuery(tbidb, "commit")
+
+# Data Snapshots  ---------------------------------------------
+## Daily Data: By Node -----
+RTMC_DAILY_NODE_DIFF <- ROracle::dbReadTable(tbidb, "RTMC_DAILY_NODE_DIFF")
+ROracle::dbSendQuery(tbidb, "delete from RTMC_DAILY_NODE_DIFF_NOW where extract(year from data_date) >= 2010")
+ROracle::dbWriteTable(tbidb, "RTMC_DAILY_NODE_DIFF_NOW", RTMC_DAILY_NODE_DIFF, append = T)
+ROracle::dbSendQuery(tbidb, "commit")
+
+RTMC_DAILY_SYSTEM_DIFF <- ROracle::dbReadTable(tbidb, "RTMC_DAILY_SYSTEM_DIFF")
+ROracle::dbSendQuery(tbidb, "delete from RTMC_DAILY_SYSTEM_DIFF_NOW where extract(year from data_date) >= 2010")
+ROracle::dbWriteTable(tbidb, "RTMC_DAILY_SYSTEM_DIFF_NOW", RTMC_DAILY_SYSTEM_DIFF, append = T)
+ROracle::dbSendQuery(tbidb, "commit")
+
+RTMC_HOURLY_NODE_DIFF_MON <- ROracle::dbReadTable(tbidb, "RTMC_HOURLY_NODE_DIFF_MON")
+ROracle::dbSendQuery(tbidb, "delete from RTMC_HOURLY_NODE_DIFF_MON_NOW where extract(year from data_date) >= 2010")
+ROracle::dbWriteTable(tbidb, "RTMC_HOURLY_NODE_DIFF_MON_NOW", RTMC_HOURLY_NODE_DIFF_MON, append = T)
+ROracle::dbSendQuery(tbidb, "commit")
+
+RTMC_HOURLY_SYSTEM_DIFF <- ROracle::dbReadTable(tbidb, "RTMC_HOURLY_SYSTEM_DIFF")
+ROracle::dbSendQuery(tbidb, "delete from RTMC_HOURLY_SYSTEM_DIFF_NOW where extract(year from data_date) >= 2010")
+ROracle::dbWriteTable(tbidb, "RTMC_HOURLY_SYSTEM_DIFF_NOW", RTMC_HOURLY_SYSTEM_DIFF, append = T)
+ROracle::dbSendQuery(tbidb, "commit")

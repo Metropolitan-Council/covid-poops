@@ -135,16 +135,63 @@ server <- function(input, output) {
     
     
     output$variantPlot <- renderPlotly({
-        variant_plot<-
-            variant_data %>%
-            filter(!variant == "Other") %>%
-            ggplot(aes(x = date, y = frequency, color = variant)) + 
-            scale_color_manual(values = c(colors$metrostatsMePurp, colors$esBlue, colors$cdGreen)) + 
-            geom_line(alpha = 0.5, lwd = 1.5) + 
-            geom_point(size =2.5) + 
-            councilR::council_theme()
+        pal <- c(colors$cdGreen, colors$esBlue, colors$metrostatsDaPurp)
+        pal <- setNames(pal, c("Omicron", "Delta", "Alpha, Beta & Gamma"))
         
-        ggplotly(variant_plot)  
+        variant_plot <-
+            variant_data %>%
+            plot_ly() %>%
+            add_trace(
+                type = 'scatter',
+                mode = 'markers',
+                x = ~ date,
+                y = ~ frequency,
+                split = ~ variant,
+                color = ~ variant,
+                alpha = 0.8,
+                colors = pal
+            ) %>%
+            add_trace(
+                type = 'scatter',
+                mode = 'lines',
+                x = ~ date,
+                fill = 'tozeroy',
+                y = ~ frequency_7day,
+                split = ~ variant,
+                color = ~ variant,
+                alpha = 0.25,
+                line = list(color = "#fffff"),
+                colors = pal
+            ) %>%
+            layout(
+                margin = list(
+                    l = 50,
+                    r = 100,
+                    b = 50,
+                    pad = 10
+                ),
+               
+                xaxis = list(
+                    title = list(text = "Date", standoff = 25),
+                    zerolinewidth = 2,
+                    gridcolor = 'ffff',
+                    zerolinecolor = '#ffff'
+                ),
+                
+                yaxis = list(
+                    title = list(
+                        text = "<b>Frequency of marker genes (%)</b>",
+                        standoff = 25,
+                        font = list(color = colors$suppGray)
+                    ),
+                    tickformat = "%",
+                    zerolinewidth = 2,
+                    tickfont = list(color = colors$suppGray),
+                    gridcolor = "gray90",
+                    zerolinecolor = "gray50"
+                ))
+        
+                
     })
     
     

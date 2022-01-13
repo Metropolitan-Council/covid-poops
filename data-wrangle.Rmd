@@ -124,14 +124,28 @@ raw_variant_data %>%
   # average by date
   group_by(date) %>%
   summarize(across(contains('frequency'), ~mean(., na.rm = T))) %>%
+  ungroup() %>%
   pivot_longer(contains('frequency'), names_to = 'mutation', values_to = 'frequency') %>%
+  # frequency to 100
+  # mutate(frequency = 100 * frequency) %>%
   mutate(mutation = str_remove(mutation, "_frequency")) %>%
   mutate(variant = case_when(mutation == 'n501y' ~ "Alpha, Beta & Gamma", 
                              mutation == 'l452r' ~ 'Delta',
-                             mutation == 'k417n' ~  'Omicron', 
+                             mutation == 'k417n' & date >= '2021-11-18' ~  'Omicron', 
                              TRUE ~ 'Other')) %>%
-  mutate(mutation = toupper(mutation))
-head(variant_data)
+  mutate(mutation = toupper(mutation)) %>%
+  # rolling 7 day average, by variant type
+  complete(nesting(mutation, variant), 
+           date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by="days")) %>%
+  group_by(mutation, variant) %>%
+  # interpolate missing values up to 3 days:
+  mutate(frequency_gapfill = zoo::na.approx(frequency, maxgap = 3, na.rm = F)) %>%
+  # now getting a rolling average with a 7-day window: 
+  mutate(frequency_7day = zoo::rollapplyr(frequency_gapfill, 7, mean, na.rm = T, partial = T, fill = NA)) %>%
+  ungroup() %>%
+  arrange(date, mutation, variant) %>%
+  filter(!variant == 'Other')
+View(variant_data)
 ```
 
 
