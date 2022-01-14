@@ -42,16 +42,16 @@ pal <- c(colors$cdGreen, colors$esBlue, colors$metrostatsDaPurp)
 pal <- setNames(pal, c("Omicron", "Delta", "Alpha, Beta & Gamma"))
 
 
-update_date <- max(c(load_data$date,
-                     variant_data$date,
-                     case_data$date),
-                   na.rm = T)
 
 ann_list <- list(
   text = paste(
     "<br><br>",
     "<i>", "Data last updated",
-    update_date,
+    max(c(
+      load_data$date,
+      variant_data$date,
+      case_data$date
+    ),na.rm = T),
     "</i>"
   ),
   font = list(
@@ -60,7 +60,7 @@ ann_list <- list(
     color = councilR::colors$suppBlack
   ),
   x = 1,
-  y = -0.1,
+  y = -0.13,
   showarrow = F,
   xref = "paper", yref = "paper",
   xanchor = "right", yanchor = "auto",
