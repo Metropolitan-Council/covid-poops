@@ -21,6 +21,27 @@ combined_data <- read.csv("combined_data.csv") %>%
   group_by(weekof) %>%
   summarize(across(c(covid_cases_7day, copies_day_person_M_mn), ~ mean(., na.rm = T)))
 
+ggplot(data = combined_data,
+       mapping = aes(
+         x = covid_cases_7day,
+           y = copies_day_person_M_mn)) +
+stat_smooth(n = 95, 
+            method = "lm", aes(outfit = fit<<-..y..))
+fit
+
+
+ggplotly(cases_vs_load_plot, layerData = 2, originalData = FALSE) %>% plotly_data()
+
+
+combined_data <- combined_data %>% 
+  mutate(predicted_copies = fit,
+         hover_text_predict = paste0("Week starting ", weekof)) %>% 
+                                     # , "<br>",
+                                     # "<b>", round(predicted_copies), "</b>",
+                                     # " predicted copies/day/person")) %>% 
+  arrange(predicted_copies)
+
+
 load_data <- read.csv("clean_load_data.csv") %>%
   mutate(date = as.Date(date)) %>%
   mutate(across(is.numeric, round, digits = 4))
