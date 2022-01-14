@@ -139,7 +139,7 @@ raw_variant_data %>%
            date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by="days")) %>%
   group_by(mutation, variant) %>%
   # interpolate missing values up to 3 days:
-  mutate(frequency_gapfill = zoo::na.approx(frequency, maxgap = 3, na.rm = F)) %>%
+  mutate(frequency_gapfill = zoo::na.approx(frequency, maxgap = 2, na.rm = F)) %>%
   # now getting a rolling average with a 7-day window: 
   mutate(frequency_7day = zoo::rollapplyr(frequency_gapfill, 7, mean, na.rm = T, partial = T, fill = NA)) %>%
   ungroup() %>%
@@ -151,14 +151,45 @@ View(variant_data)
 
 ## Graph of variants
 ```{r variant graph}
-variant_plot<-
+# variant_plot<-
+library(showtext)
+font_add("HelveticaNeueLTStd", "HelveticaNeueLTStd-Lt.otf")
+showtext_auto()
+
+
+
+varplot <- 
 variant_data %>%
   filter(!variant == "Other") %>%
-  ggplot(aes(x = date, y = frequency, color = variant)) + 
-  geom_line() + 
-  councilR::council_theme()
+  filter(date >= '2021-06-01') %>%
+  ggplot(aes(x = date, y = frequency, color = variant, fill = variant)) + 
+  geom_ribbon(aes(x = date, ymin = 0, ymax = frequency_7day, group = variant), alpha = 0.25, na.rm = T, linetype = "blank") + 
+    geom_point(alpha = 0.75)+
+  scale_color_manual(values = c(colors$cdGreen, colors$esBlue, colors$metrostatsDaPurp),
+                     name = "Variant: ")+
+  scale_fill_manual(values = c(colors$cdGreen, colors$esBlue, colors$metrostatsDaPurp), name = "Variant: ")+
+  scale_y_continuous(name = "Variant frequency (%)", labels = scales::percent, limits = c(0, 1.05))+
+  scale_x_date(name = "Date", breaks = "1 months", date_labels = "%b '%y")+
+  councilR::council_theme() +
+  labs(caption = paste0("Shaded areas are seven-day rolling averages. Points are daily data.\nLast sample date ",  max(variant_data$date, na.rm = T), "."))+
+  # theme_minimal() + 
+  theme(panel.grid.minor = element_blank(), 
+        panel.grid.major.x = element_blank(),
+        legend.position = 'bottom',
+        plot.caption = element_text(size = 11, face = 'italic', family = "Helvetica"),
+        legend.text = element_text(size = 12))
+#         legend.title = element_text(family = "HelveticaNeueLTStd-Lt", size = 12)) 
 
-ggplotly(variant_plot)  
+library(cowplot)
+library(magick)
+logo_file <- "metc-wastewater-covid-monitor/www/main-logo.png"
+
+final_varplot <-
+cowplot::ggdraw() + 
+  draw_plot(varplot) +
+  draw_image(logo_file, scale = 0.1, x = -0.4, y = -0.42)
+
+ggsave("variants_static_graph.png", final_varplot, height = 4, width = 5, units = "in", dpi = 200)
 ```
 
 ## Linear regression with cases
