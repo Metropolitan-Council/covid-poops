@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
 
-The goal of covid-poops is to ...
+This repository contains the code for cleaning, transforming and visualizing data from Environmental Services, whose researchers are monitoring COVID-19 prealence in the metro area by analyzing SARS CoV-2 viral RNA load in Metro Plant wastewater.
 
 
 ## License  
