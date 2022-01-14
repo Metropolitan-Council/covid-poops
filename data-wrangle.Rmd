@@ -11,6 +11,7 @@ library(readxl)
 library(janitor)
 library(tidyverse)
 library(plotly)
+library(councilR)
 ```
 
 ## Read in raw data from Excel
