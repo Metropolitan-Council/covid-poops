@@ -116,7 +116,7 @@ server <- function(input, output) {
     
     load_plot <-
       load_data %>%
-      left_join(case_data, by = "date") %>%
+      # left_join(case_data, by = "date") %>%
       plot_ly(type = "scatter", mode = "lines") %>%
       add_trace(
         x = ~date,
