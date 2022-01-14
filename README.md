@@ -26,6 +26,11 @@ Code of
 Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
 By contributing to this project, you agree to abide by its terms.
 
+## Contributors
+
+[@ashleyasmus](https://github.com/ashleyasmus), and
+[@eroten](https://github.com/eroten).
+
 ------------------------------------------------------------------------
 
 <a href="https://metrocouncil.org" target="_blank"><img src="metc-wastewater-covid-monitor/www/logo.png" style="margin-left: 50%;margin-right: 50%;">
