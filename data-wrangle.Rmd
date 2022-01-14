@@ -16,13 +16,16 @@ library(plotly)
 ## Read in raw data from Excel
 ### copy data
 ```{r load}
-raw_load_data <- read_excel("data/raw-load-data.xlsx", 
-    col_types = c("text", "skip", "skip", 
-        "date", "skip", "numeric", "numeric", 
-        "skip", "skip", "skip", "numeric", 
-        "skip", "skip", "skip", "skip", "skip", 
-        "skip", "skip", "skip", "skip"), 
-    skip = 1) %>%
+raw_load_data <- read_excel("data/raw-load-data.xlsx",
+  col_types = c(
+    "text", "skip", "skip",
+    "date", "skip", "numeric", "numeric",
+    "skip", "skip", "skip", "numeric",
+    "skip", "skip", "skip", "skip", "skip",
+    "skip", "skip", "skip", "skip"
+  ),
+  skip = 1
+) %>%
   janitor::clean_names() %>%
   mutate(sample_start_date = as.Date(sample_start_date))
 ```
@@ -59,46 +62,56 @@ raw_variant_data <- read_excel(
 
 ### case load from MDH
 ```{r}
-case_data <- read_excel("data/raw-case-data.xlsx", 
-    sheet = "Metro area new cases") %>%
+case_data <- read_excel("data/raw-case-data.xlsx",
+  sheet = "Metro area new cases"
+) %>%
   janitor::clean_names() %>%
   mutate(date_reported = as.Date(date_reported)) %>%
-  rename(date = date_reported, covid_cases_7day = x7_day_moving_avg)
+  rename(date = date_reported, covid_cases_7day = x7_day_moving_avg) %>% 
+  mutate(hover_text_case = paste0(format(date, "%b %d, %Y"), "<br>",
+                             "<b>", round(covid_cases_7day, 2), "</b> cases per 100,000 people") )
 ```
 
 
-## Cacluate load
+## Cacluate load  
+
 ```{r load reshape}
 seq_date <- function(x) seq(min(x, na.rm = T), max(x, na.rm = T), by = "day")
 all_dates <- seq_date(raw_load_data$sample_start_date)
 
 load_data <-
-raw_load_data %>%
+  raw_load_data %>%
   mutate(flow_l_day = metro_flow_rate_mgd_on_sample_start_date * 3785411.8) %>%
   select(-metro_flow_rate_mgd_on_sample_start_date) %>%
-  rename(N1_gene_l = copies_l_3,  N2_gene_l = copies_l_4) %>%
-  pivot_longer(cols = c("N1_gene_l", "N2_gene_l"), names_to = "gene_num", 
-               values_to = "n_l") %>%
+  rename(N1_gene_l = copies_l_3, N2_gene_l = copies_l_4) %>%
+  pivot_longer(
+    cols = c("N1_gene_l", "N2_gene_l"), names_to = "gene_num",
+    values_to = "n_l"
+  ) %>%
   # calculate n per day, per person, per person in millions
   mutate(copies_day = n_l * flow_l_day) %>%
   mutate(copies_day_person = copies_day / 195000) %>%
-  mutate(copies_day_person_M = copies_day_person/1e7) %>%
+  mutate(copies_day_person_M = copies_day_person / 1e7) %>%
   # average across runs for a sample average
   group_by(sample_name, sample_start_date, flow_l_day) %>%
-  summarize(across(c(copies_day_person_M), ~mean(., na.rm = T))) %>%
+  summarize(across(c(copies_day_person_M), ~ mean(., na.rm = T))) %>%
   ungroup() %>%
-  # average by date: 
+  # average by date:
   group_by(sample_start_date) %>%
-  add_tally(name = 'n_samples') %>%
-  summarize(copies_day_person_M_mn = mean(copies_day_person_M, na.rm = T),
-            copies_day_person_M_se = sd(copies_day_person_M, na.rm = T)/(n_samples)) %>%
+  add_tally(name = "n_samples") %>%
+  summarize(
+    copies_day_person_M_mn = mean(copies_day_person_M, na.rm = T),
+    copies_day_person_M_se = sd(copies_day_person_M, na.rm = T) / (n_samples)
+  ) %>%
   ungroup() %>%
   unique() %>%
   rename(date = sample_start_date) %>%
   # calculate a rolling 7 day average
   # (fill in for missing dates)
-  complete(date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by="days")) %>%
-  arrange(date)
+  complete(date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by = "days")) %>%
+  arrange(date) %>% 
+  mutate(hover_text_load = paste0(format(date, "%b %d, %Y"), "<br>",
+                             "<b>", round(copies_day_person_M_mn, 2), "</b> copies of RNA per day per person"))
 
 head(load_data)
 ```
@@ -107,11 +120,11 @@ head(load_data)
 ## Graph of load
 ```{r load graph}
 # Graph of load
-load_plot <- 
-ggplot(load_data, aes(x = date, y = copies_day_person_M_mn))+ 
-  geom_point() + 
-  geom_errorbar(aes(ymin = copies_day_person_M_mn - copies_day_person_M_se, ymax = copies_day_person_M_mn + copies_day_person_M_se)) + 
-  geom_line(linetype = 'dashed', color = 'gray50') + 
+load_plot <-
+  ggplot(load_data, aes(x = date, y = copies_day_person_M_mn)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = copies_day_person_M_mn - copies_day_person_M_se, ymax = copies_day_person_M_mn + copies_day_person_M_se)) +
+  geom_line(linetype = "dashed", color = "gray50") +
   councilR::council_theme()
 ggplotly(load_plot)
 ```
@@ -120,66 +133,70 @@ ggplotly(load_plot)
 ## Reshape variant data
 ```{r variant proportion}
 variant_data <-
-raw_variant_data %>%
+  raw_variant_data %>%
   # average by date
   group_by(date) %>%
-  summarize(across(contains('frequency'), ~mean(., na.rm = T))) %>%
+  summarize(across(contains("frequency"), ~ mean(., na.rm = T))) %>%
   ungroup() %>%
-  pivot_longer(contains('frequency'), names_to = 'mutation', values_to = 'frequency') %>%
+  pivot_longer(contains("frequency"), names_to = "mutation", values_to = "frequency") %>%
   # frequency to 100
   # mutate(frequency = 100 * frequency) %>%
   mutate(mutation = str_remove(mutation, "_frequency")) %>%
-  mutate(variant = case_when(mutation == 'n501y' ~ "Alpha, Beta & Gamma", 
-                             mutation == 'l452r' ~ 'Delta',
-                             mutation == 'k417n' & date >= '2021-11-18' ~  'Omicron', 
-                             TRUE ~ 'Other')) %>%
+  mutate(variant = case_when(
+    mutation == "n501y" ~ "Alpha, Beta & Gamma",
+    mutation == "l452r" ~ "Delta",
+    mutation == "k417n" & date >= "2021-11-18" ~ "Omicron",
+    TRUE ~ "Other"
+  )) %>%
   mutate(mutation = toupper(mutation)) %>%
   # rolling 7 day average, by variant type
-  complete(nesting(mutation, variant), 
-           date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by="days")) %>%
+  complete(nesting(mutation, variant),
+    date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by = "days")
+  ) %>%
   group_by(mutation, variant) %>%
   # interpolate missing values up to 3 days:
   mutate(frequency_gapfill = zoo::na.approx(frequency, maxgap = 3, na.rm = F)) %>%
-  # now getting a rolling average with a 7-day window: 
+  # now getting a rolling average with a 7-day window:
   mutate(frequency_7day = zoo::rollapplyr(frequency_gapfill, 7, mean, na.rm = T, partial = T, fill = NA)) %>%
   ungroup() %>%
   arrange(date, mutation, variant) %>%
-  filter(!variant == 'Other')
-View(variant_data)
+  filter(!variant == "Other") %>% 
+  mutate(hover_text_variant = paste0(format(date, "%b %d, %Y"), "<br>",
+         "<b>",  variant, "</b> ", round(frequency_7day * 100, digits = 2), "%" ))
+# View(variant_data)
 ```
 
 
 ## Graph of variants
 ```{r variant graph}
-variant_plot<-
-variant_data %>%
+variant_plot <-
+  variant_data %>%
   filter(!variant == "Other") %>%
-  ggplot(aes(x = date, y = frequency, color = variant)) + 
-  geom_line() + 
+  ggplot(aes(x = date, y = frequency, color = variant)) +
+  geom_line() +
   councilR::council_theme()
 
-ggplotly(variant_plot)  
+ggplotly(variant_plot)
 ```
 
 ## Write to .csv
 ```{r}
 
-write.csv(case_data, 'metc-wastewater-covid-monitor/case_data.csv', row.names = F)
+write.csv(case_data, "metc-wastewater-covid-monitor/case_data.csv", row.names = F)
 
 
-write.csv(variant_data, 'data/clean_variant_data.csv', row.names = F)
-write.csv(variant_data, 'metc-wastewater-covid-monitor/clean_variant_data.csv', row.names = F)
-write.csv(load_data, 'data/clean_load_data.csv', row.names = F)
-write.csv(load_data, 'metc-wastewater-covid-monitor/clean_load_data.csv', row.names = F)
+write.csv(variant_data, "data/clean_variant_data.csv", row.names = F)
+write.csv(variant_data, "metc-wastewater-covid-monitor/clean_variant_data.csv", row.names = F)
+write.csv(load_data, "data/clean_load_data.csv", row.names = F)
+write.csv(load_data, "metc-wastewater-covid-monitor/clean_load_data.csv", row.names = F)
 
 # master dataset:
-combined_data <- 
-case_data %>%
-  left_join(load_data) %>%
-  left_join(variant_data)
+combined_data <-
+  case_data %>%
+  left_join(load_data, by = "date") %>%
+  left_join(variant_data, by = "date")
 
-write.csv(combined_data, 'data/combined_data.csv', row.names = F)
+write.csv(combined_data, "data/combined_data.csv", row.names = F)
 
-write.csv(combined_data, 'metc-wastewater-covid-monitor/combined_data.csv', row.names = F)
-
+write.csv(combined_data, "metc-wastewater-covid-monitor/combined_data.csv", row.names = F)
 ```
