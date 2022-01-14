@@ -104,15 +104,79 @@ head(load_data)
 ```
 
 
-## Graph of load
+## Graph of load and cases
 ```{r load graph}
+ylim.cases <- c(0, max(case_data$covid_cases_7day, na.rm = T))
+ylim.load <- c(0, max(load_data$copies_day_person_M_mn, na.rm = T))
+
+b <- diff(ylim.cases)/diff(ylim.load)
+library(ggtext)
 # Graph of load
-load_plot <- 
-ggplot(load_data, aes(x = date, y = copies_day_person_M_mn))+ 
-  geom_point() + 
-  geom_errorbar(aes(ymin = copies_day_person_M_mn - copies_day_person_M_se, ymax = copies_day_person_M_mn + copies_day_person_M_se)) + 
-  geom_line(linetype = 'dashed', color = 'gray50') + 
-  councilR::council_theme()
+load_plot <-
+load_data %>%
+  left_join(case_data) %>%
+  filter(date >= '2021-06-01') %>%
+  ggplot(aes(x = date, y = copies_day_person_M_mn)) +
+  geom_ribbon(
+    aes(ymin = 0, ymax = covid_cases_7day / b),
+    fill = colors$suppGray,
+    alpha = 0.3,
+    na.rm = T,
+    linetype = 'blank'
+  ) +
+  geom_line(
+    aes(y = copies_day_person_M_mn),
+    color = colors$councilBlue,
+    alpha = 0.8,
+    lwd = 1.2,
+    na.rm = T
+  ) +
+  scale_y_continuous(
+    "COVID-19 cases per 100,000 residents (7-day avg.)",
+    sec.axis = sec_axis(
+      ~ . * b,
+      name = "Viral load (M copies per person, per day)",
+      breaks = seq(from = 0, to = 150, by = 25)
+    )
+  ) +
+  labs(
+    title = "<span style='color:#0054A4;'>Viral load in wastewater</span>
+    compared to <span style='color:#888888;'>metro-area COVID-19 cases</span>",
+    x = 'Date',
+    caption = paste0(
+      "\nCase data (gray area) are seven-day rolling averages for the 7-county area provided by MDH\nand downloaded from USAFacts. Viral load (blue line) are daily data.\nLast sample date ",
+      max(load_data$date, na.rm = T),
+      "."
+    )
+  ) +
+  scale_x_date(date_breaks = "month", date_labels = "%b '%y") +
+  councilR::council_theme() +
+  theme(
+    axis.title.y.left = element_text(color = "#888888", vjust = 1),
+    axis.title.y.right = element_text(color = colors$councilBlue, vjust = 1),
+    axis.text.y.left = element_text(color = "#888888", vjust = 0),
+    axis.text.y.right = element_text(color = colors$councilBlue, vjust = 0),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.grid = element_blank(),
+    plot.title = element_markdown(lineheight = 1.1, size = 18, hjust = 0.5),
+    plot.caption = element_text(size = 10, family = 'Helvetica', face = 'italic')
+  )
+
+load_plot
+library(cowplot)
+library(magick)
+logo_file <- "metc-wastewater-covid-monitor/www/main-logo.png"
+
+final_load_plot <-
+cowplot::ggdraw() + 
+  draw_plot(load_plot) +
+  draw_image(logo_file, scale = 0.09, x = -0.4, y = -0.45)
+final_load_plot
+
+ggsave("cases_vs_load.png", final_load_plot, height = 4, width = 5, units = "in", dpi = 200)
+
+
 ggplotly(load_plot)
 ```
 
@@ -163,22 +227,27 @@ variant_data %>%
   filter(!variant == "Other") %>%
   filter(date >= '2021-06-01') %>%
   ggplot(aes(x = date, y = frequency, color = variant, fill = variant)) + 
-  geom_ribbon(aes(x = date, ymin = 0, ymax = frequency_7day, group = variant), alpha = 0.25, na.rm = T, linetype = "blank") + 
-    geom_point(alpha = 0.75)+
-  scale_color_manual(values = c(colors$cdGreen, colors$esBlue, colors$metrostatsDaPurp),
+  geom_line(aes(x = date, y = frequency_7day, color = variant), size = 0.8) +
+  geom_area(position = "identity", aes(x = date, y = frequency_7day, group = variant, fill = variant, color = variant), alpha = 0.25, na.rm = T, lty = "blank") + 
+    geom_point()+
+  scale_color_manual(values = c("#84BB25", "#1D94B7", "#6D3571"),
                      name = "Variant: ")+
-  scale_fill_manual(values = c(colors$cdGreen, colors$esBlue, colors$metrostatsDaPurp), name = "Variant: ")+
+  scale_fill_manual(values = c("#84BB25", "#1D94B7", "#6D3571"), name = "Variant: ")+
   scale_y_continuous(name = "Variant frequency (%)", labels = scales::percent, limits = c(0, 1.05))+
   scale_x_date(name = "Date", breaks = "1 months", date_labels = "%b '%y")+
   councilR::council_theme() +
-  labs(caption = paste0("Shaded areas are seven-day rolling averages. Points are daily data.\nLast sample date ",  max(variant_data$date, na.rm = T), "."))+
+  labs(
+    title = "COVID-19 Variants in Metro Plant Wastewater",
+    caption = paste0("Shaded areas and lines are seven-day rolling averages. Points are daily data.\nLast sample date ",  max(variant_data$date, na.rm = T), "."))+
   # theme_minimal() + 
   theme(panel.grid.minor = element_blank(), 
         panel.grid.major.x = element_blank(),
+        plot.title = element_text(hjust = 0.5),
         legend.position = 'bottom',
         plot.caption = element_text(size = 11, face = 'italic', family = "Helvetica"),
         legend.text = element_text(size = 12))
 #         legend.title = element_text(family = "HelveticaNeueLTStd-Lt", size = 12)) 
+varplot
 
 library(cowplot)
 library(magick)
@@ -201,8 +270,6 @@ ggsave("variants_static_graph.png", final_varplot, height = 4, width = 5, units 
 ```{r}
 
 write.csv(case_data, 'metc-wastewater-covid-monitor/case_data.csv', row.names = F)
-
-
 write.csv(variant_data, 'data/clean_variant_data.csv', row.names = F)
 write.csv(variant_data, 'metc-wastewater-covid-monitor/clean_variant_data.csv', row.names = F)
 write.csv(load_data, 'data/clean_load_data.csv', row.names = F)
