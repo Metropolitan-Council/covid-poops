@@ -24,48 +24,49 @@ ui <- fluidPage(
     ),
     # Application title
     h1("Wastewater Treatment COVID-19 Monitoring Dashboard"),
-    h3('App Subtitle'),
+    h3('Wastewater may yield clues to COVID-19 infection rates'),
     # Show a plot of the generated distribution
     div(style = 'width:1200px;', tabsetPanel(
+        
         tabPanel(
-            "COVID-19 Variants",
+            "Prevalence",
             h4(),
-            h3('Tracking COVID-19 Variants in Metro Plant influent'),
-            h4('N501Y (Alpha, Beta, and Gamma), L452R (Delta) and K417N (Omicron) mutation frequencies in Metro Plant influent'),
-            p("Here is some text to explain what is going on."),
-            plotlyOutput("variantPlot", height = "auto"),
-            p("Data updated ... Data source ... ")
-        ),
-        tabPanel(
-            "COVID-19 Load",
-            h4(),
-            h3('Plot title'),
-            h4('Plot subtitle'),
-            p("Here is some text to explain what is going on."),
+            h4("Tracking COVID-19 Prevalence with Metro Plant Wastewater"),
+            p("The number of reported cases of COVID-19 infections in the seven-county metro area corresponds to the prevalence of the virus in wastewater samples at the Metro treatment plant in Saint Paul. The plant serves a large portion of the seven-county metro area. "),
             plotlyOutput("loadPlot", height = "auto"),
-            p("Data updated ... Data source ... ")
+            p("The blue line shows the total amount of SARS-CoV-2 viral RNA in wastewater flowing into the Metro Plant, in millions copies of SARS-CoV-2 RNA (N1 and N2 gene) per person served by the wastewater area, per day. The gray line shows the seven-day moving average number of new reported COVID-19 infections in the seven-county Metro area per 100,000 residents. Case data are provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org).. New cases tend to lag wastewater detection trends by about 6-8 days."),
+            p("Data last updated 2022-01-13.")
         ),
         tabPanel(
-            "Load vs. Reported Cases",
+            "Variants",
             h4(),
-            h3('A strong relationship between SARS-CoV-2 daily load and reported COVID-19 cases'),
-            h4('Metro Plant influent SARS-CoV-2 daily load versus new cases in the sewered service area, weekly mean values from 11 April 2021 to present.'),
-            p("Here is some text to explain what is going on."),
-            plotlyOutput("casesVload", height = "auto"),
-            p("Data updated ... Data source ... ")
+            h4('COVID-19 variant tracker'),
+            p("As the Delta variant of the SARS-CoV-2 virus declined, the Omicron variant quickly took its place as the dominant variant in wastewater samples at the Metro treatment plant in Saint Paul. The plant serves a large portion of the seven-county metro area. "),
+            plotlyOutput("variantPlot", height = "auto"),
+            p('Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron from the K417N mutation. Presence of K417N mutation before November 18 were inferred to be the Beta variant and are omitted from this image.'),
+            p("Data last updated 2022-01-13.")
         ),
+        # tabPanel(
+        #     "Relationship to Cases",
+        #     h4(),
+        #     h4('Relationship between SARS-CoV-2 daily load and reported COVID-19 cases'),
+        #     p('Metro Plant influent SARS-CoV-2 daily load versus new cases in the sewered service area, weekly mean values from 11 April 2021 to present.'),
+        #     plotlyOutput("casesVload", height = "auto"),
+        #     p("Here is some text to explain what is going on."),
+        #     p("Data last updated 2022-01-13.")
+        # ),
         tabPanel("Download Data",
                  h4(),
-                 p("Data are divided in three sections: load, the variant frequencies, and the number of cases in the sewered service area."),
-                 h3('Load'),
-                 p("Data updated ... Data source ... "),
+                 p("Data are divided in three sections: prevalence (load), variant frequencies, and the number of cases in the sewered service area."),
+                 h3('Prevalence'),
+                 p("SARS-CoV-2 prevalence in wastewater influent is determined from multiple samples of wastewater each day. Units are in millions of copies of N1 and N2 genes, per person in the sewage treatment area, per day. RNA counts are determined by MCES and the Universit of Minnesota Genomics Center. Cases are a per-capita (per 100,000 people) 7-day rolling average case rates for the 7-county Metropolitan Council area, provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org)."),
                  DTOutput("loadData"),
                  h3('Variants'),
-                 p("Data updated ... Data source ... "),
-                 DTOutput("variantData"),
-                 h3("Cases"),
-                 p("Data updated ... Data source ... "),
-                 DTOutput("caseData"))
+                 p("Variant presence and frequency are inferred from the N501Y mutation (Alpha, Beta and Gamma); the L452R mutation (Delta); and the K417N mutation (Omicron). K417N mutations present before November 18, 2020 are assumed to be Beta variants, and are marked as Other in the variant column."),
+                 DTOutput("variantData")
+                 # h3("Cases"),
+                 #  DTOutput("caseData")
+                 )
     ))
 )
 
@@ -77,7 +78,7 @@ server <- function(input, output) {
             tickfont = list(color = colors$esBlue),
             overlaying = "y",
             side = "right",
-            title = list(text = "<b>Viral load in wastewater,</b> M copies/person/day", standoff = 25,
+            title = list(text = "Viral load (M copies per person per day)", standoff = 25,
                          font = list(color = colors$esBlue)),
             zerolinewidth = 2,
             zerolinecolor = '#ffff',
@@ -103,7 +104,7 @@ server <- function(input, output) {
             add_trace(
                 x = ~ date,
                 y = ~ covid_cases_7day,
-                name = "Cases per 100,000",
+                name = "Cases",
                 fill = 'tozeroy',
                 fillcolor = 'rgba(140, 140, 140, .3)',
                 line = list(width = 0.5, color = colors$suppGray)
@@ -119,7 +120,7 @@ server <- function(input, output) {
                     zerolinecolor = '#ffff'
                 ),
                 yaxis = list(
-                    title = list(text = "<b>Reported COVID-19 cases,</b> 7-day average", standoff = 25,
+                    title = list(text = "COVID-19 cases (per capita, 7-day avg.)", standoff = 25,
                                  font = list(color = colors$suppGray)),
                     zerolinewidth = 2,
                     tickfont = list(color = colors$suppGray),
@@ -180,7 +181,7 @@ server <- function(input, output) {
                 
                 yaxis = list(
                     title = list(
-                        text = "<b>Frequency of marker genes (%)</b>",
+                        text = "<b>Frequency of marker mutations (%)</b>",
                         standoff = 25,
                         font = list(color = colors$suppGray)
                     ),
@@ -215,6 +216,7 @@ server <- function(input, output) {
     
     output$loadData<- renderDT(server = FALSE, {
         load_data %>%
+            left_join(case_data) %>%
             DT::datatable(extensions = 'Buttons', 
                           options = list(dom = 'Btrip',
                                          buttons = c('copy', 'excel', 'csv'), 
@@ -235,14 +237,14 @@ server <- function(input, output) {
             DT::formatRound('frequency', 2)
     })
     
-    output$caseData<- renderDT(server = FALSE, {
-        case_data %>%
-            DT::datatable(extensions = 'Buttons', 
-                          options = list(dom = 'Btrip',
-                                         buttons = c('copy', 'excel', 'csv'), 
-                                         searching = FALSE, 
-                                         lengthMenu = FALSE)) 
-    })
+    # output$caseData<- renderDT(server = FALSE, {
+    #     case_data %>%
+    #         DT::datatable(extensions = 'Buttons', 
+    #                       options = list(dom = 'Btrip',
+    #                                      buttons = c('copy', 'excel', 'csv'), 
+    #                                      searching = FALSE, 
+    #                                      lengthMenu = FALSE)) 
+    # })
     
 }
 

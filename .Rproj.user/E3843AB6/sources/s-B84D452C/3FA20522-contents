@@ -161,6 +161,11 @@ variant_data %>%
 ggplotly(variant_plot)  
 ```
 
+## Linear regression with cases
+```{r}
+```
+
+
 ## Write to .csv
 ```{r}
 
