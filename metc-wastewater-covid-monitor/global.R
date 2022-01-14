@@ -44,15 +44,15 @@ combined_data <- read.csv("combined_data.csv") %>%
 
 load_data <- read.csv("clean_load_data.csv") %>%
   mutate(date = as.Date(date)) %>%
-  mutate(across(is.numeric, round, digits = 4))
+  mutate(across(where(is.numeric), round, digits = 4))
 
 variant_data <- read.csv("clean_variant_data.csv") %>%
   mutate(date = as.Date(date)) %>%
-  mutate(across(is.numeric, round, digits = 2))
+  mutate(across(where(is.numeric), round, digits = 2))
 
 case_data <- read.csv("case_data.csv") %>%
   mutate(date = as.Date(date)) %>%
-  mutate(across(is.numeric, round, digits = 4))
+  mutate(across(where(is.numeric), round, digits = 4))
 
 
 font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
