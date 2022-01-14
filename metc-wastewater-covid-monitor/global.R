@@ -19,7 +19,7 @@ combined_data <- read.csv("combined_data.csv") %>%
   mutate(weekof = lubridate::floor_date(date, unit = "week", week_start = 7)) %>%
   select(weekof, covid_cases_7day, copies_day_person_M_mn) %>%
   group_by(weekof) %>%
-  summarize(across(c(covid_cases_7day, copies_day_person_M_mn), ~ mean(., na.rm = T))) 
+  summarize(across(c(covid_cases_7day, copies_day_person_M_mn), ~ mean(., na.rm = T)))
 
 load_data <- read.csv("clean_load_data.csv") %>%
   mutate(date = as.Date(date)) %>%
@@ -67,19 +67,18 @@ ann_list <- list(
   xshift = 0, yshift = -25
 )
 
-hov_lab_list <- list( #----
-                      font = list(
-                        size = 20,
-                        family = font_family_list,
-                        color = councilR::colors$suppBlack
-                      ),
-                      bgcolor = "white",
-                      stroke = list(
-                        councilR::colors$suppGray,
-                        councilR::colors$suppGray,
-                        councilR::colors$suppGray,
-                        councilR::colors$suppGray
-                      ),
-                      padding = list(l = 5, r = 5, b = 5, t = 5)
+hov_lab_list <- list(
+  font = list(
+    size = 20,
+    family = font_family_list,
+    color = councilR::colors$suppWhite
+  ),
+  # bgcolor = "white",
+  stroke = list(
+    councilR::colors$suppGray,
+    councilR::colors$suppGray,
+    councilR::colors$suppGray,
+    councilR::colors$suppGray
+  ),
+  padding = list(l = 5, r = 5, b = 5, t = 5)
 )
-
