@@ -204,8 +204,8 @@ server <- function(input, output) {
       # scatterplot:
       ggplot(aes(
         x = covid_cases_7day,
-        y = copies_day_person_M_mn,
-        label = hover_text_predict
+        y = copies_day_person_M_mn
+        # label = hover_text_predict
       )) +
       geom_point() +
       geom_smooth(
