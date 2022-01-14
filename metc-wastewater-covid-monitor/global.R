@@ -41,6 +41,9 @@ combined_data <- read.csv("combined_data.csv") %>%
                                      # " predicted copies/day/person")) %>% 
   # arrange(predicted_copies)
 
+case_data <- read.csv("case_data.csv") %>%
+  mutate(date = as.Date(date)) %>%
+  mutate(across(where(is.numeric), round, digits = 4))
 
 load_data <- read.csv("clean_load_data.csv") %>%
   mutate(date = as.Date(date)) %>%
@@ -48,11 +51,10 @@ load_data <- read.csv("clean_load_data.csv") %>%
 
 variant_data <- read.csv("clean_variant_data.csv") %>%
   mutate(date = as.Date(date)) %>%
+  left_join(case_data) %>%
   mutate(across(where(is.numeric), round, digits = 2))
 
-case_data <- read.csv("case_data.csv") %>%
-  mutate(date = as.Date(date)) %>%
-  mutate(across(where(is.numeric), round, digits = 4))
+
 
 
 font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
