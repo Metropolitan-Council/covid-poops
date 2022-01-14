@@ -174,7 +174,7 @@ cowplot::ggdraw() +
   draw_image(logo_file, scale = 0.09, x = -0.4, y = -0.45)
 final_load_plot
 
-ggsave("cases_vs_load.png", final_load_plot, height = 4, width = 5, units = "in", dpi = 200)
+ggsave("cases_vs_load_raw.png", final_load_plot, height = 4, width = 5, units = "in", dpi = 200)
 
 
 ggplotly(load_plot)
@@ -205,7 +205,7 @@ raw_variant_data %>%
   # interpolate missing values up to 3 days:
   mutate(frequency_gapfill = zoo::na.approx(frequency, maxgap = 2, na.rm = F)) %>%
   # now getting a rolling average with a 7-day window: 
-  mutate(frequency_7day = zoo::rollapplyr(frequency_gapfill, 7, mean, na.rm = T, partial = T, fill = NA)) %>%
+  mutate(frequency_7day = zoo::rollapply(frequency_gapfill, 7, align = "center", mean, na.rm = T, partial = T, fill = NA)) %>%
   ungroup() %>%
   arrange(date, mutation, variant) %>%
   filter(!variant == 'Other')
@@ -258,7 +258,7 @@ cowplot::ggdraw() +
   draw_plot(varplot) +
   draw_image(logo_file, scale = 0.1, x = -0.4, y = -0.42)
 
-ggsave("variants_static_graph.png", final_varplot, height = 4, width = 5, units = "in", dpi = 200)
+ggsave("variants_static_graph_raw.png", final_varplot, height = 4, width = 5, units = "in", dpi = 200)
 ```
 
 ## Linear regression with cases
