@@ -14,43 +14,43 @@ options(
   datatable.print.rownames = FALSE
 )
 # data:
-combined_data <- read.csv("combined_data.csv") %>%
+combined_data <- read.csv("data/combined_data.csv") %>%
   mutate(date = as.Date(date)) %>%
   mutate(weekof = lubridate::floor_date(date, unit = "week", week_start = 7)) %>%
   select(weekof, covid_cases_7day, copies_day_person_M_mn) %>%
   group_by(weekof) %>%
   summarize(across(c(covid_cases_7day, copies_day_person_M_mn), ~ mean(., na.rm = T)))
-# 
+#
 # ggplot(data = combined_data,
 #        mapping = aes(
 #          x = covid_cases_7day,
 #            y = copies_day_person_M_mn)) +
-# stat_smooth(n = 95, 
+# stat_smooth(n = 95,
 #             method = "lm", aes(outfit = fit<<-..y..))
 # fit
-# 
-# 
+#
+#
 # ggplotly(cases_vs_load_plot, layerData = 2, originalData = FALSE) %>% plotly_data()
 
 
-# combined_data <- combined_data %>% 
+# combined_data <- combined_data %>%
 #   mutate(predicted_copies = fit,
-#          hover_text_predict = paste0("Week starting ", weekof)) %>% 
+#          hover_text_predict = paste0("Week starting ", weekof)) %>%
 #                                      # , "<br>",
-                                     # "<b>", round(predicted_copies), "</b>",
-                                     # " predicted copies/day/person")) %>% 
-  # arrange(predicted_copies)
+# "<b>", round(predicted_copies), "</b>",
+# " predicted copies/day/person")) %>%
+# arrange(predicted_copies)
 
-case_data <- read.csv("case_data.csv") %>%
+case_data <- read.csv("data/case_data.csv") %>%
   mutate(date = as.Date(date)) %>%
   mutate(across(where(is.numeric), round, digits = 4))
 
-load_data <- read.csv("clean_load_data.csv") %>%
+load_data <- read.csv("data/clean_load_data.csv") %>%
   mutate(date = as.Date(date)) %>%
   left_join(case_data) %>%
   mutate(across(where(is.numeric), round, digits = 4))
 
-variant_data <- read.csv("clean_variant_data.csv") %>%
+variant_data <- read.csv("data/clean_variant_data.csv") %>%
   mutate(date = as.Date(date)) %>%
   mutate(across(where(is.numeric), round, digits = 2))
 
@@ -61,7 +61,7 @@ font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
 
 whiteSmoke <- "#F5F5F5"
 
-pal <- c(colors$cdGreen, colors$esBlue, colors$metrostatsDaPurp)
+pal <- c("#84BB25", "#1D94B7", "#6D3571")
 pal <- setNames(pal, c("Omicron", "Delta", "Alpha, Beta & Gamma"))
 
 
@@ -74,7 +74,7 @@ ann_list <- list(
       load_data$date,
       variant_data$date,
       case_data$date
-    ),na.rm = T),
+    ), na.rm = T),
     "</i>"
   ),
   font = list(

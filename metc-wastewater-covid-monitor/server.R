@@ -2,12 +2,12 @@
 
 # Server -----
 server <- function(input, output) {
-  
-  
+
+
   # variant -----
   output$variantPlot <- renderPlotly({
     # browser()
-    variant_data %>% 
+    variant_data %>%
       plot_ly() %>%
       add_trace(
         type = "scatter",
@@ -20,7 +20,7 @@ server <- function(input, output) {
         colors = pal,
         hoverinfo = "text",
         text = ~hover_text_variant
-      )  %>%
+      ) %>%
       add_trace(
         type = "scatter",
         mode = "lines",
@@ -92,13 +92,12 @@ server <- function(input, output) {
             color = councilR::colors$suppBlack
           )
         )
-      ) %>% 
+      ) %>%
       config(displayModeBar = FALSE)
-    
   })
-  
-  
-  
+
+
+
   # load -----
   output$loadPlot <- renderPlotly({
     ay <- list(
@@ -113,7 +112,7 @@ server <- function(input, output) {
       zerolinecolor = colors$suppWhite,
       gridcolor = colors$suppWhite
     )
-    
+
     load_plot <-
       load_data %>%
       # left_join(case_data, by = "date") %>%
@@ -190,12 +189,12 @@ server <- function(input, output) {
         )
       ) %>%
       config(displayModeBar = F)
-    
+
     load_plot
   })
-  
-  
-  
+
+
+
   # case and load -----
   output$casesVload <- renderPlotly({
     cases_vs_load_plot <-
@@ -213,10 +212,10 @@ server <- function(input, output) {
         color = colors$esBlue,
         fill = colors$esBlue
       )
-    
-    
-ggplotly(cases_vs_load_plot) %>% 
-  layout(
+
+
+    ggplotly(cases_vs_load_plot) %>%
+      layout(
         annotations = ann_list,
         hovermode = "closest",
         hoverdistance = "10",
@@ -276,7 +275,7 @@ ggplotly(cases_vs_load_plot) %>%
       ) %>%
       config(displayModeBar = F)
   })
-  
+
   output$loadData <- renderDT(server = FALSE, {
     load_data %>%
       DT::datatable(
@@ -292,8 +291,8 @@ ggplotly(cases_vs_load_plot) %>%
       DT::formatRound("copies_day_person_M_mn", 2) %>%
       DT::formatRound("copies_day_person_M_mn", 2)
   })
-  
-  
+
+
   output$variantData <- renderDT(server = FALSE, {
     variant_data %>%
       DT::datatable(
@@ -308,7 +307,7 @@ ggplotly(cases_vs_load_plot) %>%
       ) %>%
       DT::formatRound("frequency", 2)
   })
-  
+
   output$caseData <- renderDT(server = FALSE, {
     case_data %>%
       DT::datatable(

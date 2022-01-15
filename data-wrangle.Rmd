@@ -11,27 +11,33 @@ library(readxl)
 library(janitor)
 library(tidyverse)
 library(plotly)
+# remotes::install_github("Metropolitan-Council/councilR")
 library(councilR)
+library(cowplot)
+library(magick)
+library(ggtext)
+library(showtext)
 ```
 
 ## Read in raw data from Excel
-### copy data
+
+### Raw load data
 ```{r load}
 raw_load_data <- read_excel("data/raw-load-data.xlsx",
-  col_types = c(
-    "text", "skip", "skip",
-    "date", "skip", "numeric", "numeric",
-    "skip", "skip", "skip", "numeric",
-    "skip", "skip", "skip", "skip", "skip",
-    "skip", "skip", "skip", "skip"
-  ),
-  skip = 1
+                            col_types = c(
+                              "text", "skip", "skip",
+                              "date", "skip", "numeric", "numeric",
+                              "skip", "skip", "skip", "numeric",
+                              "skip", "skip", "skip", "skip", "skip",
+                              "skip", "skip", "skip", "skip"
+                            ),
+                            skip = 1
 ) %>%
   janitor::clean_names() %>%
   mutate(sample_start_date = as.Date(sample_start_date))
 ```
 
-### variant data
+### Variant data
 ```{r variants}
 header1 <- read.csv('data/raw-variant-data.csv') %>% names()
 header2 <- read.csv('data/raw-variant-data.csv', skip = 1) %>% names()
@@ -123,9 +129,11 @@ load_data <-
   # calculate a rolling 7 day average
   # (fill in for missing dates)
   complete(date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by = "days")) %>%
-  arrange(date) %>% 
-  mutate(hover_text_load = paste0(format(date, "%b %d, %Y"), "<br>",
-                             "<b>", round(copies_day_person_M_mn, 2), "</b> copies of RNA per day per person"))
+  arrange(date) %>%
+  mutate(hover_text_load = paste0(
+    format(date, "%b %d, %Y"), "<br>",
+    "<b>", round(copies_day_person_M_mn, 2), "</b> copies of RNA per day per person"
+  ))
 
 head(load_data)
 tail(load_data)
@@ -137,20 +145,20 @@ tail(load_data)
 ylim.cases <- c(0, max(case_data$covid_cases_7day, na.rm = T))
 ylim.load <- c(0, max(load_data$copies_day_person_M_mn, na.rm = T))
 
-b <- diff(ylim.cases)/diff(ylim.load)
+b <- diff(ylim.cases) / diff(ylim.load)
 library(ggtext)
 # Graph of load
 load_plot <-
-load_data %>%
+  load_data %>%
   left_join(case_data) %>%
-  filter(date >= '2021-06-01') %>%
+  filter(date >= "2021-06-01") %>%
   ggplot(aes(x = date, y = copies_day_person_M_mn)) +
   geom_ribbon(
     aes(ymin = 0, ymax = covid_cases_7day / b),
     fill = colors$suppGray,
     alpha = 0.3,
     na.rm = T,
-    linetype = 'blank'
+    linetype = "blank"
   ) +
   geom_line(
     aes(y = copies_day_person_M_mn),
@@ -177,7 +185,7 @@ load_data %>%
   labs(
     title = "<span style='color:#0054A4;'>Viral load in wastewater</span>
     compared to <span style='color:#888888;'>metro-area COVID-19 cases</span>",
-    x = 'Date',
+    x = "Date",
     caption = paste0(
       "\nCase data (gray area) are seven-day rolling averages for the 7-county area provided by MDH\nand downloaded from USAFacts. Viral load (blue line) are daily data.\nLast sample date ",
       max(load_data$date, na.rm = T),
@@ -195,7 +203,7 @@ load_data %>%
     panel.grid.minor.y = element_blank(),
     panel.grid = element_blank(),
     plot.title = element_markdown(lineheight = 1.1, size = 18, hjust = 0.5),
-    plot.caption = element_text(size = 10, family = 'Helvetica', face = 'italic')
+    plot.caption = element_text(size = 10, family = "Helvetica", face = "italic")
   )
 
 load_plot
@@ -220,18 +228,20 @@ variant_data <-
   mutate(mutation = toupper(mutation)) %>%
   # rolling 7 day average, by variant type
   complete(nesting(mutation, variant),
-    date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by = "days")
+           date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by = "days")
   ) %>%
   group_by(mutation, variant) %>%
   # interpolate missing values up to 3 days:
   mutate(frequency_gapfill = zoo::na.approx(frequency, maxgap = 2, na.rm = F)) %>%
-  # now getting a rolling average with a 7-day window: 
+  # now getting a rolling average with a 7-day window:
   mutate(frequency_7day = zoo::rollapply(frequency_gapfill, 7, align = "center", mean, na.rm = T, partial = T, fill = NA)) %>%
   ungroup() %>%
   arrange(date, mutation, variant) %>%
-  filter(!variant == "Other") %>% 
-  mutate(hover_text_variant = paste0(format(date, "%b %d, %Y"), "<br>",
-         "<b>",  variant, "</b> ", round(frequency_7day * 100, digits = 2), "%" ))
+  filter(!variant == "Other") %>%
+  mutate(hover_text_variant = paste0(
+    format(date, "%b %d, %Y"), "<br>",
+    "<b>", variant, "</b> ", round(frequency_7day * 100, digits = 2), "%"
+  ))
 # View(variant_data)
 ```
 
@@ -239,25 +249,26 @@ variant_data <-
 ## Graph of variants
 ```{r variant graph}
 # variant_plot<-
-library(showtext)
 font_add("HelveticaNeueLTStd", "HelveticaNeueLTStd-Lt.otf")
 showtext_auto()
 
 
 
-varplot <- 
-variant_data %>%
+varplot <-
+  variant_data %>%
   filter(!variant == "Other") %>%
-  filter(date >= '2021-06-01') %>%
-  ggplot(aes(x = date, y = frequency, color = variant, fill = variant)) + 
+  filter(date >= "2021-06-01") %>%
+  ggplot(aes(x = date, y = frequency, color = variant, fill = variant)) +
   geom_line(aes(x = date, y = frequency_7day, color = variant), size = 0.8) +
-  geom_area(position = "identity", aes(x = date, y = frequency_7day, group = variant, fill = variant, color = variant), alpha = 0.25, na.rm = T, lty = "blank") + 
-    geom_point()+
-  scale_color_manual(values = c("#84BB25", "#1D94B7", "#6D3571"),
-                     name = "Variant: ")+
-  scale_fill_manual(values = c("#84BB25", "#1D94B7", "#6D3571"), name = "Variant: ")+
-  scale_y_continuous(name = "Variant frequency (%)", labels = scales::percent, limits = c(0, 1.05))+
-  scale_x_date(name = "Date", breaks = "1 months", date_labels = "%b '%y")+
+  geom_area(position = "identity", aes(x = date, y = frequency_7day, group = variant, fill = variant, color = variant), alpha = 0.25, na.rm = T, lty = "blank") +
+  geom_point() +
+  scale_color_manual(
+    values = c("#84BB25", "#1D94B7", "#6D3571"),
+    name = "Variant: "
+  ) +
+  scale_fill_manual(values = c("#84BB25", "#1D94B7", "#6D3571"), name = "Variant: ") +
+  scale_y_continuous(name = "Variant frequency (%)", labels = scales::percent, limits = c(0, 1.05)) +
+  scale_x_date(name = "Date", breaks = "1 months", date_labels = "%b '%y") +
   councilR::council_theme() +
   labs(
     title = "COVID-19 Variants in Metro Plant Wastewater",
@@ -273,8 +284,6 @@ variant_data %>%
 #         legend.title = element_text(family = "HelveticaNeueLTStd-Lt", size = 12)) 
 varplot
 
-library(cowplot)
-library(magick)
 logo_file <- "metc-wastewater-covid-monitor/www/main-logo.png"
 
 ggsave("variants_static_graph_raw.png", varplot, width = 6, height = 4, dpi = 300)
@@ -289,11 +298,11 @@ ggsave("variants_static_graph_raw.png", varplot, width = 6, height = 4, dpi = 30
 ## Write to .csv
 ```{r}
 
-write.csv(case_data, 'metc-wastewater-covid-monitor/case_data.csv', row.names = F)
-write.csv(variant_data, 'data/clean_variant_data.csv', row.names = F)
-write.csv(variant_data, 'metc-wastewater-covid-monitor/clean_variant_data.csv', row.names = F)
-write.csv(load_data, 'data/clean_load_data.csv', row.names = F)
-write.csv(load_data, 'metc-wastewater-covid-monitor/clean_load_data.csv', row.names = F)
+write.csv(case_data, "metc-wastewater-covid-monitor/data/case_data.csv", row.names = F)
+write.csv(variant_data, "data/clean_variant_data.csv", row.names = F)
+write.csv(variant_data, "metc-wastewater-covid-monitor/data/clean_variant_data.csv", row.names = F)
+write.csv(load_data, "data/clean_load_data.csv", row.names = F)
+write.csv(load_data, "metc-wastewater-covid-monitor/data/clean_load_data.csv", row.names = F)
 
 # master dataset:
 combined_data <-
@@ -303,5 +312,5 @@ combined_data <-
 
 write.csv(combined_data, "data/combined_data.csv", row.names = F)
 
-write.csv(combined_data, "metc-wastewater-covid-monitor/combined_data.csv", row.names = F)
+write.csv(combined_data, "metc-wastewater-covid-monitor/data/combined_data.csv", row.names = F)
 ```
