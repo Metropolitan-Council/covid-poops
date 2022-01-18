@@ -276,6 +276,7 @@ server <- function(input, output) {
       config(displayModeBar = F)
   })
 
+  # Prevalence table -----
   output$loadData <- renderDT(server = FALSE, {
     load_data %>%
       DT::datatable(
@@ -293,6 +294,7 @@ server <- function(input, output) {
   })
 
 
+  # variant table -----
   output$variantData <- renderDT(server = FALSE, {
     variant_data %>%
       DT::datatable(
@@ -308,6 +310,8 @@ server <- function(input, output) {
       DT::formatRound("frequency", 2)
   })
 
+  
+  # case table -----
   output$caseData <- renderDT(server = FALSE, {
     case_data %>%
       DT::datatable(
