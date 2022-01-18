@@ -159,7 +159,12 @@ server <- function(input, output) {
           ),
           zerolinewidth = 2,
           gridcolor = colors$suppWhite,
-          zerolinecolor = colors$suppWhite
+          zerolinecolor = colors$suppWhite,
+          tickfont = list(
+            size = 12,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          )
         ),
         yaxis = list(
           title = list(
