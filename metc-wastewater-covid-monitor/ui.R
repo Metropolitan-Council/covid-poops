@@ -1,5 +1,6 @@
 
 fluidPage(
+  tags$head(includeHTML("www/google-analytics.html")),
   navbarPage(
     fluid = TRUE,
     title = div(
