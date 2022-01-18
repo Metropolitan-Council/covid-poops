@@ -33,14 +33,36 @@ raw_load_data <- read_excel("data/raw-load-data.xlsx",
 
 ### variant data
 ```{r variants}
-header <- scan("file.txt", nlines = 1, what = character())
-data <- read.table("file.txt", skip = 2, header = FALSE)
+header1 <- read.csv('data/raw-variant-data.csv') %>% names()
+header2 <- read.csv('data/raw-variant-data.csv', skip = 1) %>% names()
+header <- paste0(header1, header2) 
 
 raw_variant_data <- read.csv(
- 'data/raw-variant-data.csv'
+ 'data/raw-variant-data.csv', skip = 1
 ) %>%
+  set_names(header) %>%
   janitor::clean_names() %>%
-  mutate(date = as.Date(date))
+  select(-l452r_sample_start_date_1, -k417n_sample_start_date_2) %>%
+  rename(l452r_sample_id = l452r_1sample, 
+         k417n_sample_id = k417n_1sample_1) %>%
+  rename(n501y_frequency= n501y_1frequency_of_mutant_allele, 
+         l452r_frequency = l452r_2frequency_of_mutant_allele_1,
+         k417n_frequency = k417n_2frequency_of_mutant_allele_2) %>%
+  rename(date = i_n501y_sample_start_date) 
+
+variant_samples <- raw_variant_data %>%
+  select(date, contains('sample_id')) %>%
+  pivot_longer(contains('sample_id'), names_to = 'mutation', values_to = 'sample_id') %>%
+  mutate(mutation = str_remove(mutation, '_sample_id'))
+
+
+variant_frequencies <- raw_variant_data %>%
+  select(date, contains('frequency')) %>%
+  pivot_longer(contains('frequency'), names_to = 'mutation', values_to = 'frequency') %>%
+  mutate(mutation = str_remove(mutation, '_frequency'))
+
+
+variant_data <- merge(variant_samples, variant_frequencies)
 ```
 
 ### case load from USA Facts
@@ -67,7 +89,6 @@ case_data <- raw_case_data %>%
 
 
 ## Cacluate load  
-
 ```{r load reshape}
 seq_date <- function(x) seq(min(x, na.rm = T), max(x, na.rm = T), by = "day")
 all_dates <- seq_date(raw_load_data$sample_start_date)
@@ -190,15 +211,12 @@ ggplotly(load_plot)
 ## Reshape variant data
 ```{r variant proportion}
 variant_data <-
-  raw_variant_data %>%
+  variant_data %>%
+  mutate(date = as.Date(date, format = "%m/%d/%Y")) %>%
   # average by date
-  group_by(date) %>%
-  summarize(across(contains("frequency"), ~ mean(., na.rm = T))) %>%
+  group_by(date, mutation) %>%
+  summarize(frequency= mean(frequency, na.rm = T)) %>%
   ungroup() %>%
-  pivot_longer(contains("frequency"), names_to = "mutation", values_to = "frequency") %>%
-  # frequency to 100
-  # mutate(frequency = 100 * frequency) %>%
-  mutate(mutation = str_remove(mutation, "_frequency")) %>%
   mutate(variant = case_when(
     mutation == "n501y" ~ "Alpha, Beta & Gamma",
     mutation == "l452r" ~ "Delta",
@@ -249,12 +267,13 @@ variant_data %>%
   councilR::council_theme() +
   labs(
     title = "COVID-19 Variants in Metro Plant Wastewater",
-    caption = paste0("Shaded areas and lines are seven-day rolling averages. Points are daily data.\nLast sample date ",  max(variant_data$date, na.rm = T), "."))+
+    caption = paste0("\nShaded areas and lines are seven-day rolling averages. Points are daily data.\nLast sample date ",  max(variant_data$date, na.rm = T), "."))+
   # theme_minimal() + 
   theme(panel.grid.minor = element_blank(), 
         panel.grid.major.x = element_blank(),
         plot.title = element_text(hjust = 0.5),
         legend.position = 'bottom',
+        legend.direction = "vertical",
         plot.caption = element_text(size = 11, face = 'italic', family = "Helvetica"),
         legend.text = element_text(size = 12))
 #         legend.title = element_text(family = "HelveticaNeueLTStd-Lt", size = 12)) 
@@ -264,12 +283,12 @@ library(cowplot)
 library(magick)
 logo_file <- "metc-wastewater-covid-monitor/www/main-logo.png"
 
-final_varplot <-
+png("variants_static_graph_raw.png", width = 1200, height = 600, pointsize = 20)
 cowplot::ggdraw() + 
-  draw_plot(varplot) +
-  draw_image(logo_file, scale = 0.1, x = -0.4, y = -0.42)
+  draw_plot(varplot)+
+  draw_image(logo_file, scale = 0.09, x = -0.4, y = -0.45)
+dev.off()
 
-ggsave("variants_static_graph_raw.png", final_varplot, height = 4, width = 5, units = "in", dpi = 200)
 ```
 
 ## Linear regression with cases
