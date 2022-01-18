@@ -480,8 +480,9 @@ ggsave("fig/variants_static_graph_small.png",
 ```{r}
 
 write.csv(case_data, "metc-wastewater-covid-monitor/data/case_data.csv", row.names = F)
-write.csv(variant_data, "data/clean_variant_data.csv", row.names = F)
-write.csv(variant_data, "metc-wastewater-covid-monitor/data/clean_variant_data.csv", row.names = F)
+write.csv(variant_data_new, "data/clean_variant_data.csv", row.names = F)
+write.csv(variant_data_new, "metc-wastewater-covid-monitor/data/clean_variant_data.csv", row.names = F)
+
 write.csv(load_data, "data/clean_load_data.csv", row.names = F)
 write.csv(load_data, "metc-wastewater-covid-monitor/data/clean_load_data.csv", row.names = F)
 
@@ -489,7 +490,7 @@ write.csv(load_data, "metc-wastewater-covid-monitor/data/clean_load_data.csv", r
 combined_data <-
   case_data %>%
   left_join(load_data, by = "date") %>%
-  left_join(variant_data, by = "date")
+  left_join(variant_data_new, by = "date")
 
 write.csv(combined_data, "data/combined_data.csv", row.names = F)
 
