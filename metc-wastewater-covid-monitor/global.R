@@ -73,7 +73,8 @@ ann_list <- list(
     max(c(
       load_data$date,
       variant_data$date,
-      case_data$date
+      case_data$date,
+      combined_data$date
     ), na.rm = T),
     "</i>"
   ),
