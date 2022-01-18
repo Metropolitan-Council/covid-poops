@@ -36,7 +36,7 @@ fluidPage(
       h3("Tracking COVID-19 Prevalence with Metro Plant Wastewater"),
       p("The number of reported cases of COVID-19 infections in the seven-county metro area corresponds to the prevalence of the virus in wastewater samples at the Metro treatment plant in Saint Paul. The plant serves a large portion of the seven-county metro area. "),
       plotlyOutput("loadPlot", height = "auto"),
-      p("The blue line shows the total amount of SARS-CoV-2 viral RNA in wastewater flowing into the Metro Plant, in millions copies of SARS-CoV-2 RNA (N1 and N2 gene) per person served by the wastewater area, per day. The gray line shows the seven-day moving average number of new reported COVID-19 infections in the seven-county Metro area per 100,000 residents. Case data are provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org).. New cases tend to lag wastewater detection trends by about 6-8 days.")
+      p("The blue line shows the total amount of SARS-CoV-2 viral RNA in wastewater flowing into the Metro Plant, in millions copies of SARS-CoV-2 RNA (N1 and N2 gene) per person served by the wastewater area, per day. The gray line shows the seven-day moving average number of new reported COVID-19 infections in the seven-county Metro area per 100,000 residents. Case data are provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org). New cases tend to lag wastewater detection trends by about 6-8 days.")
       # p("Data last updated 2022-01-13.")
     ),
     tabPanel(
@@ -62,14 +62,16 @@ fluidPage(
       "Download Data",
       br(),
       # load -----
-      p("Data are divided in three sections: prevalence (load), variant frequencies, and the number of cases in the sewered service area."),
+      p("Data are divided in two sections: prevalence (load) and cases, and variant frequencies"),
       h3("Prevalence"),
       p("SARS-CoV-2 prevalence in wastewater influent is determined from multiple samples of wastewater each day. Units are in millions of copies of N1 and N2 genes, per person in the sewage treatment area, per day. RNA counts are determined by MCES and the University of Minnesota Genomics Center. Cases are a per-capita (per 100,000 people) 7-day rolling average case rates for the 7-county Metropolitan Council area, provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org)."),
+      br(),
       DTOutput("loadData"),
 
       # variants -----
       h3("Variants"),
       p("Variant presence and frequency are inferred from the N501Y mutation (Alpha, Beta and Gamma); the L452R mutation (Delta); and the K417N mutation (Omicron). K417N mutations present before November 18, 2020 are assumed to be Beta variants, and are marked as Other in the variant column."),
+      br(),
       DTOutput("variantData"),
 
       # # cases -----
