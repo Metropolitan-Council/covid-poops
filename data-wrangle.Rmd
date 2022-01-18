@@ -47,62 +47,75 @@ raw_load_data <- read_excel("data/raw-load-data.xlsx",
 
 ### Variant data
 ```{r variants}
-header1 <- read.csv('data/raw-variant-data.csv') %>% names()
-header2 <- read.csv('data/raw-variant-data.csv', skip = 1) %>% names()
-header <- paste0(header1, header2) 
+header1 <- read.csv("data/raw-variant-data.csv") %>% names()
+header2 <- read.csv("data/raw-variant-data.csv", skip = 1) %>% names()
+header <- paste0(header1, header2)
 
 raw_variant_data <- read.csv(
- 'data/raw-variant-data.csv', skip = 1
+  "data/raw-variant-data.csv",
+  skip = 1
 ) %>%
   set_names(header) %>%
   janitor::clean_names() %>%
   select(-l452r_sample_start_date_1, -k417n_sample_start_date_2) %>%
-  rename(l452r_sample_id = l452r_1sample, 
-         k417n_sample_id = k417n_1sample_1) %>%
-  rename(n501y_frequency= n501y_1frequency_of_mutant_allele, 
-         l452r_frequency = l452r_2frequency_of_mutant_allele_1,
-         k417n_frequency = k417n_2frequency_of_mutant_allele_2) %>%
-  rename(date = i_n501y_sample_start_date) 
+  rename(
+    l452r_sample_id = l452r_1sample,
+    k417n_sample_id = k417n_1sample_1,
+    n501y_sample_id = n501y_1sample_id
+  ) %>%
+  rename(
+    n501y_frequency = n501y_2frequency_of_mutant_allele,
+    l452r_frequency = l452r_2frequency_of_mutant_allele_1,
+    k417n_frequency = k417n_2frequency_of_mutant_allele_2
+  ) %>%
+  rename(date = n501y_sample_start_date)
 
 variant_samples <- raw_variant_data %>%
-  select(date, contains('sample_id')) %>%
-  pivot_longer(contains('sample_id'), names_to = 'mutation', values_to = 'sample_id') %>%
-  mutate(mutation = str_remove(mutation, '_sample_id'))
+  select(date, contains("sample_id")) %>%
+  pivot_longer(contains("sample_id"), 
+               names_to = "mutation", values_to = "sample_id") %>%
+  mutate(mutation = str_remove(mutation, "_sample_id"))
 
 
 variant_frequencies <- raw_variant_data %>%
-  select(date, contains('frequency')) %>%
-  pivot_longer(contains('frequency'), names_to = 'mutation', values_to = 'frequency') %>%
-  mutate(mutation = str_remove(mutation, '_frequency'))
+  select(date, contains("frequency")) %>%
+  pivot_longer(contains("frequency"),
+               names_to = "mutation", values_to = "frequency") %>%
+  mutate(mutation = str_remove(mutation, "_frequency"))
 
 
-variant_data <- merge(variant_samples, variant_frequencies)
+variant_data <- full_join(variant_samples, variant_frequencies) 
 ```
 
-### case load from USA Facts
+### Case load from USA Facts  
+
+
 ```{r}
-raw_case_data <- read.csv('https://static.usafacts.org/public/data/covid-19/covid_confirmed_usafacts.csv?_ga=2.86006619.233414847.1642517751-2016304881.1642174657')
+raw_case_data <- read.csv("https://static.usafacts.org/public/data/covid-19/covid_confirmed_usafacts.csv?_ga=2.86006619.233414847.1642517751-2016304881.1642174657")
 
 case_data <- raw_case_data %>%
   janitor::clean_names() %>%
-  filter(county_name %in% c('Hennepin County ', 'Ramsey County ', 'Scott County ', 'Dakota County ', 'Washington County ', 'Anoka County ', 'Carver County ') & state == 'MN') %>%
-  select(-county_fips, -state, -state_fips)%>%
-  pivot_longer(cols = contains("x"), names_to = 'date', values_to = 'covid_cases_total') %>%
+  filter(county_name %in% c("Hennepin County ", "Ramsey County ", "Scott County ", "Dakota County ", "Washington County ", "Anoka County ", "Carver County ") & state == "MN") %>%
+  select(-county_fips, -state, -state_fips) %>%
+  pivot_longer(cols = contains("x"), names_to = "date", values_to = "covid_cases_total") %>%
   mutate(date = str_remove(date, "x")) %>%
   mutate(date = as.Date(date, format = "%Y_%m_%d")) %>%
   group_by(date) %>%
   summarize(covid_cases_total = sum(covid_cases_total)) %>%
-  mutate(covid_cases_new = covid_cases_total - lag(covid_cases_total,1)) %>%
-  mutate(covid_cases_per100K = 100000*covid_cases_new/(3163104)) %>%
+  mutate(covid_cases_new = covid_cases_total - lag(covid_cases_total, 1)) %>%
+  mutate(covid_cases_per100K = 100000 * covid_cases_new / (3163104)) %>%
   # mutate(frequency_gapfill = zoo::na.approx(frequency, maxgap = 2, na.rm = F)) %>%
-  # now getting a rolling average with a 7-day window: 
+  # now getting a rolling average with a 7-day window:
   mutate(covid_cases_7day = zoo::rollapply(covid_cases_per100K, 7, align = "right", mean, na.rm = T, partial = T, fill = NA)) %>%
-  mutate(hover_text_case = paste0(format(date, "%b %d, %Y"), "<br>",
-                             "<b>", round(covid_cases_7day, 2), "</b> cases per 100,000 people") )
+  mutate(hover_text_case = paste0(
+    format(date, "%b %d, %Y"), "<br>",
+    "<b>", round(covid_cases_7day, 2), "</b> cases per 100,000 people"
+  ))
 ```
 
 
-## Cacluate load  
+## Cacluate load   
+
 ```{r load reshape}
 seq_date <- function(x) seq(min(x, na.rm = T), max(x, na.rm = T), by = "day")
 all_dates <- seq_date(raw_load_data$sample_start_date)
