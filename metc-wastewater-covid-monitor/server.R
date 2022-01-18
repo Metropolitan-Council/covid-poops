@@ -284,36 +284,7 @@ server <- function(input, output) {
   # Prevalence table -----
   output$loadData <- renderDT(server = FALSE, {
     load_data %>%
-      select(-hover_text_case, -hover_text_load) %>% 
-      DT::datatable(
-        rownames = FALSE,
-        extensions = "Buttons",
-        options = list(
-          dom = "Btrip",
-          buttons = c("copy", "excel", "csv"),
-          searching = FALSE,
-          lengthMenu = FALSE
-        ),
-        colnames = c("Date",
-                     "7-day average viral load in wastewater, M copies/person/day",
-                     "Standard error",
-                     "Total COVID cases",
-                     "New COVID cases",
-                     "COVID cases per capita",
-                     "7-day rolling average COVID cases per capita")
-      ) %>%
-      DT::formatSignif(columns = 2:7, digits = 2) %>% 
-      DT::formatRound(2:7, 2) %>% 
-      DT::formatRound(4:5, 0) 
-  })
-
-  
-  # variant table -----
-  output$variantData <- renderDT(server = FALSE, {
-    variant_data %>%
-      select(-hover_text_variant,
-             -frequency_gapfill) %>% 
-      filter(!is.na(frequency)) %>% 
+      select(-hover_text_case, -hover_text_load) %>%
       DT::datatable(
         rownames = FALSE,
         extensions = "Buttons",
@@ -324,8 +295,41 @@ server <- function(input, output) {
           lengthMenu = FALSE
         ),
         colnames = c(
-          "Mutation", 
-          "Variant", 
+          "Date",
+          "7-day average viral load in wastewater, M copies/person/day",
+          "Standard error",
+          "Total COVID cases",
+          "New COVID cases",
+          "COVID cases per capita",
+          "7-day rolling average COVID cases per capita"
+        )
+      ) %>%
+      DT::formatSignif(columns = 2:7, digits = 2) %>%
+      DT::formatRound(2:7, 2) %>%
+      DT::formatRound(4:5, 0)
+  })
+
+
+  # variant table -----
+  output$variantData <- renderDT(server = FALSE, {
+    variant_data %>%
+      select(
+        -hover_text_variant,
+        -frequency_gapfill
+      ) %>%
+      filter(!is.na(frequency)) %>%
+      DT::datatable(
+        rownames = FALSE,
+        extensions = "Buttons",
+        options = list(
+          dom = "Btrip",
+          buttons = c("copy", "excel", "csv"),
+          searching = FALSE,
+          lengthMenu = FALSE
+        ),
+        colnames = c(
+          "Mutation",
+          "Variant",
           "Date",
           "Frequency",
           "7-day rolling average frequency"
@@ -334,7 +338,7 @@ server <- function(input, output) {
       DT::formatRound("frequency", 2)
   })
 
-  
+
   # case table -----
   output$caseData <- renderDT(server = FALSE, {
     case_data %>%

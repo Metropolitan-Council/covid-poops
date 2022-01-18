@@ -81,15 +81,15 @@ fluidPage(
     )
   ),
   tags$div("This project is open-source. See our GitHub repository here",
-           tags$a(href = "https://github.com/Metropolitan-Council/covid-poops",
-                  shiny::icon("external-link-alt", lib = "font-awesome"),
-                  target = "_blank"),
-           style = "font-size: 1.5rem;
+    tags$a(
+      href = "https://github.com/Metropolitan-Council/covid-poops",
+      shiny::icon("external-link-alt", lib = "font-awesome"),
+      target = "_blank"
+    ),
+    style = "font-size: 1.5rem;
              display: block;
              text-align: right;
-             padding: 1%;", 
-           align = "right"
+             padding: 1%;",
+    align = "right"
   ),
-  
-  
 )
