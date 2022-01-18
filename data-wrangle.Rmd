@@ -128,6 +128,7 @@ load_data <-
                              "<b>", round(copies_day_person_M_mn, 2), "</b> copies of RNA per day per person"))
 
 head(load_data)
+tail(load_data)
 ```
 
 
@@ -152,6 +153,13 @@ load_data %>%
     linetype = 'blank'
   ) +
   geom_line(
+    aes(y = copies_day_person_M_mn),
+    color = colors$councilBlue,
+    alpha = 0.8,
+    lwd = 1.2,
+    na.rm = T
+  ) +
+    geom_point(
     aes(y = copies_day_person_M_mn),
     color = colors$councilBlue,
     alpha = 0.8,
