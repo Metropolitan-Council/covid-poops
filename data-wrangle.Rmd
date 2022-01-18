@@ -159,13 +159,13 @@ load_data %>%
     lwd = 1.2,
     na.rm = T
   ) +
-    geom_point(
-    aes(y = copies_day_person_M_mn),
-    color = colors$councilBlue,
-    alpha = 0.8,
-    lwd = 1.2,
-    na.rm = T
-  ) +
+  #   geom_point(
+  #   aes(y = copies_day_person_M_mn),
+  #   color = colors$councilBlue,
+  #   alpha = 0.8,
+  #   lwd = 1.2,
+  #   na.rm = T
+  # ) +
   scale_y_continuous(
     "COVID-19 cases per 100,000 residents (7-day avg.)",
     sec.axis = sec_axis(
@@ -199,20 +199,6 @@ load_data %>%
   )
 
 load_plot
-library(cowplot)
-library(magick)
-logo_file <- "metc-wastewater-covid-monitor/www/main-logo.png"
-
-final_load_plot <-
-cowplot::ggdraw() + 
-  draw_plot(load_plot) +
-  draw_image(logo_file, scale = 0.09, x = -0.4, y = -0.45)
-final_load_plot
-
-ggsave("cases_vs_load_raw.png", final_load_plot, height = 4, width = 5, units = "in", dpi = 200)
-
-
-ggplotly(load_plot)
 ```
 
 
@@ -281,7 +267,7 @@ variant_data %>%
         panel.grid.major.x = element_blank(),
         plot.title = element_text(hjust = 0.5),
         legend.position = 'bottom',
-        legend.direction = "vertical",
+        legend.direction = "horizontal",
         plot.caption = element_text(size = 11, face = 'italic', family = "Helvetica"),
         legend.text = element_text(size = 12))
 #         legend.title = element_text(family = "HelveticaNeueLTStd-Lt", size = 12)) 
@@ -291,11 +277,7 @@ library(cowplot)
 library(magick)
 logo_file <- "metc-wastewater-covid-monitor/www/main-logo.png"
 
-png("variants_static_graph_raw.png", width = 1200, height = 600, pointsize = 20)
-cowplot::ggdraw() + 
-  draw_plot(varplot)+
-  draw_image(logo_file, scale = 0.09, x = -0.4, y = -0.45)
-dev.off()
+ggsave("variants_static_graph_raw.png", varplot, width = 6, height = 4, dpi = 300)
 
 ```
 
