@@ -7,6 +7,7 @@ library(lubridate)
 library(plotly)
 library(councilR)
 library(DT)
+library(gh)
 
 options(
   launch.browser = TRUE,
