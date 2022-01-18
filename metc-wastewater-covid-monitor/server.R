@@ -296,8 +296,8 @@ server <- function(input, output) {
         ),
         colnames = c(
           "Date",
-          "7-day average viral load in wastewater, M copies/person/day",
-          "Standard error",
+          "Viral load in wastewater, M copies/person/day",
+          "Standard error of viral load",
           "Total COVID cases",
           "New COVID cases",
           "COVID cases per capita",
