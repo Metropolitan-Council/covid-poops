@@ -1,9 +1,10 @@
 ---
 title: "data-processing"
 author: "Ashley Asmus"
-date: "1/12/2022"
+date: "`r format(Sys.time(), '%d %B %Y')`"
 output: html_document
 ---
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
