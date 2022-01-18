@@ -1,6 +1,5 @@
 
 fluidPage(
-  tags$head(includeHTML("www/google-analytics.html")),
   navbarPage(
     fluid = TRUE,
     title = div(
@@ -23,7 +22,8 @@ fluidPage(
     tags$head(
       tags$link(rel = "stylesheet", type = "text/css", href = "style.css"),
       tags$link(rel = "stylesheet", type = "text/css", href = "font.css"),
-      tags$link(rel = "stylesheet", type = "text/css", href = "colors.css")
+      tags$link(rel = "stylesheet", type = "text/css", href = "colors.css"),
+      includeHTML("www/google-analytics.html")
     ),
     # Application title
     # h1("Wastewater Treatment COVID-19 Monitoring Dashboard"),
