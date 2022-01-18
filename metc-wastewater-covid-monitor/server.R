@@ -2,12 +2,12 @@
 
 # Server -----
 server <- function(input, output) {
-  
-  
+
+
   # variant -----
   output$variantPlot <- renderPlotly({
     # browser()
-    variant_data %>% 
+    variant_data %>%
       plot_ly() %>%
       add_trace(
         type = "scatter",
@@ -20,7 +20,7 @@ server <- function(input, output) {
         colors = pal,
         hoverinfo = "text",
         text = ~hover_text_variant
-      )  %>%
+      ) %>%
       add_trace(
         type = "scatter",
         mode = "lines",
@@ -92,13 +92,12 @@ server <- function(input, output) {
             color = councilR::colors$suppBlack
           )
         )
-      ) %>% 
+      ) %>%
       config(displayModeBar = FALSE)
-    
   })
-  
-  
-  
+
+
+
   # load -----
   output$loadPlot <- renderPlotly({
     ay <- list(
@@ -113,7 +112,7 @@ server <- function(input, output) {
       zerolinecolor = colors$suppWhite,
       gridcolor = colors$suppWhite
     )
-    
+
     load_plot <-
       load_data %>%
       # left_join(case_data, by = "date") %>%
@@ -160,7 +159,12 @@ server <- function(input, output) {
           ),
           zerolinewidth = 2,
           gridcolor = colors$suppWhite,
-          zerolinecolor = colors$suppWhite
+          zerolinecolor = colors$suppWhite,
+          tickfont = list(
+            size = 12,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          )
         ),
         yaxis = list(
           title = list(
@@ -190,12 +194,12 @@ server <- function(input, output) {
         )
       ) %>%
       config(displayModeBar = F)
-    
+
     load_plot
   })
-  
-  
-  
+
+
+
   # case and load -----
   output$casesVload <- renderPlotly({
     cases_vs_load_plot <-
@@ -213,10 +217,10 @@ server <- function(input, output) {
         color = colors$esBlue,
         fill = colors$esBlue
       )
-    
-    
-ggplotly(cases_vs_load_plot) %>% 
-  layout(
+
+
+    ggplotly(cases_vs_load_plot) %>%
+      layout(
         annotations = ann_list,
         hovermode = "closest",
         hoverdistance = "10",
@@ -276,9 +280,11 @@ ggplotly(cases_vs_load_plot) %>%
       ) %>%
       config(displayModeBar = F)
   })
-  
+
+  # Prevalence table -----
   output$loadData <- renderDT(server = FALSE, {
     load_data %>%
+      select(-hover_text_case, -hover_text_load) %>%
       DT::datatable(
         rownames = FALSE,
         extensions = "Buttons",
@@ -287,15 +293,31 @@ ggplotly(cases_vs_load_plot) %>%
           buttons = c("copy", "excel", "csv"),
           searching = FALSE,
           lengthMenu = FALSE
+        ),
+        colnames = c(
+          "Date",
+          "Viral load in wastewater, M copies/person/day",
+          "Standard error of viral load",
+          "Total COVID cases",
+          "New COVID cases",
+          "COVID cases per capita",
+          "7-day rolling average COVID cases per capita"
         )
       ) %>%
-      DT::formatRound("copies_day_person_M_mn", 2) %>%
-      DT::formatRound("copies_day_person_M_mn", 2)
+      DT::formatSignif(columns = 2:7, digits = 2) %>%
+      DT::formatRound(2:7, 2) %>%
+      DT::formatRound(4:5, 0)
   })
-  
-  
+
+
+  # variant table -----
   output$variantData <- renderDT(server = FALSE, {
     variant_data %>%
+      select(
+        -hover_text_variant,
+        -frequency_gapfill
+      ) %>%
+      filter(!is.na(frequency)) %>%
       DT::datatable(
         rownames = FALSE,
         extensions = "Buttons",
@@ -304,11 +326,20 @@ ggplotly(cases_vs_load_plot) %>%
           buttons = c("copy", "excel", "csv"),
           searching = FALSE,
           lengthMenu = FALSE
+        ),
+        colnames = c(
+          "Mutation",
+          "Variant",
+          "Date",
+          "Frequency",
+          "7-day rolling average frequency"
         )
       ) %>%
       DT::formatRound("frequency", 2)
   })
-  
+
+
+  # case table -----
   output$caseData <- renderDT(server = FALSE, {
     case_data %>%
       DT::datatable(
