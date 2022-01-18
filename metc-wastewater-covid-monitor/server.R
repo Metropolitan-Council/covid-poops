@@ -124,9 +124,9 @@ server <- function(input, output) {
         name = "Viral load",
         size = 1,
         yaxis = "y2",
-        fill = "tozeroy",
-        fillcolor = "rgba(0, 154, 199, .5)",
-        line = list(width = 0.5, color = colors$esBlue),
+        # fill = "tozeroy",
+        # fillcolor = "rgba(0, 154, 199, .5)",
+        line = list(width = 2, color = colors$esBlue),
         hoverinfo = "text",
         text = ~hover_text_load
       ) %>%
@@ -135,7 +135,7 @@ server <- function(input, output) {
         y = ~covid_cases_7day,
         name = "Cases per 100,000",
         fill = "tozeroy",
-        fillcolor = "rgba(140, 140, 140, .3)",
+        fillcolor = "rgba(160, 160, 160, .3)",
         line = list(width = 0.5, color = colors$suppGray),
         hoverinfo = "text",
         text = ~hover_text_case
