@@ -14,8 +14,8 @@ font_add("Arial Narrow Italic",
 )
 showtext_auto()
 
-load_data <- read_csv("data/clean_load_data.csv")
-case_data <- read_csv("metc-wastewater-covid-monitor/data/case_data.csv")
+load_data <- read_csv("data/clean_load_data.csv", show_col_types = F)
+case_data <- read_csv("metc-wastewater-covid-monitor/data/case_data.csv", show_col_types = F)
 
 ## LARGE -----
 ylim.cases <- c(0, max(case_data$covid_cases_7day, na.rm = T))
@@ -25,7 +25,7 @@ b <- diff(ylim.cases) / diff(ylim.load)
 # Graph of load
 load_plot <-
   load_data %>%
-  left_join(case_data) %>%
+  left_join(case_data, by = "date") %>%
   filter(date >= "2021-06-01") %>%
   ggplot(aes(x = date, y = copies_day_person_M_mn)) +
   geom_ribbon(
@@ -112,7 +112,7 @@ ggsave("fig/cases_vs_load_large.png",
 
 ## SMALL ----
 load_data %>%
-  left_join(case_data) %>%
+  left_join(case_data, by = "date") %>%
   filter(date >= "2021-06-01") %>%
   ggplot(aes(x = date, y = copies_day_person_M_mn)) +
   geom_ribbon(

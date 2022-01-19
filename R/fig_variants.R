@@ -11,7 +11,7 @@ font_add("Arial Narrow Italic",
 )
 showtext_auto()
 
-variant_data_new <- read_csv("data/clean_variant_data.csv")
+variant_data_new <- read_csv("data/clean_variant_data.csv", show_col_types = F)
 
 
 ## LARGE -----
