@@ -18,7 +18,7 @@ viral RNA load in Metro Plant wastewater.
 
 All processing scripts for data and figures are in ./R. The prefix “d”
 indicates data processing, while the prefix “fig” indicates figure
-processing. `0_run_all.R` runs all scripts.
+processing. `0_run_all.R` runs all scripts and saves final data.
 
 <PRE class="fansi fansi-output"><CODE>#&gt; <span style='color: #0000BB; font-weight: bold;'>R</span>
 #&gt; ├── <span style='color: #00BB00;'>0_run_all.R</span>

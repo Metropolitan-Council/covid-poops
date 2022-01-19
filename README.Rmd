@@ -30,7 +30,7 @@ This repository contains the code for cleaning, transforming and visualizing dat
 
 ## Structure  
 
-All processing scripts for data and figures are in ./R. The prefix "d" indicates data processing, while the prefix "fig" indicates figure processing. `0_run_all.R` runs all scripts and saves final data.  
+All processing scripts for data and figures are in ./R. The prefix "d" indicates data processing, while the prefix "fig" indicates figure processing. `0_run_all.R` runs all scripts and saves final data. 
 
 ```{r}
 fs::dir_tree("R", recurse = 1)
