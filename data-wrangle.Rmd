@@ -149,7 +149,6 @@ load_data <-
   ungroup() %>%
   unique() %>%
   rename(date = sample_start_date) %>%
-  # calculate a rolling 7 day average
   # (fill in for missing dates)
   complete(date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by = "days")) %>%
   arrange(date) %>%
