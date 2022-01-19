@@ -75,7 +75,8 @@ variant_data_new <-
   mutate(hover_text_variant = paste0(
     format(date, "%b %d, %Y"), "<br>",
     "<b>", variant, "</b> ", round(frequency_7day * 100, digits = 2), "%"
-  ))
+  )) %>% 
+  mutate(across(where(is.numeric), round, digits = 6))
 
 write.csv(variant_data_new, "data/clean_variant_data.csv", row.names = F)
 write.csv(variant_data_new, "metc-wastewater-covid-monitor/data/clean_variant_data.csv", row.names = F)
