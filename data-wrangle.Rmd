@@ -217,7 +217,13 @@ load_plot <-
     )
   ) +
   scale_x_date(date_breaks = "month", date_labels = "%b '%y") +
-  councilR::council_theme(use_showtext = TRUE) +
+   councilR::council_theme(
+    # size_header = 7,
+    # size_axis_text = 5,
+    # size_axis_title = 6,
+    # size_caption = 3,
+    use_showtext = T
+  ) +
   theme(
     plot.background = element_rect(
       fill = "white",
@@ -240,7 +246,8 @@ load_plot <-
       face = "italic",
       family = "Arial Narrow Italic"
     ),
-  )
+  ) 
+  
 
 load_plot
 
