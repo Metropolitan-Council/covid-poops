@@ -1,3 +1,7 @@
+library(readxl)
+library(janitor)
+library(tidyverse)
+
 raw_load_data <- read_excel("data/raw-load-data.xlsx",
                             col_types = c(
                               "text", "skip", "skip",
