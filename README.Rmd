@@ -7,8 +7,16 @@ output: github_document
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  echo = FALSE
 )
+
+options(crayon.enabled = TRUE)
+
+old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks,
+  which = c("output", "message", "error")
+)
+library(fs)
 ```
 
 # covid-poops  
@@ -19,6 +27,20 @@ knitr::opts_chunk$set(
 
 This repository contains the code for cleaning, transforming and visualizing data from Environmental Services, whose researchers are monitoring COVID-19 prealence in the metro area by analyzing SARS CoV-2 viral RNA load in Metro Plant wastewater.
 
+
+## Structure  
+
+All processing scripts for data and figures are in ./R. The prefix "d" indicates data processing, while the prefix "fig" indicates figure processing. `0_run_all.R` runs all scripts and saves final data.  
+
+```{r}
+fs::dir_tree("R", recurse = 1)
+```
+
+The Shiny app is located in ./metc-wastewater-covid-monitor. /data contains relevant CSV data and /www contains CSS, HTML, and relevant font files the app needs upon running. 
+
+```{r}
+fs::dir_tree("metc-wastewater-covid-monitor/", 0)
+```
 
 ## License  
 
@@ -34,4 +56,4 @@ Please note that the covid-poops project is released with a [Contributor Code of
 [&#x0040;ashleyasmus](https://github.com/ashleyasmus), and [&#x0040;eroten](https://github.com/eroten).
 
 -----
-<a href="https://metrocouncil.org" target="_blank"><img src="metc-wastewater-covid-monitor/www/logo.png" style="margin-left: 50%;margin-right: 50%;"><div></div></a>
+<a href="https://metrocouncil.org" target="_blank"><img src="metc-wastewater-covid-monitor/www/main-logo.png" style="margin-left: 50%;margin-right: 50%;"><div></div></a>
