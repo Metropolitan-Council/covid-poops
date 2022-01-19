@@ -6,8 +6,8 @@ library(showtext)
 font_add("HelveticaNeueLTStd", "HelveticaNeueLTStd-Lt.otf")
 font_add("Arial Narrow", "Arial Narrow.ttf")
 font_add("Arial Narrow Italic",
-         regular = "Arial Narrow.ttf",
-         italic = "Arial Narrow Italic.ttf"
+  regular = "Arial Narrow.ttf",
+  italic = "Arial Narrow Italic.ttf"
 )
 showtext_auto()
 
@@ -65,10 +65,10 @@ varplot
 logo_file <- "metc-wastewater-covid-monitor/www/main-logo.png"
 
 ggsave("fig/variants_static_graph_large.png",
-       varplot,
-       width = 11,
-       height = 8.5,
-       dpi = 300
+  varplot,
+  width = 11,
+  height = 8.5,
+  dpi = 300
 )
 
 ## SMALL -----
@@ -80,8 +80,8 @@ variant_data_new %>%
   ) %>%
   ggplot(aes(x = date, y = frequency, color = variant, fill = variant)) +
   geom_line(aes(x = date, y = frequency_7day, color = variant),
-            # size = 0.8,
-            lwd = 0.3
+    # size = 0.8,
+    lwd = 0.3
   ) +
   geom_area(
     position = "identity", aes(
@@ -147,8 +147,8 @@ variant_data_new %>%
 # logo_file <- "metc-wastewater-covid-monitor/www/main-logo.png"
 
 ggsave("fig/variants_static_graph_small.png",
-       height = 675,
-       width = 1200,
-       dpi = 300,
-       units = "px"
+  height = 675,
+  width = 1200,
+  dpi = 300,
+  units = "px"
 )

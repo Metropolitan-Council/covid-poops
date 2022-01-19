@@ -3,14 +3,14 @@ library(janitor)
 library(tidyverse)
 
 raw_load_data <- read_excel("data/raw-load-data.xlsx",
-                            col_types = c(
-                              "text", "skip", "skip",
-                              "date", "skip", "numeric", "numeric",
-                              "skip", "skip", "skip", "numeric",
-                              "skip", "skip", "skip", "skip", "skip",
-                              "skip", "skip", "skip", "skip"
-                            ),
-                            skip = 1
+  col_types = c(
+    "text", "skip", "skip",
+    "date", "skip", "numeric", "numeric",
+    "skip", "skip", "skip", "numeric",
+    "skip", "skip", "skip", "skip", "skip",
+    "skip", "skip", "skip", "skip"
+  ),
+  skip = 1
 ) %>%
   janitor::clean_names() %>%
   mutate(sample_start_date = as.Date(sample_start_date))

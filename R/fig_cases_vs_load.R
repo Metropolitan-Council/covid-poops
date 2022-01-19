@@ -9,8 +9,8 @@ library(tidyverse)
 font_add("HelveticaNeueLTStd", "HelveticaNeueLTStd-Lt.otf")
 font_add("Arial Narrow", "Arial Narrow.ttf")
 font_add("Arial Narrow Italic",
-         regular = "Arial Narrow.ttf",
-         italic = "Arial Narrow Italic.ttf"
+  regular = "Arial Narrow.ttf",
+  italic = "Arial Narrow Italic.ttf"
 )
 showtext_auto()
 
@@ -97,15 +97,15 @@ load_plot <-
       face = "italic",
       family = "Arial Narrow Italic"
     ),
-  ) 
+  )
 
 
 load_plot
 
 ggsave("fig/cases_vs_load_large.png",
-       load_plot,
-       height = 8.5, width = 11,
-       units = "in", dpi = 300
+  load_plot,
+  height = 8.5, width = 11,
+  units = "in", dpi = 300
 )
 
 
@@ -180,6 +180,6 @@ load_data %>%
   )
 
 ggsave("fig/cases_vs_load_small.png",
-       height = 675, width = 1200,
-       units = "px", dpi = 300
+  height = 675, width = 1200,
+  units = "px", dpi = 300
 )

@@ -29,7 +29,7 @@ raw_variant_data <- read.csv(
 variant_samples <- raw_variant_data %>%
   select(date, contains("sample_id")) %>%
   pivot_longer(contains("sample_id"),
-               names_to = "mutation", values_to = "sample_id"
+    names_to = "mutation", values_to = "sample_id"
   ) %>%
   mutate(mutation = str_remove(mutation, "_sample_id"))
 
@@ -37,7 +37,7 @@ variant_samples <- raw_variant_data %>%
 variant_frequencies <- raw_variant_data %>%
   select(date, contains("frequency")) %>%
   pivot_longer(contains("frequency"),
-               names_to = "mutation", values_to = "frequency"
+    names_to = "mutation", values_to = "frequency"
   ) %>%
   mutate(mutation = str_remove(mutation, "_frequency"))
 
@@ -62,7 +62,7 @@ variant_data_new <-
   mutate(mutation = toupper(mutation)) %>%
   # rolling 7 day average, by variant type
   complete(nesting(mutation, variant),
-           date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by = "days")
+    date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by = "days")
   ) %>%
   group_by(mutation, variant) %>%
   # interpolate missing values up to 3 days:
@@ -75,7 +75,7 @@ variant_data_new <-
   mutate(hover_text_variant = paste0(
     format(date, "%b %d, %Y"), "<br>",
     "<b>", variant, "</b> ", round(frequency_7day * 100, digits = 2), "%"
-  )) %>% 
+  )) %>%
   mutate(across(where(is.numeric), round, digits = 6))
 
 write.csv(variant_data_new, "data/clean_variant_data.csv", row.names = F)
