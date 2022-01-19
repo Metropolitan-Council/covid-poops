@@ -5,7 +5,7 @@ library(shiny)
 library(tidyverse)
 library(lubridate)
 library(plotly)
-library(councilR)
+library(councilR) #remotes::install_github("Metropolitan-Council/councilR")
 library(DT)
 library(gh)
 
