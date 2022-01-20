@@ -40,6 +40,7 @@ load_data <-
   # average by date:
   group_by(sample_start_date) %>%
   add_tally(name = "n_samples") %>%
+  # average across multiple samples: 
   summarize(
     copies_day_person_M_mn = mean(copies_day_person_M, na.rm = T),
     copies_day_person_M_se = sd(copies_day_person_M, na.rm = T) / (n_samples)
@@ -49,6 +50,8 @@ load_data <-
   rename(date = sample_start_date) %>%
   # (fill in for missing dates)
   complete(date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by = "days")) %>%
+  # add 7-day running average: 
+  mutate(copies_day_person_7day = zoo::rollapply(copies_day_person_M_mn, 7, align = "right", mean, na.rm = T, partial = F, fill = 'extend')) %>%
   arrange(date) %>%
   mutate(hover_text_load = paste0(
     format(date, "%b %d, %Y"), "<br>",
