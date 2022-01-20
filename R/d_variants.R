@@ -72,7 +72,7 @@ variant_data_new <-
   # interpolate missing values up to 3 days:
   mutate(frequency_gapfill = zoo::na.approx(frequency, maxgap = 2, na.rm = F)) %>%
   # now getting a rolling average with a 7-day window:
-  mutate(frequency_7day = zoo::rollapply(frequency_gapfill, 7, align = "center", mean, na.rm = T, partial = T, fill = NA)) %>%
+  mutate(frequency_7day = zoo::rollapply(frequency_gapfill, 7, align = "right", mean, na.rm = T, partial = T, fill = "extend")) %>%
   ungroup() %>%
   arrange(date, mutation, variant) %>%
   filter(!variant == "Other") %>%
