@@ -11,6 +11,7 @@ font_add("Arial Narrow Italic",
          regular = "ARIALN.ttf",
          italic = "ARIALNI.ttf"
 )
+
 showtext_auto()
 
 variant_data_new <- read_csv("data/clean_variant_data.csv", show_col_types = F)
@@ -49,17 +50,23 @@ varplot <-
     ),
     panel.grid.minor = element_blank(),
     panel.grid.major.x = element_blank(),
-    plot.title = element_text(hjust = 0.5),
+    plot.title = element_text(size = 72, hjust = 0.5),
     legend.position = "bottom",
     legend.direction = "horizontal",
     plot.caption = element_text(
-      size = 11,
-      face = "italic",
+      size = 36,
+      lineheight = 0.25,
       margin = margin(t = -15, 0, 0, 0),
+      face = "italic",
       family = "Arial Narrow Italic"
     ),
     legend.justification = c(0, 0),
-    legend.text = element_text(size = 12),
+    legend.text = element_text(size = 48),
+    legend.title = element_text(size = 48),
+    axis.title.y = element_text(size = 64, vjust = 1),
+    axis.text.x = element_text(size =48),
+    axis.title.x = element_text(size = 64),
+    axis.text.y = element_text(size = 48, vjust = 0)
   )
 
 varplot
