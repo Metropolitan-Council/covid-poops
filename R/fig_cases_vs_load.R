@@ -50,11 +50,12 @@ load_plot <-
   #   na.rm = T
   # ) +
   scale_y_continuous(
-    "COVID-19 cases per 100,000 residents (7-day avg.)",
+    "Viral load (copies per person, per day)",
+    labels = unit_format(unit = "M"),
     sec.axis = sec_axis(
       ~ . * b,
-      name = "Viral load (M copies per person, per day)",
-      breaks = seq(from = 0, to = max(load_data$copies_day_person_M_mn, na.rm = T), by = 25)
+      name = "COVID-19 cases per 100,000 residents (7-day avg.)",
+      breaks = seq(from = 0, to = max(case_data$covid_cases_7day, na.rm = T), by = 25)
     )
   ) +
   labs(
@@ -81,12 +82,12 @@ load_plot <-
       colour = NA,
       linetype = 0
     ),
-    axis.title.y.left = element_text(size = 64, color = "#888888", vjust = 1),
-    axis.title.y.right = element_text(size = 64, color = colors$councilBlue, vjust = 1),
+    axis.title.y.right = element_text(size = 64, color = "#888888", vjust = 1),
+    axis.title.y.left = element_text(size = 64, color = colors$councilBlue, vjust = 1),
     axis.text.x = element_text(size =48),
     axis.title.x = element_text(size = 64),
-    axis.text.y.left = element_text(size = 48, color = "#888888", vjust = 0),
-    axis.text.y.right = element_text(size = 48, color = colors$councilBlue, vjust = 0),
+    axis.text.y.right = element_text(size = 48, color = "#888888", vjust = 0),
+    axis.text.y.left = element_text(size = 48, color = colors$councilBlue, vjust = 0),
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
     panel.grid = element_blank(),
@@ -134,11 +135,11 @@ load_data %>%
     na.rm = T
   ) +
   scale_y_continuous(
-    "COVID-19 cases per 100,000 residents (7-day avg.)",
+    "Viral load (M copies per person, per day)",
     sec.axis = sec_axis(
       ~ . * b,
-      name = "Viral load (M copies per person, per day)",
-      breaks = seq(from = 0, to = max(load_data$copies_day_person_M_mn, na.rm = T), by = 50)
+      name = "COVID-19 cases per 100,000 residents (7-day avg.)",
+      breaks = seq(from = 0, to = max(case_data$covid_cases_7day, na.rm = T), by = 50)
     )
   ) +
   labs(
