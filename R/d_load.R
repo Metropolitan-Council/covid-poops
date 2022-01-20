@@ -52,7 +52,7 @@ load_data <-
   arrange(date) %>%
   mutate(hover_text_load = paste0(
     format(date, "%b %d, %Y"), "<br>",
-    "<b>", round(copies_day_person_M_mn, 2), "</b> copies of RNA per day per person"
+    "<b>", round(copies_day_person_M_mn, 2), "M</b> copies per person per day"
   )) %>%
   filter(!is.na(date))
 
