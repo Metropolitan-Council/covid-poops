@@ -36,7 +36,7 @@ fluidPage(
       h3("Tracking COVID-19 Prevalence with Metro Plant Wastewater"),
       p("The number of reported cases of COVID-19 infections in the seven-county metro area corresponds to the prevalence of the virus in wastewater samples at the Metro treatment plant in Saint Paul. The plant serves a large portion of the seven-county metro area. "),
       plotlyOutput("loadPlot", height = "auto"),
-      p("The blue line shows the total amount of SARS-CoV-2 viral RNA in wastewater flowing into the Metro Plant, in millions copies of the SARS-CoV-2 genome (N1 and N2 gene) per person served by the wastewater area, per day. The gray line shows the seven-day moving average number of new reported COVID-19 infections in the seven-county Metro area per 100,000 residents. Case data are provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org). New cases tend to lag wastewater detection trends by about 6-8 days.")
+      p("The blue line shows the total amount of SARS-CoV-2 viral RNA in wastewater flowing into the Metro Plant, in millions copies of the SARS-CoV-2 genome (N1 and N2 gene) per person served by the wastewater area, per day. The gray line shows the average of the previous 7 days of new reported COVID-19 infections in the seven-county Metro area per 100,000 residents. Case data are provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org). New cases tend to lag wastewater detection trends by about 6-8 days.")
       # p("Data last updated 2022-01-13.")
     ),
     tabPanel(
@@ -45,7 +45,7 @@ fluidPage(
       h3("COVID-19 variant tracker"),
       p("As the Delta variant of the SARS-CoV-2 virus declined, the Omicron variant quickly took its place as the dominant variant in wastewater samples at the Metro treatment plant in Saint Paul. The plant serves a large portion of the seven-county metro area. "),
       plotlyOutput("variantPlot", height = "auto"),
-      p("Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron from the K417N mutation. Presence of K417N mutation before November 18 were inferred to be the Beta variant and are omitted from this image.")
+      p("Points are daily data; lines are averages of the previous 7 days. Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron from the K417N mutation. Presence of K417N mutation before November 18 were inferred to be the Beta variant and are omitted from this image.")
       # p("Data last updated 2022-01-13.")
     ),
 
