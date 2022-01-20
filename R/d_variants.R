@@ -7,39 +7,42 @@ header1 <- read.csv("data/raw-variant-data.csv") %>% names()
 header2 <- read.csv("data/raw-variant-data.csv", skip = 1) %>% names()
 header <- paste0(header1, header2)
 
-raw_variant_data <- read.csv(
-  "data/raw-variant-data.csv",
-  skip = 1
-) %>%
+header1 <- read_excel("data/raw-variant-data.xlsx") %>% 
+  janitor::clean_names() %>% 
+  names()
+header2 <- read_excel("data/raw-variant-data.xlsx", skip = 1) %>% 
+  janitor::clean_names() %>% 
+  names()
+header <- paste0(header1, header2)
+
+raw_variant_data <-
+  read_excel(
+    "data/raw-variant-data.xlsx",
+    skip = 1
+  ) %>%
   set_names(header) %>%
-  janitor::clean_names() %>%
-  select(-l452r_sample_start_date_1, -k417n_sample_start_date_2) %>%
-  rename(
-    l452r_sample_id = l452r_1sample,
-    k417n_sample_id = k417n_1sample_1,
-    n501y_sample_id = n501y_1sample_id
-  ) %>%
-  rename(
-    n501y_frequency = n501y_2frequency_of_mutant_allele,
-    l452r_frequency = l452r_2frequency_of_mutant_allele_1,
-    k417n_frequency = k417n_2frequency_of_mutant_allele_2
-  ) %>%
-  rename(date = n501y_sample_start_date)
+  # get rid of trailing numbers in header: 
+  rename_all(~gsub("_[[:digit:]]$|_[[:digit:]][[:digit:]]$", "", .)) %>% 
+  rename_all(~gsub("[[:digit:]]sample|[[:digit:]][[:digit:]]sample", "sample", .)) %>% 
+  rename_all(~gsub("allele_[[:digit:]]|allele_[[:digit:]][[:digit:]]", "allele", .)) %>% 
+  rename_all(~gsub("[[:digit:]]frequency|[[:digit:]][[:digit:]]frequency", "frequency", .)) %>% 
+  rename(date = n501y_sample_start_date) %>%
+  select(-contains("sample_start_date"))
 
 variant_samples <- raw_variant_data %>%
-  select(date, contains("sample_id")) %>%
-  pivot_longer(contains("sample_id"),
-    names_to = "mutation", values_to = "sample_id"
+  select(date, contains("sample")) %>%
+  pivot_longer(contains("sample"),
+               names_to = "mutation", values_to = "sample_id"
   ) %>%
-  mutate(mutation = str_remove(mutation, "_sample_id"))
+  mutate(mutation = str_remove(mutation, "_sample"))
 
 
 variant_frequencies <- raw_variant_data %>%
   select(date, contains("frequency")) %>%
   pivot_longer(contains("frequency"),
-    names_to = "mutation", values_to = "frequency"
+               names_to = "mutation", values_to = "frequency"
   ) %>%
-  mutate(mutation = str_remove(mutation, "_frequency"))
+  mutate(mutation = str_remove(mutation, "_frequency_of_mutant_allele"))
 
 
 variant_data <- full_join(variant_samples, variant_frequencies)
