@@ -45,7 +45,8 @@ variant_frequencies <- raw_variant_data %>%
   mutate(mutation = str_remove(mutation, "_frequency_of_mutant_allele"))
 
 
-variant_data <- full_join(variant_samples, variant_frequencies)
+variant_data <- full_join(variant_samples, variant_frequencies)%>%
+  filter(!is.na(date))
 
 
 # reshape-----
@@ -79,7 +80,7 @@ variant_data_new <-
     format(date, "%b %d, %Y"), "<br>",
     "<b>", variant, "</b> ", round(frequency * 100, digits = 2), "%"
   )) %>%
-  mutate(across(where(is.numeric), round, digits = 6))
+  mutate(across(where(is.numeric), round, digits = 6)) 
 
 write.csv(variant_data_new, "data/clean_variant_data.csv", row.names = F)
 write.csv(variant_data_new, "metc-wastewater-covid-monitor/data/clean_variant_data.csv", row.names = F)
