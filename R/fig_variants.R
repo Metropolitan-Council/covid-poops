@@ -102,7 +102,7 @@ variant_data_new %>%
     ),
     alpha = 0.25, na.rm = T, lty = "blank"
   ) +
-  geom_point(size = 0.1) +
+  geom_point(size = 0.5) +
   scale_color_manual(
     values = c("#84BB25", "#1D94B7", "#6D3571"),
     name = "Variant "
@@ -143,18 +143,20 @@ variant_data_new %>%
       lineheight = 0.25,
       face = "italic",
       family = "Arial Narrow Italic",
-      margin = margin(t = -10, 0, 0, 0)
+      margin = margin(t = -1, 0, 0, 0)
     ),
     legend.position = "bottom",
     legend.direction = "horizontal",
     legend.margin = margin(),
     legend.key.height = unit(10, "pt"),
     legend.justification = c(0, 0),
-    plot.title = element_text(hjust = 0.5),
+    plot.title = element_text(size = 24, hjust = 0.5),
     axis.title.y = element_text(size = 18, vjust = 1),
     axis.text.y = element_text(size = 18, vjust = 0),
     axis.text.x = element_text(size =18),
     axis.title.x = element_text(size = 18),
+    legend.text = element_text(size = 18),
+    legend.title = element_text(size = 18),
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
     panel.grid = element_blank()
@@ -164,7 +166,7 @@ variant_data_new %>%
 # logo_file <- "metc-wastewater-covid-monitor/www/main-logo.png"
 
 ggsave("fig/variants_static_graph_small.png",
-  height = 675,
+  height = 800,
   width = 1200,
   dpi = 300,
   units = "px"
