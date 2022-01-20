@@ -99,7 +99,7 @@ load_plot <-
       lineheight = 0.25,
       face = "italic",
       family = "Arial Narrow Italic"
-    ),
+    )
   )
 
 
@@ -138,7 +138,7 @@ load_data %>%
     sec.axis = sec_axis(
       ~ . * b,
       name = "Viral load (M copies per person, per day)",
-      breaks = seq(from = 0, to = 150, by = 25)
+      breaks = seq(from = 0, to = max(load_data$copies_day_person_M_mn, na.rm = T), by = 50)
     )
   ) +
   labs(
@@ -169,12 +169,12 @@ load_data %>%
       lineheight = 1.1,
       size = 24, hjust = 0.5
     ),
-    axis.title.y.left = element_text(size = 32, color = "#888888", vjust = 1),
-    axis.title.y.right = element_text(size = 32, color = colors$councilBlue, vjust = 1),
+    axis.title.y.left = element_text(size = 18, color = "#888888", vjust = 1),
+    axis.title.y.right = element_text(size = 18, color = colors$councilBlue, vjust = 1),
     axis.text.y.left = element_text(size = 18, color = "#888888", vjust = 0),
     axis.text.y.right = element_text(size = 18, color = colors$councilBlue, vjust = 0),
     axis.text.x = element_text(size =18),
-    axis.title.x = element_text(size = 32),
+    axis.title.x = element_text(size = 18),
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
     panel.grid = element_blank(),
@@ -187,6 +187,6 @@ load_data %>%
   )
 
 ggsave("fig/cases_vs_load_small.png",
-  height = 675, width = 1200,
+  height = 800, width = 1200,
   units = "px", dpi = 300
 )
