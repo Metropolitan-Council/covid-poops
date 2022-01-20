@@ -7,10 +7,10 @@ library(showtext)
 library(tidyverse)
 
 font_add("HelveticaNeueLTStd", "HelveticaNeueLTStd-Lt.otf")
-font_add("Arial Narrow", "Arial Narrow.ttf")
+font_add("Arial Narrow", "ARIALN.ttf")
 font_add("Arial Narrow Italic",
-  regular = "Arial Narrow.ttf",
-  italic = "Arial Narrow Italic.ttf"
+  regular = "ARIALN.ttf",
+  italic = "ARIALNI.ttf"
 )
 showtext_auto()
 
