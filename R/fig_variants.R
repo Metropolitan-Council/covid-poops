@@ -2,6 +2,7 @@ library(cowplot)
 library(magick)
 library(ggtext)
 library(showtext)
+library(councilR)
 
 font_add("HelveticaNeueLTStd", "HelveticaNeueLTStd-Lt.otf")
 font_add("Arial Narrow", "Arial Narrow.ttf")

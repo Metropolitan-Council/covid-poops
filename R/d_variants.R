@@ -77,7 +77,7 @@ variant_data_new <-
   filter(!variant == "Other") %>%
   mutate(hover_text_variant = paste0(
     format(date, "%b %d, %Y"), "<br>",
-    "<b>", variant, "</b> ", round(frequency_7day * 100, digits = 2), "%"
+    "<b>", variant, "</b> ", round(frequency * 100, digits = 2), "%"
   )) %>%
   mutate(across(where(is.numeric), round, digits = 6))
 
