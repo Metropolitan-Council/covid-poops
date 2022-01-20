@@ -58,7 +58,7 @@ load_plot <-
     )
   ) +
   labs(
-    title = "<span style='color:#0054A4;'>Viral load in wastewater</span>
+    title = "<span style='color:#0054A4'>Viral load in wastewater</span>
     compared to <span style='color:#888888;'>metro-area COVID-19 cases</span>",
     x = "Date",
     caption = paste0(
@@ -81,19 +81,22 @@ load_plot <-
       colour = NA,
       linetype = 0
     ),
-    axis.title.y.left = element_text(color = "#888888", vjust = 1),
-    axis.title.y.right = element_text(color = colors$councilBlue, vjust = 1),
-    axis.text.y.left = element_text(color = "#888888", vjust = 0),
-    axis.text.y.right = element_text(color = colors$councilBlue, vjust = 0),
+    axis.title.y.left = element_text(size = 48, color = "#888888", vjust = 1),
+    axis.title.y.right = element_text(size = 48, color = colors$councilBlue, vjust = 1),
+    axis.text.x = element_text(size =36),
+    axis.title.x = element_text(size = 48),
+    axis.text.y.left = element_text(size = 36, color = "#888888", vjust = 0),
+    axis.text.y.right = element_text(size = 36, color = colors$councilBlue, vjust = 0),
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
     panel.grid = element_blank(),
     plot.title = element_markdown(
       lineheight = 1.1,
-      size = 18, hjust = 0.5
+      size = 64, hjust = 0.5
     ),
     plot.caption = element_text(
-      size = 10,
+      size = 36,
+      lineheight = 0.25,
       face = "italic",
       family = "Arial Narrow Italic"
     ),
@@ -104,6 +107,7 @@ load_plot
 
 ggsave("fig/cases_vs_load_large.png",
   load_plot,
+  scale = 1,
   height = 8.5, width = 11,
   units = "in", dpi = 300
 )
