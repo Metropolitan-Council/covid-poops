@@ -54,7 +54,7 @@ load_plot <-
     sec.axis = sec_axis(
       ~ . * b,
       name = "Viral load (M copies per person, per day)",
-      breaks = seq(from = 0, to = 150, by = 25)
+      breaks = seq(from = 0, to = max(load_data$copies_day_person_M_mn, na.rm = T), by = 25)
     )
   ) +
   labs(
@@ -81,18 +81,18 @@ load_plot <-
       colour = NA,
       linetype = 0
     ),
-    axis.title.y.left = element_text(size = 48, color = "#888888", vjust = 1),
-    axis.title.y.right = element_text(size = 48, color = colors$councilBlue, vjust = 1),
-    axis.text.x = element_text(size =36),
-    axis.title.x = element_text(size = 48),
-    axis.text.y.left = element_text(size = 36, color = "#888888", vjust = 0),
-    axis.text.y.right = element_text(size = 36, color = colors$councilBlue, vjust = 0),
+    axis.title.y.left = element_text(size = 64, color = "#888888", vjust = 1),
+    axis.title.y.right = element_text(size = 64, color = colors$councilBlue, vjust = 1),
+    axis.text.x = element_text(size =48),
+    axis.title.x = element_text(size = 64),
+    axis.text.y.left = element_text(size = 48, color = "#888888", vjust = 0),
+    axis.text.y.right = element_text(size = 48, color = colors$councilBlue, vjust = 0),
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
     panel.grid = element_blank(),
     plot.title = element_markdown(
       lineheight = 1.1,
-      size = 64, hjust = 0.5
+      size = 72, hjust = 0.5
     ),
     plot.caption = element_text(
       size = 36,
@@ -167,17 +167,20 @@ load_data %>%
     ),
     plot.title = element_markdown(
       lineheight = 1.1,
-      size = 7, hjust = 0.5
+      size = 24, hjust = 0.5
     ),
-    axis.title.y.left = element_text(color = "#888888", vjust = 1),
-    axis.title.y.right = element_text(color = colors$councilBlue, vjust = 1),
-    axis.text.y.left = element_text(color = "#888888", vjust = 0),
-    axis.text.y.right = element_text(color = colors$councilBlue, vjust = 0),
+    axis.title.y.left = element_text(size = 32, color = "#888888", vjust = 1),
+    axis.title.y.right = element_text(size = 32, color = colors$councilBlue, vjust = 1),
+    axis.text.y.left = element_text(size = 18, color = "#888888", vjust = 0),
+    axis.text.y.right = element_text(size = 18, color = colors$councilBlue, vjust = 0),
+    axis.text.x = element_text(size =18),
+    axis.title.x = element_text(size = 32),
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
     panel.grid = element_blank(),
     plot.caption = element_text(
-      size = 3,
+      size = 18,
+      lineheight = 0.25,
       face = "italic",
       family = "Arial Narrow Italic"
     )
