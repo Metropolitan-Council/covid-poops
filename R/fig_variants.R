@@ -138,8 +138,9 @@ variant_data_new %>%
     panel.grid.minor = element_blank(),
     panel.grid.major.x = element_blank(),
     plot.caption = element_text(
-      size = 3,
+      size = 18,
       # debug = T,
+      lineheight = 0.25,
       face = "italic",
       family = "Arial Narrow Italic",
       margin = margin(t = -10, 0, 0, 0)
@@ -149,7 +150,14 @@ variant_data_new %>%
     legend.margin = margin(),
     legend.key.height = unit(10, "pt"),
     legend.justification = c(0, 0),
-    plot.title = element_text(hjust = 0.5)
+    plot.title = element_text(hjust = 0.5),
+    axis.title.y = element_text(size = 18, vjust = 1),
+    axis.text.y = element_text(size = 18, vjust = 0),
+    axis.text.x = element_text(size =18),
+    axis.title.x = element_text(size = 18),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.grid = element_blank()
   )
 
 
