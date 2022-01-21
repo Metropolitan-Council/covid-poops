@@ -138,7 +138,7 @@ load_data %>%
     aes(y = copies_day_person_M_mn),
     color = colors$councilBlue,
     alpha = 0.8,
-    lwd = 1.2,
+    lwd = 0.5,
     na.rm = T
   ) +
   scale_y_continuous(

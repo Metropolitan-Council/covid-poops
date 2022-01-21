@@ -103,9 +103,10 @@ server <- function(input, output) {
     ay <- list(
       tickfont = list(color = colors$esBlue),
       overlaying = "y",
-      side = "right",
+      side = "left",
       title = list(
-        text = "<b>Viral load in wastewater,</b> M copies/person/day", standoff = 25,
+        text = "<b>Viral load in wastewater,</b> M copies/person/day", 
+        standoff = 25,
         font = list(color = colors$esBlue)
       ),
       zerolinewidth = 2,
@@ -142,7 +143,7 @@ server <- function(input, output) {
       layout(
         annotations = ann_list,
         showlegend = FALSE,
-        margin = list(l = 50, r = 100, b = 50, pad = 10),
+        margin = list(l = 75, r = 100, b = 50, pad = 10),
         hovermode = "closest",
         hoverdistance = "10",
         hoverlabel = hov_lab_list,
@@ -167,8 +168,10 @@ server <- function(input, output) {
           )
         ),
         yaxis = list(
+          side = "right",
           title = list(
-            text = "<b>Reported COVID-19 cases,</b> 7-day average", standoff = 25,
+            text = "<b>Reported COVID-19 cases,</b> 7-day average", 
+            standoff = 25,
             font = list(
               size = 14,
               family = font_family_list,
