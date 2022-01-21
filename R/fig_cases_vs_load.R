@@ -36,19 +36,19 @@ load_plot <-
     linetype = "blank"
   ) +
   geom_line(
+    aes(y = copies_day_person_7day),
+    color = colors$councilBlue,
+    alpha = 0.8,
+    lwd = 1.2,
+    na.rm = T
+  ) +
+    geom_point(
     aes(y = copies_day_person_M_mn),
     color = colors$councilBlue,
     alpha = 0.8,
     lwd = 1.2,
     na.rm = T
   ) +
-  #   geom_point(
-  #   aes(y = copies_day_person_M_mn),
-  #   color = colors$councilBlue,
-  #   alpha = 0.8,
-  #   lwd = 1.2,
-  #   na.rm = T
-  # ) +
   scale_y_continuous(
     "Viral load (copies per person, per day)",
     labels = scales::unit_format(unit = "M"),
@@ -63,7 +63,7 @@ load_plot <-
     compared to <span style='color:#888888;'>metro-area COVID-19 cases</span>",
     x = "Date",
     caption = paste0(
-      "\nCase data (gray area) are seven-day rolling averages for the 7-county area provided by MDH\nand downloaded from USAFacts. Viral load (blue line) are daily data.\nLast sample date ",
+      "\nCase data (gray area) are reported case data for the 7-county area provided by MDH and downloaded from USAFacts.\nCase data are a running average of the preceding 7 days. Viral load data are from Metropolitan Council and MCES;\npoints are daily values while the line is an average of the preceding 7 days.\nLast sample date ",
       max(load_data$date, na.rm = T),
       "."
     )
@@ -128,10 +128,17 @@ load_data %>%
     linetype = "blank"
   ) +
   geom_line(
-    aes(y = copies_day_person_M_mn),
+    aes(y = copies_day_person_7day),
     color = colors$councilBlue,
     alpha = 0.8,
     lwd = 0.25,
+    na.rm = T
+  ) +
+  geom_point(
+    aes(y = copies_day_person_M_mn),
+    color = colors$councilBlue,
+    alpha = 0.8,
+    lwd = 1.2,
     na.rm = T
   ) +
   scale_y_continuous(
@@ -148,7 +155,7 @@ load_data %>%
     compared to <span style='color:#888888;'>metro-area COVID-19 cases</span>",
     x = "Date",
     caption = paste0(
-      "\nCase data (gray area) are seven-day rolling averages for the 7-county area provided by MDH\nand downloaded from USAFacts. Viral load (blue line) are daily data.\nLast sample date ",
+      "\nCase data (gray area) are reported case data for the 7-county area provided by MDH and downloaded from USAFacts.\nCase data are a running average of the preceding 7 days. Viral load data are from Metropolitan Council and MCES;\npoints are daily values while the line is an average of the preceding 7 days.\nLast sample date ",
       max(load_data$date, na.rm = T),
       "."
     )
