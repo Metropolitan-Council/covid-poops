@@ -56,7 +56,11 @@ load_data <-
   mutate(hover_text_load = paste0(
     format(date, "%b %d, %Y"), "<br>",
     "<b>", round(copies_day_person_M_mn, 2), "M</b> copies per person per day"
-  )) %>%
+  ),
+  hover_text_load_7day = paste0(
+    "7-day avg. load on ", format(date, "%b %d "), ":<br>",
+    "<b>", round(copies_day_person_7day, 1), "M</b> copies per person per day")
+  ) %>%
   filter(!is.na(date))
 
 head(load_data)

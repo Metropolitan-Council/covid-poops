@@ -101,15 +101,15 @@ server <- function(input, output) {
   # load -----
   output$loadPlot <- renderPlotly({
     ay <- list(
-      tickfont = list(color = colors$esBlue),
+      tickfont = list(color = colors$councilBlue),
       overlaying = "y",
       side = "left",
       title = list(
         text = "<b>Viral load in wastewater,</b> M copies/person/day", 
         standoff = 25,
-        font = list(color = colors$esBlue)
+        font = list(color = colors$councilBlue, size = 16)
       ),
-      zerolinewidth = 2,
+      zerolinewidth = 1,
       zerolinecolor = colors$suppWhite,
       gridcolor = colors$suppWhite
     )
@@ -119,16 +119,33 @@ server <- function(input, output) {
       # left_join(case_data, by = "date") %>%
       plot_ly(type = "scatter", mode = "lines") %>%
       add_trace(
+        mode = "markers",
         x = ~date,
         y = ~copies_day_person_M_mn,
         name = "Viral load",
         size = 1,
         yaxis = "y2",
-        # fill = "tozeroy",
-        # fillcolor = "rgba(0, 154, 199, .5)",
-        line = list(width = 2, color = colors$esBlue),
+        marker = list(color ="rgba(0, 84, 164, .5)", 
+                      size = 8,
+                      line = list(color = colors$councilBlue,
+                                  width = 0.5)),
+        # fillcolor = ,
+        # line = list(width = 2, color = colors$esBlue),
         hoverinfo = "text",
         text = ~hover_text_load
+      ) %>%
+      add_trace(
+        mode = "lines",
+        x = ~date,
+        y = ~copies_day_person_7day,
+        name = "Viral load",
+        size = 1,
+        yaxis = "y2",
+        # fill = "tozeroy",
+        # fillcolor = "rgba(0, 154, 199, .5)",
+        line = list(width = 2, color = colors$councilBlue),
+        hoverinfo = "text",
+        text = ~hover_text_load_7day
       ) %>%
       add_trace(
         x = ~date,
@@ -141,9 +158,10 @@ server <- function(input, output) {
         text = ~hover_text_case
       ) %>%
       layout(
+        autosize = T,
         annotations = ann_list,
         showlegend = FALSE,
-        margin = list(l = 75, r = 100, b = 50, pad = 10),
+        margin = list(l = 75, r = 75, b = 50, pad = 10),
         hovermode = "closest",
         hoverdistance = "10",
         hoverlabel = hov_lab_list,
@@ -173,14 +191,14 @@ server <- function(input, output) {
             text = "<b>Reported COVID-19 cases,</b> 7-day average", 
             standoff = 25,
             font = list(
-              size = 14,
+              size = 16,
               family = font_family_list,
               color = councilR::colors$suppBlack
             )
           ),
-          zerolinewidth = 2,
+          zerolinewidth = 1,
           tickfont = list(
-            size = 12,
+            size = 14,
             family = font_family_list,
             color = councilR::colors$suppBlack
           ),
@@ -231,7 +249,7 @@ server <- function(input, output) {
         margin = list(
           l = 50,
           r = 100,
-          b = 50,
+          b = 75,
           pad = 10
         ),
         xaxis = list(
