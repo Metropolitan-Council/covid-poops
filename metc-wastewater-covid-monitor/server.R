@@ -188,7 +188,7 @@ server <- function(input, output) {
         yaxis = list(
           side = "right",
           title = list(
-            text = "<b>Reported COVID-19 cases,</b> 7-day average", 
+            text = "<b>COVID-19 cases</b> per 100K residents", 
             standoff = 25,
             font = list(
               size = 16,
