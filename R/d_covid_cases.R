@@ -19,7 +19,7 @@ case_data <- raw_case_data %>%
   mutate(covid_cases_per100K = 100000 * covid_cases_new / (3163104)) %>%
   # mutate(frequency_gapfill = zoo::na.approx(frequency, maxgap = 2, na.rm = F)) %>%
   # now getting a rolling average with a 7-day window:
-  mutate(covid_cases_7day = zoo::rollapply(covid_cases_per100K, 7, align = "right", mean, na.rm = T, partial = F, fill = 'extend')) %>%
+  mutate(covid_cases_7day = zoo::rollapplyr(covid_cases_per100K, 7, mean, fill = c("extend", "extend", "extend"))) %>%
   mutate(hover_text_case = paste0(
     format(date, "%b %d, %Y"), "<br>",
     "<b>", round(covid_cases_7day, 2), "</b> cases per 100,000 people"
