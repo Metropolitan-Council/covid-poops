@@ -26,7 +26,7 @@ b <- diff(ylim.cases) / diff(ylim.load)
 load_plot <-
   load_data %>%
   left_join(case_data, by = "date") %>%
-  filter(date >= "2021-06-01") %>%
+  filter(date >= "2021-10-01") %>%
   ggplot(aes(x = date, y = copies_day_person_M_mn)) +
   geom_ribbon(
     aes(ymin = 0, ymax = covid_cases_7day / b),
@@ -55,7 +55,7 @@ load_plot <-
     sec.axis = sec_axis(
       ~ . * b,
       name = "COVID-19 cases per 100,000 residents (7-day avg.)",
-      breaks = seq(from = 0, to = max(case_data$covid_cases_7day, na.rm = T), by = 25)
+      breaks = seq(from = 0, to = max(case_data$covid_cases_7day, na.rm = T + 15), by = 25)
     )
   ) +
   labs(
@@ -118,7 +118,7 @@ ggsave("fig/cases_vs_load_large.png",
 ## SMALL ----
 load_data %>%
   left_join(case_data, by = "date") %>%
-  filter(date >= "2021-06-01") %>%
+  filter(date >= "2021-10-01") %>%
   ggplot(aes(x = date, y = copies_day_person_M_mn)) +
   geom_ribbon(
     aes(ymin = 0, ymax = covid_cases_7day / b),
