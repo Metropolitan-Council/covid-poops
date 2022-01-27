@@ -137,7 +137,6 @@ for (file_num in seq_along(raw_data_files)) {
 ## Load --------
 load_data <-
   data.table::rbindlist(load_data_list, fill = T) %>%
-  load_data_raw %>%
   # many ways of naming "concentration in the input sample"
   mutate(
     conc_copies_m_l_of_input_sample = coalesce(
@@ -189,7 +188,7 @@ variant_data <-
   select_if(~ sum(!is.na(.)) > 0)
 
 # Checks---------
-## Samples with missing data---
+## Samples with missing data----
 sample_info %>%
   left_join(variant_data_clean %>% select(sample, target),
             by = c("sample_id" = "sample")) %>%
@@ -201,3 +200,54 @@ sample_info %>%
   filter(is.na(target_load) & is.na(target_variant)) %>%
   arrange(sample_start_date, sample_type) %>%
   View()
+
+## Load data comparison
+old_load_data <- read_excel("data/raw-load-data.xlsx",
+                                             col_types = c(
+                                               "text", "numeric", "numeric",
+                                               "date", "skip", "skip", "skip",
+                                               "skip", "skip", "skip", "skip",
+                                               "skip", "skip", "skip", "skip", "skip",
+                                               "skip", "skip", "skip", "skip"
+                                             ),
+                                             skip = 1
+) %>%
+  janitor::clean_names() %>%
+  mutate(sample_start_date = as.Date(sample_start_date)) %>%
+  # rename(N1_gene_l = copies_l_3, N2_gene_l = copies_l_4) %>%
+  pivot_longer(
+    cols = c("n1_copies_u_l", "n2_copies_u_l"), names_to = "target",
+    values_to = "clean_conc"
+  ) %>%
+  mutate(target = str_remove(target, "_copies_u_l")) %>%
+  mutate(target = toupper(target)) %>%
+  rename(sample = sample_name)
+
+load_data %>%
+  select(well, sample, target, conc_copies_m_l_of_input_sample) %>%
+  left_join(old_load_data) %>%
+  filter(conc_copies_m_l_of_input_sample < 1000) %>%
+  mutate(monthyr = lubridate::floor_date(sample_start_date, "month", "%B %y")) %>%
+  ggplot(aes(x = clean_conc, y = conc_copies_m_l_of_input_sample, color =  as.factor(monthyr))) + 
+  geom_point() + 
+  geom_smooth(method = lm, se = F)
+
+# here are the samples that do not match:
+load_data %>%
+  select(well, sample, target, conc_copies_m_l_of_input_sample) %>%
+  group_by(sample, target) %>%
+  summarize(new_conc = mean(conc_copies_m_l_of_input_sample)) %>%
+  left_join(old_load_data) %>%
+  # filter(!new_conc == clean_conc) %>%
+  filter(!is.na(new_conc) & !is.na(clean_conc)) %>%
+  mutate(monthyr = lubridate::floor_date(sample_start_date, "month", "%B %y")) %>%
+  mutate(fac = clean_conc/new_conc) %>%
+  # filter(fac > 1.01 | fac < 0.98) %>%
+  # filter(monthyr == "2020-11-01") %>%
+  View()
+  
+  
+  group_by(monthyr) %>%
+  tally() %>%
+  View()
+  
