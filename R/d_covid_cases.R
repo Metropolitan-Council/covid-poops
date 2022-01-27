@@ -17,7 +17,8 @@ case_data <- raw_case_data %>%
   summarize(covid_cases_total = sum(covid_cases_total)) %>%
   mutate(covid_cases_new = covid_cases_total - lag(covid_cases_total, 1)) %>%
   mutate(covid_cases_per100K = 100000 * covid_cases_new / (3163104)) %>%
-  # mutate(frequency_gapfill = zoo::na.approx(frequency, maxgap = 2, na.rm = F)) %>%
+  # population of 3163014 is from 2020 census - 
+  # Info at https://metrocouncil.org/Data-and-Maps/Research-and-Data/Census-Data.aspx; interactive application with data here https://metrotransitmn.shinyapps.io/census-2020/).
   # now getting a rolling average with a 7-day window:
   mutate(covid_cases_7day = zoo::rollapplyr(covid_cases_per100K, 7, mean, fill = c("extend", "extend", "extend"))) %>%
   mutate(hover_text_case = paste0(
