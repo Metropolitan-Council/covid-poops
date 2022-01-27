@@ -3,10 +3,6 @@ library(janitor)
 library(tidyverse)
 
 # read in raw -----
-header1 <- read.csv("data/raw-variant-data.csv") %>% names()
-header2 <- read.csv("data/raw-variant-data.csv", skip = 1) %>% names()
-header <- paste0(header1, header2)
-
 header1 <- read_excel("data/raw-variant-data.xlsx") %>% 
   janitor::clean_names() %>% 
   names()
