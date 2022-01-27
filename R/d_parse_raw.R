@@ -6,7 +6,7 @@ library(readxl)
 library(janitor)
 
 # Sample IDs ----------
-load_sample_info <-read.csv("data/load_sample_info.csv") %>%
+load_sample_info <- read.csv("data/load_sample_info.csv") %>%
   mutate(sample_type = "copies")
 
 variant_sample_info <- read.csv("data/variant_sample_info.csv") %>%
@@ -18,52 +18,58 @@ sample_info <- rbind(load_sample_info, variant_sample_info) %>%
   unique() %>%
   filter(!is.na(sample_id)) %>%
   # now un-nest some combined samples (+)
-  mutate(sample_id_single = strsplit(sample_id, "[+]")) %>% 
+  mutate(sample_id_single = strsplit(sample_id, "[+]")) %>%
   unnest(sample_id_single) %>%
   relocate(sample_id_single, .after = "sample_id") %>%
   arrange(sample_start_date, sample_id_single)
 
 
-
+# Our excel workbooks ----
 raw_data_files <- list.files("data/umgc-raw/", pattern = ".xlsx")
 
-# Find the spreadsheet names we need ------
-# there are lots of naming conventions for the data sheets!
-# sorry, y"all, i still just love a good for loop :D   - Ashley
+# Search for the worksheets we need within each workbook ----
+
+# an empty list to hold the worksheet names:
 all_sheet_names_list <- list()
 
+# for every excel file, extract all worksheet names:
 for (file_num in seq_along(raw_data_files)) {
   excel_file <- file.path('data/umgc-raw', raw_data_files[file_num])
   sheet_names <- readxl::excel_sheets(excel_file)
   all_sheet_names_list[[file_num]] <- data.frame(sheet_names)
 }
 
+# bind up the worksheet names:
 all_sheet_names <-
   all_sheet_names_list %>%
   bind_rows() %>%
   unique() %>%
   arrange()
 
-load_sheet_names <- 
+# find all the ways "load" spreadsheets (that measure N1 & N2 concentration) are named:
+load_sheet_names <-
   all_sheet_names %>%
+  # layout sheets contain the layouts of the trays
   filter(!grepl("layout", sheet_names, ignore.case = T)) %>%
   filter(grepl("ddpcr", sheet_names, ignore.case = T)) %>%
   filter(!grepl("variant", sheet_names, ignore.case = T))
 
-variant_sheet_names <- 
+# find all the ways "variant" spreadsheets are named:
+variant_sheet_names <-
   all_sheet_names %>%
   filter(!grepl("layout", sheet_names, ignore.case = T)) %>%
   filter(grepl("ddpcr", sheet_names, ignore.case = T)) %>%
   filter(!grepl("N1", sheet_names, ignore.case = F)) %>%
   filter(grepl("variant", sheet_names, ignore.case = T))
 
-# Extract! ------
+# Extract the sheets we need ------
+
+# empty lists to hold our data:
 load_data_list <- list()
 variant_data_list <- list()
 
-# get all the N1 & N2 load data sheets:
+# a for loop to read each excel workbook, find the variant & load worksheets, extract and clean
 for (file_num in seq_along(raw_data_files)) {
-  
   excel_file <- file.path('data/umgc-raw', raw_data_files[file_num])
   
   sheet_names <- readxl::excel_sheets(excel_file)
@@ -73,9 +79,10 @@ for (file_num in seq_along(raw_data_files)) {
   
   found_variant_sheet_names <-
     sheet_names[sheet_names %in% variant_sheet_names$sheet_names]
-
+  
   if (length(found_load_sheet_names) == 1) {
-    load_data_raw <- suppressMessages(read_excel(excel_file, found_load_sheet_names, na = c("", "No Call"))) %>%
+    load_data_raw <-
+      suppressMessages(read_excel(excel_file, found_load_sheet_names, na = c("", "No Call"))) %>%
       janitor::clean_names()
     load_data_list[[file_num]] <- load_data_raw
   } else if (length(found_load_sheet_names) > 1) {
@@ -97,7 +104,8 @@ for (file_num in seq_along(raw_data_files)) {
   }
   
   if (length(found_variant_sheet_names) == 1) {
-    variant_data_raw <- suppressMessages(read_excel(excel_file, found_variant_sheet_names, na = c("", "No Call"))) %>%
+    variant_data_raw <-
+      suppressMessages(read_excel(excel_file, found_variant_sheet_names, na = c("", "No Call"))) %>%
       janitor::clean_names()
     variant_data_list[[file_num]] <- variant_data_raw
   } else if (length(found_variant_sheet_names) > 1) {
@@ -111,7 +119,8 @@ for (file_num in seq_along(raw_data_files)) {
         found_variant_sheet_names[[1]]
       )
     )
-    variant_data_raw <- suppressMessages(read_excel(excel_file, found_variant_sheet_names[[1]], na = c("", "No Call"))) %>%
+    variant_data_raw <-
+      suppressMessages(read_excel(excel_file, found_variant_sheet_names[[1]], na = c("", "No Call"))) %>%
       janitor::clean_names()
     variant_data_list[[file_num]] <- variant_data_raw
   } else {
@@ -124,48 +133,71 @@ for (file_num in seq_along(raw_data_files)) {
   }
 }
 
-load_data_raw <- data.table::rbindlist(load_data_list, fill = T)
-
-load_data_clean <- 
-load_data_raw %>%
-  mutate(conc_copies_m_l_of_input_sample = coalesce(
-    conc_copies_m_l_of_input_sample, 
-    conc_copies_ml_of_input_sample,
-    conc_copies_u_l_of_input_sample,
-    conc_input_copies_m_l,
-    conc_input_sample_copies_m_l)) %>%
-  select(-c(conc_copies_ml_of_input_sample,
-         conc_copies_u_l_of_input_sample,
-         conc_input_copies_m_l,
-         conc_input_sample_copies_m_l)) %>%
-  # rearrange columns: 
+# Bind the data together ----
+## Load --------
+load_data <-
+  data.table::rbindlist(load_data_list, fill = T) %>%
+  load_data_raw %>%
+  # many ways of naming "concentration in the input sample"
+  mutate(
+    conc_copies_m_l_of_input_sample = coalesce(
+      conc_copies_m_l_of_input_sample,
+      conc_copies_ml_of_input_sample,
+      conc_copies_u_l_of_input_sample,
+      conc_input_copies_m_l,
+      conc_input_sample_copies_m_l
+    )
+  ) %>%
+  select(
+    -c(
+      conc_copies_ml_of_input_sample,
+      conc_copies_u_l_of_input_sample,
+      conc_input_copies_m_l,
+      conc_input_sample_copies_m_l
+    )
+  ) %>%
+  # rearrange columns:
   relocate(conc_copies_m_l_of_input_sample, .after = "target") %>%
   relocate(copies_20m_l_well, .after = "target") %>%
   # get rid of completely NA columns:
-  select_if(~sum(!is.na(.)) > 0) 
+  select_if(~ sum(!is.na(.)) > 0)
 
-
-variant_data_raw <- data.table::rbindlist(variant_data_list, fill = T)
-
-variant_data_clean <-
-variant_data_raw %>%
-  # make this column name match that of the load data:
-  mutate(conc_copies_m_l_of_input_sample = coalesce(
-    conc_copies_m_l_of_input_sample, 
-    conc_copies_ml_of_input_sample,
-    conc_input_copies_m_l,
-    conc_copies_ul_of_sample_input)) %>%
-  select(-c(conc_copies_ml_of_input_sample,
-            conc_input_copies_m_l,
-            conc_copies_ul_of_sample_input)) %>%
+## Variants -------
+variant_data <-
+  data.table::rbindlist(variant_data_list, fill = T) %>%
+  # many ways of naming "concentration in the input sample" - make this match the load data
+  mutate(
+    conc_copies_m_l_of_input_sample = coalesce(
+      conc_copies_m_l_of_input_sample,
+      conc_copies_ml_of_input_sample,
+      conc_input_copies_m_l,
+      conc_copies_ul_of_sample_input
+    )
+  ) %>%
+  select(
+    -c(
+      conc_copies_ml_of_input_sample,
+      conc_input_copies_m_l,
+      conc_copies_ul_of_sample_input
+    )
+  ) %>%
   # rearrange columns:
   relocate(conc_copies_m_l, .after = "target") %>%
   relocate(conc_copies_m_l_of_input_sample, .after = "target") %>%
   relocate(copies_20m_l_well, .after = "target") %>%
   # get rid of completely NA columns:
-  select_if(~sum(!is.na(.)) > 0)
+  select_if(~ sum(!is.na(.)) > 0)
 
-
-# cross-check against sample info:
-sample_info <- 
-  
+# Checks---------
+## Samples with missing data---
+sample_info %>%
+  left_join(variant_data_clean %>% select(sample, target),
+            by = c("sample_id" = "sample")) %>%
+  left_join(
+    load_data_clean %>% select(sample, target),
+    by = c("sample_id" = "sample"),
+    suffix = c("_variant", "_load")
+  ) %>%
+  filter(is.na(target_load) & is.na(target_variant)) %>%
+  arrange(sample_start_date, sample_type) %>%
+  View()
