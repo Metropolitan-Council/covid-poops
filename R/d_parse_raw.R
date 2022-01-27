@@ -1,15 +1,29 @@
-# script for grabbing raw data from the various excel spreadsheets and putting them in one place
+# Extracts raw data from excel sheets and compiles into clean .csvs
 
+# toolbox -----
+library(tidyverse)
+library(readxl)
+library(janitor)
+
+# Sample IDs ----------
 load_sample_info <-read.csv("data/load_sample_info.csv") %>%
   mutate(sample_type = "copies")
+
 variant_sample_info <- read.csv("data/variant_sample_info.csv") %>%
   mutate(sample_type = "variants")
 
 sample_info <- rbind(load_sample_info, variant_sample_info) %>%
+  filter(!is.na(sample_start_date)) %>%
   mutate(sample_start_date  = as.Date(sample_start_date, format = "%m/%d/%Y")) %>%
   unique() %>%
   filter(!is.na(sample_id)) %>%
-  arrange(sample_start_date, sample_id)
+  # now un-nest some combined samples (+)
+  mutate(sample_id_single = strsplit(sample_id, "[+]")) %>% 
+  unnest(sample_id_single) %>%
+  relocate(sample_id_single, .after = "sample_id") %>%
+  arrange(sample_start_date, sample_id_single)
+
+
 
 raw_data_files <- list.files("data/umgc-raw/", pattern = ".xlsx")
 
@@ -150,4 +164,8 @@ variant_data_raw %>%
   relocate(copies_20m_l_well, .after = "target") %>%
   # get rid of completely NA columns:
   select_if(~sum(!is.na(.)) > 0)
+
+
+# cross-check against sample info:
+sample_info <- 
   
