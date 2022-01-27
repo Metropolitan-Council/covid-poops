@@ -83,7 +83,8 @@ for (file_num in seq_along(raw_data_files)) {
   if (length(found_load_sheet_names) == 1) {
     load_data_raw <-
       suppressMessages(read_excel(excel_file, found_load_sheet_names, na = c("", "No Call"))) %>%
-      janitor::clean_names()
+      janitor::clean_names() %>%
+      mutate(sheet = paste0(excel_file, "----", found_load_sheet_names))
     load_data_list[[file_num]] <- load_data_raw
   } else if (length(found_load_sheet_names) > 1) {
     message(
