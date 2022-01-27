@@ -27,8 +27,11 @@ sample_info <- rbind(load_sample_info, variant_sample_info) %>%
 # Our excel workbooks ----
 raw_data_files <- list.files("data/umgc-raw/", pattern = ".xlsx")
 
-# Search for the worksheets we need within each workbook ----
+# File dates for each file:
+file_dates <- read.csv('data/umgc-file-names-date.csv') %>%
+  mutate(date == as.Date(date, "%m/%d/%Y"))
 
+# Search for the worksheets we need within each workbook ----
 # an empty list to hold the worksheet names:
 all_sheet_names_list <- list()
 
@@ -72,6 +75,8 @@ variant_data_list <- list()
 for (file_num in seq_along(raw_data_files)) {
   excel_file <- file.path('data/umgc-raw', raw_data_files[file_num])
   
+  sheet_date <- file_dates$date[file_dates$filename == raw_data_files[file_num]]
+  
   sheet_names <- readxl::excel_sheets(excel_file)
   
   found_load_sheet_names <-
@@ -84,7 +89,8 @@ for (file_num in seq_along(raw_data_files)) {
     load_data_raw <-
       suppressMessages(read_excel(excel_file, found_load_sheet_names, na = c("", "No Call"))) %>%
       janitor::clean_names() %>%
-      mutate(sheet = paste0(excel_file, "----", found_load_sheet_names))
+      mutate(sheet = paste0(excel_file, "----", found_load_sheet_names)) %>%
+      mutate(sheet_date = sheet_date)
     load_data_list[[file_num]] <- load_data_raw
   } else if (length(found_load_sheet_names) > 1) {
     message(
@@ -107,7 +113,8 @@ for (file_num in seq_along(raw_data_files)) {
   if (length(found_variant_sheet_names) == 1) {
     variant_data_raw <-
       suppressMessages(read_excel(excel_file, found_variant_sheet_names, na = c("", "No Call"))) %>%
-      janitor::clean_names()
+      janitor::clean_names() %>%
+      mutate(sheet_date = sheet_date)
     variant_data_list[[file_num]] <- variant_data_raw
   } else if (length(found_variant_sheet_names) > 1) {
     message(
@@ -190,11 +197,14 @@ variant_data <-
 
 # Checks---------
 ## Samples with missing data----
+
 sample_info %>%
-  left_join(variant_data_clean %>% select(sample, target),
+  mutate(sample_month = lubridate::floor_date(sample_start_date, "month")) %>%
+  
+  left_join(variant_data %>% select(sample, target),
             by = c("sample_id" = "sample")) %>%
   left_join(
-    load_data_clean %>% select(sample, target),
+    load_data %>% select(sample, target),
     by = c("sample_id" = "sample"),
     suffix = c("_variant", "_load")
   ) %>%
