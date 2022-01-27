@@ -76,8 +76,10 @@ variant_data <-
     `Alpha, Beta & Gamma` = n501y,
     Delta = l452r,
     `Omicron BA.1` = case_when(date >= "2021-11-18" ~ k417n,
+                               date < "2021-11-18" ~ NA,
                                TRUE ~ 0),
     `Omicron BA.2` = case_when(date >= '2021-11-18' ~ `Omicron BA.1` - hv_69_70,
+                               date < "2021-11-18" ~ NA,
                                TRUE ~ 0)
   ) %>%
   select(-d80a, -e484k, -hv_69_70, -n501y, -k417n, -l452r) %>%
