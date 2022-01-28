@@ -301,7 +301,7 @@ server <- function(input, output) {
         ),
         yaxis = list(
           title = list(
-            text = "<b>Copies per </b>",
+            text = "<b>Viral load in wastewater,</b> M copies/person/day",
             standoff = 25,
             font = list(
               size = 14,
@@ -309,7 +309,6 @@ server <- function(input, output) {
               color = councilR::colors$suppBlack
             )
           ),
-          tickformat = "M",
           tickfont = list(
             size = 12,
             family = font_family_list,
