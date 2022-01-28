@@ -218,6 +218,118 @@ server <- function(input, output) {
 
     load_plot
   })
+  
+  # load by variant
+  # variant -----
+  output$loadVariantPlot <- renderPlotly({
+    # browser()
+    plot_ly() %>%
+      #total load:
+      add_trace(
+        data = load_data,
+        type = "scatter",
+        mode = "lines",
+        x = ~ date,
+        fill = "tozeroy",
+        y = ~ copies_day_person_7day,
+        alpha = 0.25,
+        line = list(width = 0.5, color = colors$suppGray),
+        color = ~ "Total load",
+        colors = pal,
+        name = "Total load",
+        hoverinfo = "text",
+        text = ~ hover_text_load_7day
+      ) %>%
+      add_trace(
+        data = copies_by_variant,
+        type = "scatter",
+        mode = "lines",
+        x = ~ date,
+        fill = "tozeroy",
+        y = ~ copies_7day,
+        split = ~ variant,
+        color = ~ variant,
+        alpha = 0.25,
+        colors = pal,
+        hoverinfo = "none"
+      ) %>%
+      
+      add_trace(
+        data = copies_by_variant,
+        type = "scatter",
+        mode = "markers",
+        x = ~ date,
+        y = ~ copies,
+        split = ~ variant,
+        color = ~ variant,
+        alpha = 0.8,
+        colors = pal,
+        hoverinfo = "text",
+        text = ~ hover_text_variant
+      ) %>%
+      
+      layout(
+        annotations = ann_list,
+        hovermode = "closest",
+        hoverdistance = "10",
+        hoverlabel = hov_lab_list,
+        margin = list(
+          l = 50,
+          r = 100,
+          b = 50,
+          pad = 10
+        ),
+        xaxis = list(
+          title = list(
+            text = "",
+            standoff = 25,
+            font = list(
+              size = 14,
+              family = font_family_list,
+              color = councilR::colors$suppBlack
+            )
+          ),
+          zerolinewidth = 2,
+          zeroline = TRUE,
+          showline = FALSE,
+          showgrid = FALSE,
+          tickfont = list(
+            size = 12,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          )
+        ),
+        yaxis = list(
+          title = list(
+            text = "<b>Copies per </b>",
+            standoff = 25,
+            font = list(
+              size = 14,
+              family = font_family_list,
+              color = councilR::colors$suppBlack
+            )
+          ),
+          tickformat = "M",
+          tickfont = list(
+            size = 12,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          ),
+          gridcolor = "gray90",
+          zerolinecolor = "gray50",
+          zerolinewidth = 2
+        ),
+        legend = list(
+          orientation = "h",
+          font = list(
+            size = 14,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          )
+        )
+      ) %>%
+      config(displayModeBar = FALSE)
+  })
 
 
 
