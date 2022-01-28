@@ -76,17 +76,35 @@ variant_data_run <-
   mutate(
     `Alpha, Beta & Gamma` = n501y,
     Delta = l452r,
-    `Omicron BA.2` = case_when(date >= "2021-11-18" & 
-                                 k417n > hv_69_70 ~ k417n - hv_69_70,
-                               date >= "2021-11-18" & k417n < hv_69_70 ~ 0),
-    `Omicron BA.1` = case_when(date >= "2021-11-18" ~ k417n - `Omicron BA.2`),
+    `Omicron BA.2` = case_when(
+      date >= "2021-11-18" &
+        k417n > hv_69_70  &
+        !is.na(hv_69_70) &
+        !is.na(k417n)
+      ~ k417n - hv_69_70,
+      date >= "2021-11-18" &
+        k417n < hv_69_70 &
+        !is.na(hv_69_70) &
+        !is.na(k417n)  ~ 0
+    ),
+    `Omicron BA.1` = case_when(
+      date >= "2021-11-18" &
+        k417n > hv_69_70 &
+        !is.na(hv_69_70) &
+        !is.na(k417n)
+      ~ k417n - (1 - hv_69_70),
+      date >= "2021-11-18" &
+        (k417n < hv_69_70 |
+           is.na(hv_69_70))
+      ~ k417n
+    ),
   ) %>%
   select(-d80a, -e484k, -hv_69_70, -n501y, -k417n, -l452r) %>%
   pivot_longer(
-      cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`, `Omicron BA.2`),
-      names_to = 'variant',
-      values_to = 'frequency'
-    )
+    cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`, `Omicron BA.2`),
+    names_to = 'variant',
+    values_to = 'frequency'
+  )
 
 variant_data <-
   variant_data_run %>%
