@@ -65,6 +65,7 @@ variant_split <-
 
 variant_data <-
   variant_split %>%
+  mutate(date = as.Date(date)) %>%
   rename(sample_id = sample, frequency = frequency_of_mutant_allele) %>%
   # sometimes multiple runs on same sample - average across these.
   group_by(sample_id, date, mutation) %>%
@@ -75,16 +76,18 @@ variant_data <-
   mutate(
     `Alpha, Beta & Gamma` = n501y,
     Delta = l452r,
-    `Omicron BA.1` = case_when(date >= "2021-11-18" ~ k417n,
-                               date < "2021-11-18" ~ NA,
-                               TRUE ~ 0),
-    `Omicron BA.2` = case_when(date >= '2021-11-18' ~ `Omicron BA.1` - hv_69_70,
-                               date < "2021-11-18" ~ NA,
-                               TRUE ~ 0)
+    `Omicron BA.1` = case_when(date >= "2021-11-18" ~ k417n - (1 - hv_69_70)),
+    `Omicron BA.2` = case_when(date >= "2021-11-18" ~ k417n - hv_69_70)
   ) %>%
   select(-d80a, -e484k, -hv_69_70, -n501y, -k417n, -l452r) %>%
-  pivot_longer(cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`, `Omicron BA.2`),
-               names_to = 'variant', values_to = 'frequency')
+  pivot_longer(
+    cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`, `Omicron BA.2`),
+    names_to = 'variant',
+    values_to = 'frequency'
+  ) %>%
+  arrange(date)
+  
+variant_data %>% filter(date > '2022-01-20')
 
 
 # reshape-----

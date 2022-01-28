@@ -20,7 +20,7 @@ raw_load_data <- read_excel("data/raw-load-data.xlsx",
 seq_date <- function(x) seq(min(x, na.rm = T), max(x, na.rm = T), by = "day")
 all_dates <- seq_date(raw_load_data$sample_start_date)
 
-load_data <-
+load_data_bysample <- 
   raw_load_data %>%
   mutate(flow_l_day = metro_flow_rate_mgd_on_sample_start_date * 3785411.8) %>%
   select(-metro_flow_rate_mgd_on_sample_start_date) %>%
@@ -36,7 +36,10 @@ load_data <-
   # average across runs for a sample average
   group_by(sample_name, sample_start_date, flow_l_day) %>%
   summarize(across(c(copies_day_person_M), ~ mean(., na.rm = T))) %>%
-  ungroup() %>%
+  ungroup()
+
+load_data <-
+  load_data_bysample %>%
   # average by date:
   group_by(sample_start_date) %>%
   add_tally(name = "n_samples") %>%
