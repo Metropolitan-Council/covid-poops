@@ -74,7 +74,8 @@ copies_by_variant <-
     "M copies, 7-day average"
   )) %>%
   mutate(across(where(is.numeric), round, digits = 6)) %>%
-  filter(!is.na(copies))
+  filter(!is.na(copies)) %>%
+  filter(!variant == 'Other')
 
 write.csv(copies_by_variant, 'data/copies_by_variant.csv', row.names = F)
 write.csv(copies_by_variant, 'metc-wastewater-covid-monitor/data/copies_by_variant.csv', row.names = F)
