@@ -63,6 +63,17 @@ copies_by_variant <-
     "M copies"
   )) %>%
   mutate(across(where(is.numeric), round, digits = 6)) %>%
+  filter(!is.na(copies)) %>%
+  mutate(hover_text_variant_7day = paste0(
+    format(date, "%b %d, %Y"),
+    "<br>",
+    "<b>",
+    variant,
+    "</b> ",
+    round(copies_7day, digits = 2),
+    "M copies"
+  )) %>%
+  mutate(across(where(is.numeric), round, digits = 6)) %>%
   filter(!is.na(copies))
 
 write.csv(copies_by_variant, 'data/copies_by_variant.csv', row.names = F)
