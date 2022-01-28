@@ -1,4 +1,5 @@
-Package: Faux
+Type: Package
+Name: Faux
 Depends: 
     R (>= 3.5.0)
 Imports: 
