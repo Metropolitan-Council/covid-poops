@@ -1,0 +1,12 @@
+Depends: 
+    R (>= 3.5.0)
+Imports: 
+    shiny,
+    tidyverse,
+    lubridate,
+    plotly,
+    DT,
+    gh,
+    councilR
+Remotes:
+  Metropolitan-Council/councilR
