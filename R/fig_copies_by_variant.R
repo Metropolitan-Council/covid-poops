@@ -14,19 +14,19 @@ font_add("Arial Narrow Italic",
 )
 showtext_auto()
 
-## LARGE -----
+
 load_varplot <-
   copies_by_variant %>%
   filter(date >= "2021-01-01" & !variant == "Other") %>%
-  ggplot(aes(x = date, y = copies, color = variant, fill = variant)) +
+  ggplot(aes(x = date, y = copies)) +
   
-  # background - all counts
-  geom_area(data = load_data, aes(x = date, y = copies_day_person_7day), color = 'gray50', fill = 'gray50', alpha = 0.35, lty = "blank") + 
+  # gray background area - total
+  geom_area(data = load_data, aes(x = date, y = copies_day_person_7day), color = 'gray50', fill = 'gray50', alpha = 0.5, lty = "blank") + 
   
   geom_line(aes(x = date, y = copies_7day, color = variant), size = 0.8) +
-  geom_area(position = "identity", aes(x = date, y = copies_7day, group = variant, fill = variant, color = variant), alpha = 0.35, na.rm = T, lty = "blank") +
+  geom_area(position = "identity", aes(x = date, y = copies_7day, group = variant, fill = variant, color = variant), alpha = 0.5, na.rm = T, lty = "blank") +
   
-  geom_point() +
+  geom_point(aes(color = variant, fill = variant)) +
   scale_color_manual(
     values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "gray50"),
     name = "Variant "
@@ -43,7 +43,7 @@ load_varplot <-
   ) +  scale_x_date(name = "Date", breaks = "1 months", date_labels = "%b '%y") +
   labs(
     title = "COVID-19 Variants in Metro Plant Wastewater",
-    caption = paste0("\nShaded areas and lines are seven-day rolling averages. Points are daily data.\n Gray area in background is the total viral load. \nLast sample date ", max(variant_data_new$date, na.rm = T), ".")
+    caption = paste0("\nViral load of each variant is estimated by multiplying the total viral load (shown in gray) by the frequency of each variant. Frequencies do not always add to 100%.\nShaded areas and lines are seven-day rolling averages. Points are daily data. \nLast sample date ", max(variant_data_new$date, na.rm = T), ".")
   ) +
   council_theme(use_showtext = T) +
   theme(
