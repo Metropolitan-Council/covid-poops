@@ -11,6 +11,7 @@ source("R/d_covid_cases.R", verbose = F)
 source("R/d_load.R", verbose = F)
 source("R/d_variants.R", verbose = F)
 source("R/d_copies_by_variant.R", verbose = F)
+
 combined_data <-
   case_data %>%
   left_join(load_data, by = "date") %>%
