@@ -14,26 +14,6 @@ options(
   scipen = 99999,
   datatable.print.rownames = FALSE
 )
-#
-# ggplot(data = combined_data,
-#        mapping = aes(
-#          x = covid_cases_7day,
-#            y = copies_day_person_M_mn)) +
-# stat_smooth(n = 95,
-#             method = "lm", aes(outfit = fit<<-..y..))
-# fit
-#
-#
-# ggplotly(cases_vs_load_plot, layerData = 2, originalData = FALSE) %>% plotly_data()
-
-
-# combined_data <- combined_data %>%
-#   mutate(predicted_copies = fit,
-#          hover_text_predict = paste0("Week starting ", weekof)) %>%
-#                                      # , "<br>",
-# "<b>", round(predicted_copies), "</b>",
-# " predicted copies/day/person")) %>%
-# arrange(predicted_copies)
 
 case_data <- read.csv("data/case_data.csv") %>%
   mutate(date = as.Date(date)) %>%
