@@ -71,7 +71,7 @@ copies_by_variant <-
     variant,
     "</b> ",
     round(copies_7day, digits = 2),
-    "M copies"
+    "M copies, 7-day average"
   )) %>%
   mutate(across(where(is.numeric), round, digits = 6)) %>%
   filter(!is.na(copies))
