@@ -14,13 +14,6 @@ options(
   scipen = 99999,
   datatable.print.rownames = FALSE
 )
-# data:
-combined_data <- read.csv("data/combined_data.csv") %>%
-  mutate(date = as.Date(date)) %>%
-  mutate(weekof = lubridate::floor_date(date, unit = "week", week_start = 7)) %>%
-  select(weekof, covid_cases_7day, copies_day_person_M_mn) %>%
-  group_by(weekof) %>%
-  summarize(across(c(covid_cases_7day, copies_day_person_M_mn), ~ mean(., na.rm = T)))
 #
 # ggplot(data = combined_data,
 #        mapping = aes(
