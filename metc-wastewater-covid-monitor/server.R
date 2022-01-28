@@ -305,7 +305,8 @@ server <- function(input, output) {
   # Prevalence table -----
   output$loadData <- renderDT(server = FALSE, {
     load_data %>%
-      select(-hover_text_case, -hover_text_load) %>%
+      select(-hover_text_case, -hover_text_load,
+             -hover_text_load_7day) %>%
       DT::datatable(
         rownames = FALSE,
         extensions = "Buttons",
@@ -363,6 +364,7 @@ server <- function(input, output) {
   # case table -----
   output$caseData <- renderDT(server = FALSE, {
     case_data %>%
+      select(-hover_text_case) %>% 
       DT::datatable(
         rownames = FALSE,
         extensions = "Buttons",
