@@ -1,26 +1,38 @@
+library(tidyverse)
+library(zoo)
+
+# merge the variant and load data together
+# samples for load and samples for variants are different, so we'll match at the date level.
 copies_by_variant <-
+  # take the variant data, by date:
   variant_data_new %>%
   select(date, variant, frequency) %>%
+  # match to the load data, by date: 
   left_join(load_data %>% select(date, copies_day_person_M_mn)) %>%
+  # get complete data: 
   filter(!is.na(frequency) & !is.na(copies_day_person_M_mn)) %>%
+  # approx. number of copies of the variant is equal to the frequency of that variant, times the total # of copies:
   mutate(copies_variant = frequency * copies_day_person_M_mn) %>%
+  # put this in wide format, with variant in columns:
   pivot_wider(
     names_from = "variant",
     values_from = copies_variant,
     id_cols = c(date, copies_day_person_M_mn)
   ) %>%
+  # now, a row-wise calculation to figure out how much is "other" variants
   rowwise() %>%
   mutate(`Other` = copies_day_person_M_mn -
            sum(
              c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`, `Omicron BA.2`),
              na.rm = T
            )) %>%
-  # select(-copies_day_person_M_mn) %>%
+  # pivot back to long format: 
   pivot_longer(
     cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`, `Omicron BA.2`, Other),
     names_to = "variant",
     values_to = "copies"
   ) %>%
+  # for each variant, get a seven-day running average: 
   group_by(variant) %>%
   complete(variant,
            date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by = "days")) %>%
@@ -39,7 +51,7 @@ copies_by_variant <-
     )
   ) %>%
   ungroup() %>%
-  filter(copies > 0) %>%
+  # now clean up and add data labels: 
   arrange(date, variant) %>%
   mutate(hover_text_variant = paste0(
     format(date, "%b %d, %Y"),
@@ -51,3 +63,6 @@ copies_by_variant <-
     "M copies"
   )) %>%
   mutate(across(where(is.numeric), round, digits = 6))
+
+write.csv('data/copies_by_variant.csv', row.names = F)
+write.csv('metc-wastewater-covid-monitor/data/copies_by_variant.csv', row.names = F)
