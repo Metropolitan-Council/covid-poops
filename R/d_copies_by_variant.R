@@ -64,5 +64,5 @@ copies_by_variant <-
   )) %>%
   mutate(across(where(is.numeric), round, digits = 6))
 
-write.csv('data/copies_by_variant.csv', row.names = F)
-write.csv('metc-wastewater-covid-monitor/data/copies_by_variant.csv', row.names = F)
+write.csv(copies_by_variant, 'data/copies_by_variant.csv', row.names = F)
+write.csv(copies_by_variant, 'metc-wastewater-covid-monitor/data/copies_by_variant.csv', row.names = F)
