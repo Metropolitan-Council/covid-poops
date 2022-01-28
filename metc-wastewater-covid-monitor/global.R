@@ -48,7 +48,7 @@ case_data <- read.csv("data/case_data.csv") %>%
 
 load_data <- read.csv("data/clean_load_data.csv") %>%
   mutate(date = as.Date(date)) %>%
-  left_join(case_data) %>%
+  left_join(case_data, by = "date") %>%
   mutate(across(where(is.numeric), round, digits = 4))
 
 variant_data <- read.csv("data/clean_variant_data.csv") %>%
