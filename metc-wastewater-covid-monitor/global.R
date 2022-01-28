@@ -5,9 +5,15 @@ library(shiny)
 library(tidyverse)
 library(lubridate)
 library(plotly)
-library(councilR) # remotes::install_github("Metropolitan-Council/councilR", force = T)
+library(councilR) 
 library(DT)
 library(gh)
+
+
+# if you get error message
+# `Error building image: unable to satisfy package: councilR (0.1.0.9001)`
+# force install councilR from GitHub
+# remotes::install_github("Metropolitan-Council/councilR", force = T)
 
 options(
   launch.browser = TRUE,
