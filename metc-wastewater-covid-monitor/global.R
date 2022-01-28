@@ -28,7 +28,9 @@ variant_data <- read.csv("data/clean_variant_data.csv") %>%
   mutate(date = as.Date(date)) %>%
   mutate(across(where(is.numeric), round, digits = 2))
 
-
+copies_by_variant <- read.csv("data/copies_by_variant.csv") %>%
+  mutate(date = as.Date(date)) %>%
+  mutate(across(where(is.numeric), round, digits = 2))
 
 
 font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
