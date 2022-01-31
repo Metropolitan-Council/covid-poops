@@ -63,7 +63,7 @@ load_plot <-
     compared to <span style='color:#888888;'>metro-area COVID-19 cases</span>",
     x = "Date",
     caption = paste0(
-      "\nCase data (gray area) are reported case data for the 7-county area provided by MDH and downloaded from USAFacts.\nCase data are a running average of the preceding 7 days. Viral load data are from Metropolitan Council and the University of Minnesota Genomics Center;\npoints are daily values while the line is an average of the preceding 7 days.\nLast sample date ",
+      "\nCase data (gray area) are reported case data for the 7-county area provided by MDH and downloaded from USAFacts.\nCase data are a running average of the preceding 7 days. Viral load data are from Metropolitan Council and the\nUniversity of Minnesota Genomics Center; points are daily values while the line is an average of the preceding 7 days.\nLast sample date ",
       max(load_data$date, na.rm = T),
       "."
     )
@@ -155,7 +155,7 @@ load_data %>%
     compared to <span style='color:#888888;'>metro-area COVID-19 cases</span>",
     x = "Date",
     caption = paste0(
-      "\nCase data (gray area) are reported case data for the 7-county area provided by MDH and downloaded from USAFacts.\nCase data are a running average of the preceding 7 days. Viral load data are from Metropolitan Council and the University of Minnesota Genomics Center;\npoints are daily values while the line is an average of the preceding 7 days.\nLast sample date ",
+      "\nCase data (gray area) are reported case data for the 7-county area provided by MDH and downloaded from USAFacts.\nCase data are a running average of the preceding 7 days. Viral load data are from Metropolitan Council and the\nUniversity of Minnesota Genomics Center; points are daily values while the line is an average of the preceding 7 days.\nLast sample date ",
       max(load_data$date, na.rm = T),
       "."
     )
