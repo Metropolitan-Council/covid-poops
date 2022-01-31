@@ -461,14 +461,14 @@ server <- function(input, output) {
           lengthMenu = FALSE
         ),
         colnames = c(
-          "Mutation",
           "Variant",
           "Date",
           "Frequency",
           "7-day rolling average frequency"
         )
       ) %>%
-      DT::formatRound("frequency", 2)
+      DT::formatRound("frequency", 2,
+                      "frequency_7day", 2)
   })
 
 
