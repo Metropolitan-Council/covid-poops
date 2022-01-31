@@ -1,0 +1,15 @@
+Type: Package
+Package: Faux
+Version: 0.0.0.9000
+Depends: 
+    R (>= 3.5.0)
+Imports: 
+    shiny,
+    dplyr,
+    lubridate,
+    plotly,
+    DT,
+    gh,
+    councilR
+Remotes:
+  Metropolitan-Council/councilR

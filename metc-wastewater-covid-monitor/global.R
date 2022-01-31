@@ -2,12 +2,19 @@
 
 # toolbox:
 library(shiny)
-library(tidyverse)
+# library(tidyverse)
+library(dplyr)
 library(lubridate)
 library(plotly)
-library(councilR) # remotes::install_github("Metropolitan-Council/councilR", force = T)
+library(councilR) 
 library(DT)
 library(gh)
+
+
+# if you get error message
+# `Error building image: unable to satisfy package: councilR (0.1.0.9001)`
+# force install councilR from GitHub
+# remotes::install_github("Metropolitan-Council/councilR", force = T)
 
 options(
   launch.browser = TRUE,
@@ -21,7 +28,7 @@ case_data <- read.csv("data/case_data.csv") %>%
 
 load_data <- read.csv("data/clean_load_data.csv") %>%
   mutate(date = as.Date(date)) %>%
-  left_join(case_data) %>%
+  left_join(case_data, by = "date") %>%
   mutate(across(where(is.numeric), round, digits = 4))
 
 variant_data <- read.csv("data/clean_variant_data.csv") %>%
