@@ -77,7 +77,7 @@ pal <- setNames(pal, c("Omicron", "Delta", "Alpha, Beta & Gamma"))
 ann_list <- list(
   text = paste(
     "<br><br>",
-    "<i>", "Data last updated",
+    "<i>", "Latest sample date",
     max(c(
       load_data$date,
       variant_data$date
