@@ -1,0 +1,27 @@
+:root {
+    --council-blue: #0054a4;
+    --council-black: #252525;
+    --council-white: #FFFFFF;
+    --council-gray: #EDEDED;
+    --cd-green: #78A22F;
+    --mts-red: #EE3124;
+    /* blue cascade with backround and text color */
+    --background-blue-0: #002b5c;
+    --color-blue-0: #ffffff;
+    --background-blue-1: #01408a;
+    --color-blue-1: #ffffff;
+    --background-blue-2: var(--council-blue);
+    --color-blue-2: var(--council-white);
+    --background-blue-3: #A5BAD5;
+    --color-blue-3: #002b5c;
+    --background-blue-4: #cad3e0;
+    --color-blue-4: #002b5c;
+    --background-blue-5: #e0e3e8;
+    --color-blue-5: #002b5c;
+    --background-blue-6: var(--council-gray);
+    --color-blue-6: #002b5c;
+    --background-blue-7: #f7f7f7;
+    --color-blue-7: #002b5c;
+    --background-blue-8: --var(--council-white);
+    --color-blue-8: #002b5c;
+}
