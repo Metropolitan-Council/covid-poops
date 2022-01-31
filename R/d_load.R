@@ -8,7 +8,7 @@ raw_load_data <- read_excel("data/raw-load-data.xlsx",
     "date", "skip", "numeric", "numeric",
     "skip", "skip", "skip", "numeric",
     "skip", "skip", "skip", "skip", "skip",
-    "skip", "skip", "skip", "skip"
+    "skip", "skip", "skip", "skip", "skip"
   ),
   skip = 1
 ) %>%
