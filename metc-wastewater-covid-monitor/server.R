@@ -467,8 +467,8 @@ server <- function(input, output) {
           "7-day rolling average frequency"
         )
       ) %>%
-      DT::formatRound("frequency", 2,
-                      "frequency_7day", 2)
+      DT::formatRound("frequency", 2) %>%
+      DT::formatRound("frequency_7day", 2)
   })
 
 
