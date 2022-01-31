@@ -9,7 +9,6 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-setwd(paste0(here::here(), "/metc-wastewater-covid-monitor"))
 
 library(shiny)
 library(tidyverse)
