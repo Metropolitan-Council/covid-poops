@@ -7,6 +7,7 @@
 
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![Deploy](https://github.com/Metropolitan-Council/covid-poops/workflows/deploy/badge.svg)](https://github.com/Metropolitan-Council/covid-poops/actions)
 <!-- badges: end -->
 
 This repository contains the code for cleaning, transforming and
@@ -26,6 +27,7 @@ processing. `0_run_all.R` runs all scripts and saves final data.
 #&gt; ├── <span style='color: #00BB00;'>d_load.R</span>
 #&gt; ├── <span style='color: #00BB00;'>d_variants.R</span>
 #&gt; ├── <span style='color: #00BB00;'>fig_cases_vs_load.R</span>
+#&gt; ├── <span style='color: #00BB00;'>fig_sewershed.R</span>
 #&gt; └── <span style='color: #00BB00;'>fig_variants.R</span>
 </CODE></PRE>
 
@@ -35,7 +37,9 @@ font files the app needs upon running.
 
 <PRE class="fansi fansi-output"><CODE>#&gt; <span style='color: #0000BB; font-weight: bold;'>metc-wastewater-covid-monitor/</span>
 #&gt; ├── <span style='color: #0000BB; font-weight: bold;'>data</span>
+#&gt; ├── deploy.sh
 #&gt; ├── <span style='color: #00BB00;'>global.R</span>
+#&gt; ├── <span style='color: #0000BB; font-weight: bold;'>rsconnect</span>
 #&gt; ├── <span style='color: #00BB00;'>server.R</span>
 #&gt; ├── <span style='color: #00BB00;'>ui.R</span>
 #&gt; └── <span style='color: #0000BB; font-weight: bold;'>www</span>

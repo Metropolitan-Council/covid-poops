@@ -24,7 +24,9 @@ load_data_bysample <-
   raw_load_data %>%
   mutate(flow_l_day = metro_flow_rate_mgd_on_sample_start_date * 3785411.8) %>%
   select(-metro_flow_rate_mgd_on_sample_start_date) %>%
-  rename(N1_gene_l = copies_l_3, N2_gene_l = copies_l_4) %>%
+  rename(N1_gene_l = t1_copies_u_l, N2_gene_l = t2_copies_u_l) %>%
+  # convert microliter to liter: 
+  mutate(N1_gene_l = 1e6 * (N1_gene_l/20), N2_gene_l = 1e6 * (N2_gene_l/20)) %>%
   pivot_longer(
     cols = c("N1_gene_l", "N2_gene_l"), names_to = "gene_num",
     values_to = "n_l"
