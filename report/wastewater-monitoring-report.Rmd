@@ -1,0 +1,565 @@
+---
+title: "Metro Wastewater COVID-19 Monitoring"
+author: "Metropolitan Council"
+date: "January 31, 2022"
+output:
+  html_document:
+    css: ["www/rmd-report-style.css", "www/colors.css", "www/font.css"]
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(shiny)
+library(tidyverse)
+library(lubridate)
+library(plotly)
+library(councilR) # remotes::install_github("Metropolitan-Council/councilR", force = T)
+library(DT)
+library(gh)
+
+
+case_data <- read.csv("data/case_data.csv") %>%
+  mutate(date = as.Date(date)) %>%
+  mutate(across(where(is.numeric), round, digits = 4))
+
+load_data <- read.csv("data/clean_load_data.csv") %>%
+  mutate(date = as.Date(date)) %>%
+  left_join(case_data) %>%
+  mutate(across(where(is.numeric), round, digits = 4))
+
+variant_data <- read.csv("data/clean_variant_data.csv") %>%
+  mutate(date = as.Date(date)) %>%
+  mutate(across(where(is.numeric), round, digits = 2))
+
+copies_by_variant <- read.csv("data/copies_by_variant.csv") %>%
+  mutate(date = as.Date(date)) %>%
+  mutate(across(where(is.numeric), round, digits = 2))
+
+omi_ratio_data <- read.csv("data/omi_ratio_data.csv") %>%
+  mutate(date = as.Date(date)) %>%
+  mutate(across(where(is.numeric), round, digits = 3))
+
+font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
+
+whiteSmoke <- "#F5F5F5"
+
+pal <- c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#666666")
+pal <- setNames(pal, c("Alpha, Beta & Gamma", "Delta", "Omicron BA.1", "Omicron BA.2", "Total load"))
+
+
+
+ann_list <- list(
+  text = paste(
+    "<br><br>",
+    "<i>", "Data last updated",
+    max(c(
+      load_data$date,
+      variant_data$date
+      # case_data$date,
+      # combined_data$date
+    ), na.rm = T),
+    "</i>"
+  ),
+  font = list(
+    size = 11,
+    family = font_family_list,
+    color = councilR::colors$suppBlack
+  ),
+  x = 1,
+  y = -0.13,
+  showarrow = F,
+  xref = "paper", yref = "paper",
+  xanchor = "right", yanchor = "auto",
+  xshift = 0, yshift = -25
+)
+
+hov_lab_list <- list(
+  font = list(
+    size = 20,
+    family = font_family_list,
+    color = councilR::colors$suppWhite
+  ),
+  # bgcolor = "white",
+  stroke = list(
+    councilR::colors$suppGray,
+    councilR::colors$suppGray,
+    councilR::colors$suppGray,
+    councilR::colors$suppGray
+  ),
+  padding = list(l = 5, r = 5, b = 5, t = 5)
+)
+```
+
+## COVID-19 Load
+#### Tracking COVID-19 Prevalence with Metro Plant Wastewater
+
+The number of reported cases of COVID-19 infections in the seven-county metro area corresponds to the prevalence of the virus in wastewater samples at the Metro treatment plant in Saint Paul. The plant serves a large portion of the seven-county metro area.
+
+###### How to read this graph:
+The blue line and points show the total amount of SAR S-CoV-2 viral RNA in wastewater flowing into the Metro Plant, in millions copies of the SARS-CoV-2 genome per person served by the wastewater area, per day. Blue points are daily values; the blue line is a running average of the previous 7 days. The gray line shows the average of the previous 7 days of new reported COVID-19 infections in the seven-county Metro area per 100,000 residents. Case data are provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org). New cases tend to lag wastewater detection trends by about 6-8 days.
+
+```{r load plot, out.width = '80%', message = FALSE, warning = FALSE}
+  ay <- list(
+      tickfont = list(color = colors$councilBlue),
+      overlaying = "y",
+      side = "left",
+      title = list(
+        text = "<b>Viral load in wastewater,</b> M copies/person/day", 
+        standoff = 25,
+        font = list(color = colors$councilBlue, size = 16)
+      ),
+      zerolinewidth = 1,
+      zerolinecolor = colors$suppWhite,
+      gridcolor = colors$suppWhite
+    )
+
+    load_plot <-
+      load_data %>%
+      # left_join(case_data, by = "date") %>%
+      plot_ly(type = "scatter", mode = "lines") %>%
+      add_trace(
+        mode = "markers",
+        x = ~date,
+        y = ~copies_day_person_M_mn,
+        name = "Viral load",
+        size = 1,
+        yaxis = "y2",
+        marker = list(color ="rgba(0, 84, 164, .5)", 
+                      size = 8,
+                      line = list(color = colors$councilBlue,
+                                  width = 0.5)),
+        # fillcolor = ,
+        # line = list(width = 2, color = colors$esBlue),
+        hoverinfo = "text",
+        text = ~hover_text_load
+      ) %>%
+      add_trace(
+        mode = "lines",
+        x = ~date,
+        y = ~copies_day_person_7day,
+        name = "Viral load",
+        size = 1,
+        yaxis = "y2",
+        # fill = "tozeroy",
+        # fillcolor = "rgba(0, 154, 199, .5)",
+        line = list(width = 2, color = colors$councilBlue),
+        hoverinfo = "text",
+        text = ~hover_text_load_7day
+      ) %>%
+      add_trace(
+        x = ~date,
+        y = ~covid_cases_7day,
+        name = "Cases per 100,000",
+        fill = "tozeroy",
+        fillcolor = "rgba(160, 160, 160, .3)",
+        line = list(width = 0.5, color = colors$suppGray),
+        hoverinfo = "text",
+        text = ~hover_text_case
+      ) %>%
+      layout(
+        autosize = T,
+        annotations = ann_list,
+        showlegend = FALSE,
+        margin = list(l = 75, r = 75, b = 50, pad = 10),
+        hovermode = "closest",
+        hoverdistance = "10",
+        hoverlabel = hov_lab_list,
+        yaxis2 = ay,
+        xaxis = list(
+          title = list(
+            text = "Date",
+            standoff = 25,
+            font = list(
+              size = 14,
+              family = font_family_list,
+              color = councilR::colors$suppBlack
+            )
+          ),
+          zerolinewidth = 2,
+          gridcolor = colors$suppWhite,
+          zerolinecolor = colors$suppWhite,
+          tickfont = list(
+            size = 12,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          )
+        ),
+        yaxis = list(
+          side = "right",
+          title = list(
+            text = "<b>COVID-19 cases</b> per 100K residents", 
+            standoff = 25,
+            font = list(
+              size = 16,
+              family = font_family_list,
+              color = councilR::colors$suppBlack
+            )
+          ),
+          zerolinewidth = 1,
+          tickfont = list(
+            size = 14,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          ),
+          gridcolor = colors$suppWhite,
+          zerolinecolor = colors$suppWhite
+        ),
+        legend = list(
+          orientation = "h",
+          font = list(
+            size = 14,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          )
+        )
+      ) %>%
+      config(displayModeBar = F)
+
+    div(load_plot, align = "center")
+```
+
+## COVID-19 Variants
+#### COVID-19 variant tracker
+
+As the Delta variant of the SARS-CoV-2 virus declined, the Omicron variant quickly took its place as the dominant variant in wastewater samples at the Metro treatment plant in Saint Paul. The plant serves a large portion of the seven-county metro area.
+
+###### How to read this graph:
+This graph shows the frequency of SARS-CoV-2 variants. Points are daily data; lines and shaded areas are averages of the previous 7 days.
+
+```{r variant plot, message = FALSE, warning = FALSE}
+variant_plot <- 
+variant_data %>%
+      plot_ly() %>%
+      add_trace(
+        type = "scatter",
+        mode = "markers",
+        x = ~date,
+        y = ~frequency,
+        split = ~variant,
+        color = ~variant,
+        alpha = 0.8,
+        colors = pal,
+        hoverinfo = "text",
+        text = ~hover_text_variant
+      ) %>%
+      add_trace(
+        type = "scatter",
+        mode = "lines",
+        x = ~date,
+        fill = "tozeroy",
+        y = ~frequency_7day,
+        split = ~variant,
+        color = ~variant,
+        alpha = 0.25,
+        colors = pal,
+        hoverinfo = "none"
+      ) %>%
+      layout(
+        annotations = ann_list,
+        hovermode = "closest",
+        hoverdistance = "10",
+        hoverlabel = hov_lab_list,
+        margin = list(
+          l = 50,
+          r = 100,
+          b = 50,
+          pad = 10
+        ),
+        xaxis = list(
+          title = list(
+            text = "", standoff = 25,
+            font = list(
+              size = 14,
+              family = font_family_list,
+              color = councilR::colors$suppBlack
+            )
+          ),
+          zerolinewidth = 2,
+          zeroline = TRUE,
+          showline = FALSE,
+          showgrid = FALSE,
+          tickfont = list(
+            size = 12,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          )
+        ),
+        yaxis = list(
+          title = list(
+            text = "<b>Frequency of marker genes (%)</b>",
+            standoff = 25,
+            font = list(
+              size = 14,
+              family = font_family_list,
+              color = councilR::colors$suppBlack
+            )
+          ),
+          tickformat = "1%",
+          tickfont = list(
+            size = 12,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          ),
+          gridcolor = "gray90",
+          zerolinecolor = "gray50",
+          zerolinewidth = 2,
+          range = c(0, 1.1)
+        ),
+        legend = list(
+          orientation = "h",
+          font = list(
+            size = 14,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          )
+        )
+      ) %>%
+      config(displayModeBar = FALSE)
+
+div(variant_plot, align = "center")
+```
+
+
+## COVID-19 Load by Variant
+#### Another way of looking at the variant data
+
+###### How to read this graph:
+In this graph, variant frequencies (in %) are multiplied by the total load to create an estimate of the number of copies of each variant in wastewater. Points are daily data; lines and shaded areas are averages of the previous 7 days. The gray area in the background is the 7-day average total viral load. Variant proportions do not always add to 100%, so slight discrepancies between the total viral load and that of the individual variants are expected.
+
+```{r load x variant plot, message = FALSE, warning = FALSE}
+  # browser()
+loadxvariantplot <-
+    plot_ly() %>%
+      #total load:
+      add_trace(
+        data = load_data,
+        type = "scatter",
+        mode = "lines",
+        x = ~ date,
+        fill = "tozeroy",
+        y = ~ copies_day_person_7day,
+        alpha = 0.25,
+        line = list(width = 0.5, color = colors$suppGray),
+        color = ~ "Total load",
+        colors = pal,
+        name = "Total load",
+        hoverinfo = "text",
+        text = ~ hover_text_load_7day
+      ) %>%
+      add_trace(
+        data = copies_by_variant,
+        type = "scatter",
+        mode = "lines",
+        x = ~ date,
+        fill = "tozeroy",
+        y = ~ copies_7day,
+        split = ~ variant,
+        color = ~ variant,
+        alpha = 0.25,
+        colors = pal,
+        hoverinfo = "none"
+      ) %>%
+
+      add_trace(
+        data = copies_by_variant,
+        type = "scatter",
+        mode = "markers",
+        x = ~ date,
+        y = ~ copies,
+        split = ~ variant,
+        color = ~ variant,
+        alpha = 0.8,
+        colors = pal,
+        hoverinfo = "text",
+        text = ~ hover_text_variant
+      ) %>%
+
+      layout(
+        annotations = ann_list,
+        hovermode = "closest",
+        hoverdistance = "10",
+        hoverlabel = hov_lab_list,
+        margin = list(
+          l = 50,
+          r = 100,
+          b = 50,
+          pad = 10
+        ),
+        xaxis = list(
+          title = list(
+            text = "",
+            standoff = 25,
+            font = list(
+              size = 14,
+              family = font_family_list,
+              color = councilR::colors$suppBlack
+            )
+          ),
+          zerolinewidth = 2,
+          zeroline = TRUE,
+          showline = FALSE,
+          showgrid = FALSE,
+          tickfont = list(
+            size = 12,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          )
+        ),
+        yaxis = list(
+          title = list(
+            text = "<b>Viral load in wastewater,</b> M copies/person/day",
+            standoff = 25,
+            font = list(
+              size = 14,
+              family = font_family_list,
+              color = councilR::colors$suppBlack
+            )
+          ),
+          tickfont = list(
+            size = 12,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          ),
+          gridcolor = "gray90",
+          zerolinecolor = "gray50",
+          zerolinewidth = 2
+        ),
+        legend = list(
+          orientation = "h",
+          font = list(
+            size = 14,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          )
+        )
+      ) %>%
+      config(displayModeBar = FALSE)
+
+div(loadxvariantplot, align = "center")
+```
+
+###### More information about variant detection
+Variant frequencies are inferred from the presence of key mutations in the SARS-CoV-2 genome. Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron from the K417N mutation. Some variants share mutations: presence of K417N mutation before November 18 were inferred to be the Beta variant.
+
+###### Monitoring Omicron BA.1 and BA.2 sub-lineages
+Metropolitan Council and the University of Minnesota continue to monitor for the BA.1 and BA.2 sub-lineages of Omicron. These two sub-lineages (or "sub-variants") can be distinguished by tracking the HV69-70 deletion: Omicron BA.2 has the K417N mutation but not the HV69-70 deletion, while Omicron BA.1 has both. Because other variants may be missing the HV69-70 deletion, Omicron BA.2 will be inferred to be absent until the ratio of HV69-70 to K417N decreases below 95%. This simple rule of thumb is subject to change.
+
+```{r ratio plot, message = FALSE, warning = FALSE}
+  # browser()
+ratioplot <- 
+  plot_ly() %>%
+  #total load:
+  add_trace(
+    data = omi_ratio_data,
+    type = "scatter",
+    mode = "lines",
+    x = ~ date,
+    y = ~ ratio_7day,
+    alpha = 0.8,
+    line = list(width = 0.75, color = colors$suppBlack),
+    color = ~ "7-day Average",
+    colors = pal,
+    name = "7-day Average",
+    hoverinfo = "text",
+    text = ~ hover_text_ratio_7day
+  ) %>%
+  
+  add_trace(
+    data = omi_ratio_data,
+    type = "scatter",
+    mode = "markers",
+    x = ~ date,
+    y = ~ ratio,
+    alpha = 0.8,
+    hoverinfo = "text",
+    color = ~ "Daily Data",
+    marker = list(color =colors$suppBlack),
+    text = ~ hover_text_ratio
+  ) %>%
+  
+  add_trace(
+    data = omi_ratio_data,
+    type = "scatter",
+    mode = "lines",
+    x = ~ date,
+    y = 0.95,
+    hoverinfo = "text",
+    text = "Our threshold for reporting Omicron BA.2",
+    color = "Reporting threshold",
+    name = "Reporting threshold",
+    fill = "tozeroy",
+    alpha = 0.8,
+    line = list(width = 1, color = "#D64776", dash = 'dash'),
+    fillcolor = "rgba(214, 71, 118, 0.5)"
+  ) %>%
+      layout(
+        annotations = ann_list,
+        hovermode = "closest",
+        hoverdistance = "10",
+        hoverlabel = hov_lab_list,
+        margin = list(
+          l = 50,
+          r = 100,
+          b = 50,
+          pad = 10
+        ),
+        xaxis = list(
+          title = list(
+            text = "",
+            standoff = 25,
+            font = list(
+              size = 14,
+              family = font_family_list,
+              color = councilR::colors$suppBlack
+            )
+          ),
+          zerolinewidth = 2,
+          zeroline = TRUE,
+          showline = FALSE,
+          showgrid = FALSE,
+          tickfont = list(
+            size = 12,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          )
+        ),
+        yaxis = list(
+          title = list(
+            text = "Ratio of HV 69-70 deletion to K417N mutation",
+            standoff = 25,
+            font = list(
+              size = 14,
+              family = font_family_list,
+              color = councilR::colors$suppBlack
+            )
+          ),
+          tickfont = list(
+            size = 12,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          ),
+          # ticks and limits: 
+          range = list(0.9, 1.05),
+          tickvals = list(0.9, 0.925, 0.95, 0.975, 1, 1.025, 1.05),
+          gridcolor = "gray90",
+          zerolinecolor = "gray50",
+          zerolinewidth = 2
+        ),
+        legend = list(
+          orientation = "h",
+          font = list(
+            size = 14,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          )
+        )
+      ) %>%
+      config(displayModeBar = FALSE)
+
+div(ratioplot, align = "center")
+```
+
+
+
+

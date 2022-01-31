@@ -1,0 +1,88 @@
+
+/* Light */
+@font-face {
+  font-family: "Light";
+  font-style: normal;
+  src: local("HelveticaNeue Light"), local("HelveticaNeue-Light"), url(helveticaneueltstd-lt-webfont.woff) format("woff");
+}
+
+/* Condensed */
+@font-face {
+  font-family: "Condensed";
+  font-style: normal;
+  src: local("HelveticaNeue Condensed"), local("HelveticaNeue-Condensed"), url(helveticaneueltstd-cn-webfont.woff) format("woff");
+}
+
+/* Bold condensed */
+@font-face{
+  font-family: "Bold-Condensed";
+  font-style: normal;
+  src: local("HelveticaNeue Condensed Bold"), local("HelveticaNeue-Condensed-Bold"), url(helveticaneueltstd-bdcn-webfont.woff) format("woff");
+}
+
+/* Medium */
+@font-face{
+  font-family: "Medium";
+  font-style: normal;
+  src: local("HelveticaNeue Medium"), local("HelveticaNeue-Medium"), url(helveticaneueltstd-md-webfont.woff) format("woff");
+}
+
+/* Medium Condensed */
+@font-face{
+  font-family: "Medium-Condensed";
+  font-style: normal;
+  src: local("HelveticaNeue Medium Condensed"), local("HelveticaNeue-Medium-Condensed"), url(helveticaneueltstd-mdcn-webfont.woff) format("woff");
+}
+
+/* Roman */
+@font-face{
+  font-family: "Roman";
+  font-style: normal;
+  src: local("HelveticaNeue Roman"), local("HelveticaNeue-Roman"), url(helveticaneueltstd-roman-webfont.woff) format("woff");
+}
+
+
+
+/* Original fonts ------------------------------------------------------------------*/
+/* latin-ext */
+@font-face {
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 300;
+  src: local("Raleway Light"), local("Raleway-Light"), url(https://fonts.gstatic.com/s/raleway/v12/1Ptrg8zYS_SKggPNwIYqWqhPANqczVsq4A.woff2) format("woff2");
+}
+/* latin */
+@font-face {
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 300;
+  src: local("Raleway Light"), local("Raleway-Light"), url(https://fonts.gstatic.com/s/raleway/v12/1Ptrg8zYS_SKggPNwIYqWqZPANqczVs.woff2) format("woff2");
+}
+/* latin-ext */
+@font-face {
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Raleway"), local("Raleway-Regular"), url(https://fonts.gstatic.com/s/raleway/v12/1Ptug8zYS_SKggPNyCMIT4ttDfCmxA.woff2) format("woff2");
+}
+/* latin */
+@font-face {
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Raleway"), local("Raleway-Regular"), url(https://fonts.gstatic.com/s/raleway/v12/1Ptug8zYS_SKggPNyC0IT4ttDfA.woff2) format("woff2");
+}
+/* latin-ext */
+@font-face {
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 600;
+  src: local("Raleway SemiBold"), local("Raleway-SemiBold"), url(https://fonts.gstatic.com/s/raleway/v12/1Ptrg8zYS_SKggPNwPIsWqhPANqczVsq4A.woff2) format("woff2");
+}
+/* latin */
+@font-face {
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 600;
+  src: local("Raleway SemiBold"), local("Raleway-SemiBold"), url(https://fonts.gstatic.com/s/raleway/v12/1Ptrg8zYS_SKggPNwPIsWqZPANqczVs.woff2) format("woff2");
+}
