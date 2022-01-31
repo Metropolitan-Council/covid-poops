@@ -416,6 +416,7 @@ server <- function(input, output) {
   # Prevalence table -----
   output$loadData <- renderDT(server = FALSE, {
     load_data %>%
+      left_join(case_data) %>%
       select(-hover_text_case, -hover_text_load,
              -hover_text_load_7day) %>%
       DT::datatable(
@@ -431,15 +432,17 @@ server <- function(input, output) {
           "Date",
           "Viral load in wastewater, M copies/person/day",
           "Standard error of viral load",
+          "7-day rolling average viral load",
           "Total COVID cases",
           "New COVID cases",
           "COVID cases per capita",
           "7-day rolling average COVID cases per capita"
         )
       ) %>%
-      DT::formatSignif(columns = 2:7, digits = 2) %>%
-      DT::formatRound(2:7, 2) %>%
-      DT::formatRound(4:5, 0)
+      DT::formatSignif(columns = 2:8, digits = 2) %>%
+      DT::formatRound(2:4, 2) %>%
+      # round case rates to nearest digit:
+      DT::formatRound(5:8, 0)
   })
 
 
