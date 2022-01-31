@@ -9,7 +9,6 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-
 setwd(paste0(here::here(), "/metc-wastewater-covid-monitor"))
 
 library(shiny)
@@ -93,8 +92,8 @@ hov_lab_list <- list(
 
 The number of reported cases of COVID-19 infections in the seven-county metro area corresponds to the prevalence of the virus in wastewater samples at the Metro treatment plant in Saint Paul. The plant serves a large portion of the seven-county metro area.
 
-##### How to read this graph:
-The blue line and points show the total amount of SARS-CoV-2 viral RNA in wastewater flowing into the Metro Plant, in millions copies of the SARS-CoV-2 genome per person served by the wastewater area, per day. Blue points are daily values; the blue line is a running average of the previous 7 days. The gray line shows the average of the previous 7 days of new reported COVID-19 infections in the seven-county Metro area per 100,000 residents. Case data are provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org). New cases tend to lag wastewater detection trends by about 6-8 days.
+###### How to read this graph:
+The blue line and points show the total amount of SAR S-CoV-2 viral RNA in wastewater flowing into the Metro Plant, in millions copies of the SARS-CoV-2 genome per person served by the wastewater area, per day. Blue points are daily values; the blue line is a running average of the previous 7 days. The gray line shows the average of the previous 7 days of new reported COVID-19 infections in the seven-county Metro area per 100,000 residents. Case data are provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org). New cases tend to lag wastewater detection trends by about 6-8 days.
 
 ```{r load plot, out.width = '80%', message = FALSE, warning = FALSE}
   ay <- list(
@@ -222,7 +221,7 @@ The blue line and points show the total amount of SARS-CoV-2 viral RNA in wastew
 As the Delta variant of the SARS-CoV-2 virus declined, the Omicron variant quickly took its place as the dominant variant in wastewater samples at the Metro treatment plant in Saint Paul. The plant serves a large portion of the seven-county metro area.
 
 ###### How to read this graph:
-Points are daily data; lines are averages of the previous 7 days. Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron BA.1 and BA.2 inferred from combined information about the K417N mutation HV69-70 deletion. Omicron BA.1 has the K417N mutation but not the HV69-70 deletion. Omicron BA.2 has both the K417N mutation and the HV69-70 deletion. Presence of K417N mutation before November 18 were inferred to be the Beta variant and are omitted from this image.
+This graph shows the frequency of SARS-CoV-2 variants. Points are daily data; lines and shaded areas are averages of the previous 7 days.
 
 ```{r variant plot, message = FALSE, warning = FALSE}
 variant_plot <- 
@@ -319,10 +318,10 @@ div(variant_plot, align = "center")
 
 
 ## COVID-19 Load by Variant
-#### Another way of viewing variant data
+#### Another way of looking at the variant data
 
 ###### How to read this graph: 
-Here is another way of looking at the variant data being gathered by the University of Minnesota Genomics Center and the Metropolitan Council. Here, variant frequencies (in %) are multiplied by the total load to create an estimate of the number of compies of each variant in wastewater. The gray area in the background is the total viral load in the wastewater. Variant proportions do not always add to 100%.
+In this graph, variant frequencies (in %) are multiplied by the total load to create an estimate of the number of copies of each variant in wastewater. Points are daily data; lines and shaded areas are averages of the previous 7 days. The gray area in the background is the 7-day average total viral load. Variant proportions do not always add to 100%, so slight discrepancies between the total viral load and that of the individual variants are expected.
 
 ```{r load x variant plot, message = FALSE, warning = FALSE}
   # browser()
@@ -436,3 +435,5 @@ loadxvariantplot <-
 div(loadxvariantplot, align = "center")
 ```
 
+###### How do we detect variants?
+Variant frequencies are inferred from the presence of key mutations in the SARS-CoV-2 genome. Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron BA.1 and BA.2 inferred from combined information about the K417N mutation HV69-70 deletion. Omicron BA.1 has the K417N mutation but not the HV69-70 deletion. Omicron BA.2 has both the K417N mutation and the HV69-70 deletion. Presence of K417N mutation before November 18 were inferred to be the Beta variant and are omitted from this image.
