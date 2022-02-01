@@ -15,8 +15,6 @@ font_add("Arial Narrow Italic",
 showtext_auto()
 
 variant_data_new <- read_csv("data/clean_variant_data.csv", show_col_types = F)
-
-
 ## LARGE -----
 
 varplot <-
@@ -28,11 +26,11 @@ varplot <-
   geom_area(position = "identity", aes(x = date, y = frequency_7day, group = variant, fill = variant, color = variant), alpha = 0.25, na.rm = T, lty = "blank") +
   geom_point() +
   scale_color_manual(
-    values = c("#84BB25", "#1D94B7", "#6D3571"),
+    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776"),
     name = "Variant "
   ) +
   scale_fill_manual(
-    values = c("#84BB25", "#1D94B7", "#6D3571"),
+    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776"),
     name = "Variant "
   ) +
   scale_y_continuous(name = "Variant frequency (%)", labels = scales::percent, limits = c(0, 1.05)) +
@@ -90,7 +88,7 @@ variant_data_new %>%
   ggplot(aes(x = date, y = frequency, color = variant, fill = variant)) +
   geom_line(aes(x = date, y = frequency_7day, color = variant),
     # size = 0.8,
-    lwd = 0.3
+    lwd = 1
   ) +
   geom_area(
     position = "identity", aes(
@@ -102,13 +100,13 @@ variant_data_new %>%
     ),
     alpha = 0.25, na.rm = T, lty = "blank"
   ) +
-  geom_point(size = 0.5) +
+  geom_point(size = 1) +
   scale_color_manual(
-    values = c("#84BB25", "#1D94B7", "#6D3571"),
+    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776"),
     name = "Variant "
   ) +
   scale_fill_manual(
-    values = c("#84BB25", "#1D94B7", "#6D3571"),
+    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776"),
     name = "Variant "
   ) +
   scale_y_continuous(
@@ -171,3 +169,4 @@ ggsave("fig/variants_static_graph_small.png",
   dpi = 300,
   units = "px"
 )
+

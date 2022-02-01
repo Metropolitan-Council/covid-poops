@@ -4,6 +4,9 @@
 .Ruserdata
 metc-wastewater-covid-monitor/rsconnect/
 
+# all dot files
+.*
+
 # History files
 .Rhistory
 .Rapp.history

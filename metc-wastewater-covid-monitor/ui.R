@@ -46,7 +46,6 @@ fluidPage(
       p("As the Delta variant of the SARS-CoV-2 virus declined, the Omicron variant quickly took its place as the dominant variant in wastewater samples at the Metro treatment plant in Saint Paul. The plant serves a large portion of the seven-county metro area. "),
       plotlyOutput("variantPlot", height = "auto"),
       p("Points are daily data; lines are averages of the previous 7 days. Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron from the K417N mutation. Presence of K417N mutation before November 18 were inferred to be the Beta variant and are omitted from this image.")
-      # p("Data last updated 2022-01-13.")
     ),
 
     # tabPanel(
@@ -64,7 +63,7 @@ fluidPage(
       # load -----
       p("Data are divided in two sections: prevalence (load) and cases, and variant frequencies"),
       h3("Prevalence"),
-      p("SARS-CoV-2 prevalence in wastewater influent is determined from multiple samples of wastewater each day. Units are in millions of copies of N1 and N2 genes, per person in the sewage treatment area, per day. RNA counts are determined by MCES and the University of Minnesota Genomics Center. Cases are a per-capita (per 100,000 people) 7-day rolling average case rates for the 7-county Metropolitan Council area, provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org)."),
+      p("SARS-CoV-2 prevalence in wastewater influent is determined from multiple samples of wastewater each day. Units are in millions of copies of N1 and N2 genes, per person in the sewage treatment area, per day. Viral load data are from Metropolitan Council and the University of Minnesota Genomics Center. Cases are a per-capita (per 100,000 people) 7-day rolling average case rates for the 7-county Metropolitan Council area, provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org)."),
       br(),
       DTOutput("loadData"),
 
@@ -90,7 +89,7 @@ fluidPage(
     tags$br(),
     "App last updated ",
     # get rid of this when I get the SAML error to go away:
-    "2022-01-26",
+    "2022-01-31",
     # gh::gh("GET /repos/Metropolitan-Council/covid-poops")[49][[1]] %>% as.Date(),
     style = "font-size: 1.5rem;
              display: block;

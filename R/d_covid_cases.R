@@ -27,3 +27,5 @@ case_data <- raw_case_data %>%
   ))
 
 write.csv(case_data, "metc-wastewater-covid-monitor/data/case_data.csv", row.names = F)
+write.csv(case_data, "data/case_data.csv", row.names = F)
+
