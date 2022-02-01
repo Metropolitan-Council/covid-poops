@@ -18,22 +18,25 @@ showtext_auto()
 load_varplot <-
   copies_by_variant %>%
   filter(date >= "2021-01-01" & !variant == "Other") %>%
+  mutate(variant = factor(variant, levels = c("Omicron BA.2", "Omicron BA.1", "Delta", "Alpha, Beta & Gamma", "Other")))%>%
   ggplot(aes(x = date, y = copies)) +
   
   # gray background area - total
   geom_area(data = load_data, aes(x = date, y = copies_day_person_7day), color = 'gray50', fill = 'gray50', alpha = 0.5, lty = "blank") + 
   
-  geom_line(aes(x = date, y = copies_7day, color = variant), size = 0.8) +
-  geom_area(position = "identity", aes(x = date, y = copies_7day, group = variant, fill = variant, color = variant), alpha = 0.5, na.rm = T, lty = "blank") +
+  # geom_line(position = "stack", aes(x = date, y = copies_7day, color = variant), size = 0.8) +
+  geom_area(position = "stack", aes(x = date, y = copies_7day, group = variant, fill = variant, color = variant), alpha = 0.5, na.rm = T, lty = "blank") +
   
-  geom_point(aes(color = variant, fill = variant)) +
+  # geom_point(position = "stack", aes(color = variant, fill = variant)) +
   scale_color_manual(
-    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "gray50"),
-    name = "Variant "
+    values = c("#D64776","#6D3571", "#1D94B7","#84BB25",   "gray50"),
+    name = "Variant ",
+    drop = F
   ) +
   scale_fill_manual(
-    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "gray50"),
-    name = "Variant "
+    values = c("#D64776","#6D3571", "#1D94B7","#84BB25",   "gray50"),
+    name = "Variant ",
+    drop = F
   ) +
   
   
