@@ -23,3 +23,13 @@ source("R/fig_variants.R", verbose = F)
 source("R/fig_copies_by_variant.R", verbose = F)
 
 tictoc::toc()
+
+## Report -----
+
+tictoc::tic("Generating Markdown Report")
+
+library(rmarkdown)
+rmarkdown::render("report/wastewater-monitoring-report.Rmd")
+chrome_print('report/wastewater-monitoring-report.html', output = 'report/wastewater-monitoring-report.pdf')
+
+tictoc::toc()
