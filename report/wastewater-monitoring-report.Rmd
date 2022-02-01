@@ -9,7 +9,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-
+setwd(here::here())
 library(shiny)
 library(tidyverse)
 library(lubridate)
@@ -218,7 +218,7 @@ The blue line and points show the total amount of SAR S-CoV-2 viral RNA in waste
 
     div(load_plot, align = "center")
 ```
-
+\newpage
 ## COVID-19 Variants
 #### COVID-19 variant tracker
 
@@ -320,7 +320,7 @@ variant_data %>%
 div(variant_plot, align = "center")
 ```
 
-
+\newpage
 ## COVID-19 Load by Variant
 #### Another way of looking at the variant data
 
@@ -438,7 +438,7 @@ loadxvariantplot <-
 
 div(loadxvariantplot, align = "center")
 ```
-
+\newpage
 ###### More information about variant detection
 Variant frequencies are inferred from the presence of key mutations in the SARS-CoV-2 genome. Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron from the K417N mutation. Some variants share mutations: presence of K417N mutation before November 18 were inferred to be the Beta variant.
 
