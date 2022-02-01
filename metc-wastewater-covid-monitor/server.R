@@ -220,7 +220,7 @@ server <- function(input, output) {
   })
   
   # load by variant
-  # variant -----
+  # variant x load -----
   output$loadVariantPlot <- renderPlotly({
     # browser()
     plot_ly() %>%
