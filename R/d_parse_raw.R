@@ -5,6 +5,11 @@ library(tidyverse)
 library(readxl)
 library(janitor)
 
+# Find Sharepoint Directory:
+source("R/sharepointfilepath.R")
+# loads in file path as 'sharepath'
+# this little snippet is ignored. 
+
 # Sample IDs ----------
 load_sample_info <- read.csv("data/load_sample_info.csv") %>%
   mutate(sample_type = "copies")
@@ -25,11 +30,16 @@ sample_info <- rbind(load_sample_info, variant_sample_info) %>%
 
 
 # Our excel workbooks ----
-raw_data_files <- list.files("data/umgc-raw/", pattern = ".xlsx")
+raw_data_files <- list.files(file.path(paste0(sharepath, "/ddPCR results/UMGC Raw Data - 220125 Balogh")), pattern = ".xlsx")
 
 # File dates for each file:
 file_dates <- read.csv('data/umgc-file-names-date.csv') %>%
-  mutate(date == as.Date(date, "%m/%d/%Y"))
+  mutate(date = as.Date(date, format = "%m/%d/%Y"))
+
+sample_dates <- readxl::read_excel(file.path(paste0(sharepath, "/ddPCR results/ddPCR data summary.xlsx")), 
+                                             sheet = "time trend", skip = 1) %>%
+  janitor::clean_names() %>%
+  select(submission_date, sample_name_2, sample_start_date_3, sample_end_date_4)
 
 # Search for the worksheets we need within each workbook ----
 # an empty list to hold the worksheet names:
