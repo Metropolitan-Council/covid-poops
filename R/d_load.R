@@ -2,7 +2,12 @@ library(readxl)
 library(janitor)
 library(tidyverse)
 
-raw_load_data <- read_excel("data/raw-load-data.xlsx",
+
+# Find Sharepoint Directory:
+source("R/sharepointfilepath.R")
+
+raw_load_data <- read_excel(file.path(paste0(sharepath, "/1 - Update data/A- Metro data - load and variants.xlsx")),
+                            sheet = "load",
   col_types = c(
     "text", "skip", "skip",
     "date", "skip", "numeric", "numeric",

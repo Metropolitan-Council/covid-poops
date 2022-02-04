@@ -2,21 +2,27 @@ library(readxl)
 library(janitor)
 library(tidyverse)
 
+source("R/sharepointfilepath.R")
+
 # read in raw -----
-header1 <- read_excel("data/raw-variant-data.xlsx") %>% 
+header1 <- read_excel(file.path(paste0(sharepath, "/1 - Update data/A- Metro data - load and variants.xlsx")),
+                      sheet = "variants") %>% 
   janitor::clean_names() %>% 
   names()
-header2 <- read_excel("data/raw-variant-data.xlsx", skip = 1) %>% 
+header2 <- read_excel(file.path(paste0(sharepath, "/1 - Update data/A- Metro data - load and variants.xlsx")),
+                      sheet = "variants", skip = 1) %>% 
   janitor::clean_names() %>% 
   names()
 header <- paste0(header1, header2)
 
 raw_variant_data <-
   read_excel(
-    "data/raw-variant-data.xlsx",
+    file.path(paste0(sharepath, "/1 - Update data/A- Metro data - load and variants.xlsx")),
+    sheet = "variants",
     skip = 1
   ) %>%
   set_names(header) %>%
+  select(1:18) %>%
   # get rid of trailing numbers in header: 
   rename_all(~gsub("_[[:digit:]]$|_[[:digit:]][[:digit:]]$", "", .)) %>% 
   rename_all(~gsub("[[:digit:]]sample|[[:digit:]][[:digit:]]sample", "sample", .)) %>% 
@@ -48,7 +54,9 @@ variant_split <-
     raw_variant_data %>%
       select(date, contains("d80a")) %>%
       mutate(mutation = "d80a") %>%
-      rename_all(~gsub("d80a_", "", .)),
+      rename_all(~gsub("d80a_", "", .)) %>%
+      # mysteriously, this column is reading in as character  - i think it's the scientific notation.
+      mutate(frequency_of_mutant_allele = as.numeric(frequency_of_mutant_allele)),
     
     raw_variant_data %>%
       select(date, contains("l452r")) %>%
@@ -116,7 +124,6 @@ variant_data <-
   filter(!is.na(sample_id) & !is.na(date)) %>%
   arrange(date)
   
-variant_data %>% filter(date >= '2022-01-20')
 
 
 # reshape-----
