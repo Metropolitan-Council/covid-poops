@@ -2,6 +2,8 @@ library(readxl)
 library(janitor)
 library(tidyverse)
 
+source("R/sharepointfilepath.R")
+
 # read in raw -----
 header1 <- read_excel(file.path(paste0(sharepath, "/1 - Update data/A- Metro data - load and variants.xlsx")),
                       sheet = "variants") %>% 
