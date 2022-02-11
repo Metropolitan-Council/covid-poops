@@ -3,9 +3,17 @@
 # Server -----
 server <- function(input, output) {
   
-  
-  # variant -----
+  # code here to select whether variantPlot = variantFreqPlot or variantLoadPlot
   output$variantPlot <- renderPlotly({
+    if(input$plotSel == "Show as percentages (%)") {
+      variantFreqPlot
+    } else if (input$plotSel == "Show as number of copies"){
+      variantLoadPlot
+    }
+  })
+  
+  # variant frequency -----
+  variantFreqPlot <-
     # browser()
     variant_data %>%
       plot_ly() %>%
@@ -94,7 +102,6 @@ server <- function(input, output) {
         )
       ) %>%
       config(displayModeBar = FALSE)
-  })
   
   
   
@@ -219,11 +226,11 @@ server <- function(input, output) {
     load_plot
   })
   
-  # load by variant
-  # variant x load -----
-  output$loadVariantPlot <- renderPlotly({
+  # variant load -----
+  variantLoadPlot <-
     # browser()
-    plot_ly() %>%
+    loadxvariantplot <-
+      plot_ly() %>%
       #total load:
       add_trace(
         data = load_data,
@@ -328,7 +335,6 @@ server <- function(input, output) {
         )
       ) %>%
       config(displayModeBar = FALSE)
-  })
   
   
   
