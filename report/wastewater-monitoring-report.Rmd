@@ -224,15 +224,16 @@ The blue line and points show the total amount of SAR S-CoV-2 viral RNA in waste
 ## COVID-19 Variants
 
 #### COVID-19 variant tracker
-In December 2021, omicron rapidly replaced delta as the dominant SARS-CoV-2 variant of concern in influent wastewater at the Metro treatment plant in Saint Paul.
+In December 2021, Omicron rapidly replaced Delta as the dominant SARS-CoV-2 variant of concern in influent wastewater at the Metro treatment plant in Saint Paul.
 
 ###### How to read this graph:
-This graph shows the frequency of SARS-CoV-2 variants. Points are daily data; lines and shaded areas are averages of the previous 7 days.
+his graph shows the frequency of SARS-CoV-2 variants in Metro Plant wastewater. Points are daily data; lines and shaded areas are averages of the previous 7 days.
 
 ```{r variant plot, message = FALSE, warning = FALSE}
 variant_plot <- 
 variant_data %>%
-      plot_ly() %>%
+      plot_ly(# set height and width
+              width = 900, height = 500) %>%
       add_trace(
         type = "scatter",
         mode = "markers",
@@ -323,11 +324,12 @@ div(variant_plot, align = "center")
 ```
 
 \newpage
-<!-- ## COVID-19 Load by Variant -->
-<!-- #### Another way of looking at the variant data -->
+## COVID-19 Load by Variant
+#### Another way of looking at the variant data
+The dominance of various SARS-CoV-2 variants has ebbed and flowed over time. The current dominant variant, Omicron, became dominant in late December. The total amount of SARS-CoV-2 virus in wastewater has also been higher during the Omicron wave relative to earlier periods of the COVID-19 Pandemic, consistent with higher case counts in the region.
 
-<!-- ###### How to read this graph: -->
-<!-- In this graph, variant frequencies (in %) are multiplied by the total load to create an estimate of the number of copies of each variant in wastewater. Points are daily data; lines and shaded areas are averages of the previous 7 days. The gray area in the background is the 7-day average total viral load. Variant proportions do not always add to 100%, so slight discrepancies between the total viral load and that of the individual variants are expected. -->
+###### How to read this graph:
+This graph shows the measured number of copies per person per day of each variant in wastewater. Points are daily data; lines and shaded areas are averages of the previous 7 days. The gray area in the background is the 7-day average total viral load. Variant proportions do not always add to 100%, so slight discrepancies between the total viral load and that of the individual variants are expected.
 
 <!-- ```{r load x variant plot, message = FALSE, warning = FALSE} -->
 <!--   # browser() -->
