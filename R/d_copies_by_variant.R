@@ -23,13 +23,13 @@ copies_by_variant <-
   rowwise() %>%
   mutate(`Other` = copies_day_person_M_mn -
            sum(
-             c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`),
+             c(`Alpha, Beta & Gamma`, Delta, `Omicron`),
                # `Omicron BA.2`), # turn this on when we start reporting BA2
              na.rm = T
            )) %>%
   # pivot back to long format: 
   pivot_longer(
-    cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`, 
+    cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron`, 
              # `Omicron BA.2`,  # turn this on when we start reporting BA2
              Other),
     names_to = "variant",

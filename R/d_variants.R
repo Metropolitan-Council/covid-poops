@@ -85,33 +85,36 @@ variant_data_run <-
     `Alpha, Beta & Gamma` = n501y,
     Delta = l452r,
     `Omicron BA.2` = case_when(
-      date >= "2021-11-18" &
+      date >= "2022-02-10" &
         k417n > hv_69_70  &
         !is.na(hv_69_70) &
         !is.na(k417n)
       ~ k417n - hv_69_70,
-      date >= "2021-11-18" &
+      # omicron BA.2 not detected until recently - this date is a placeholder
+      date >= "2022-02-10" &
         k417n < hv_69_70 &
         !is.na(hv_69_70) &
         !is.na(k417n)  ~ 0
     ),
-    `Omicron BA.1` = case_when(
-      date >= "2021-11-18" &
-        k417n > hv_69_70 &
-        !is.na(hv_69_70) &
-        !is.na(k417n)
-      ~ k417n - (1 - hv_69_70),
-      date >= "2021-11-18" &
-        (k417n < hv_69_70 |
-           is.na(hv_69_70))
-      ~ k417n
-    ),
+    # turn this on when we start detecting BA.1/2: 
+    # `Omicron BA.1` = case_when(
+    #   date >= "2021-11-18" &
+    #     k417n > hv_69_70 &
+    #     !is.na(hv_69_70) &
+    #     !is.na(k417n)
+    #   ~ k417n - (1 - hv_69_70),
+    #   date >= "2021-11-18" &
+    #     (k417n < hv_69_70 |
+    #        is.na(hv_69_70))
+    #   ~ k417n
+    # ),
+    Omicron = case_when(date >= "2021-11-18" ~ k417n)
   ) %>%
   # for now, NA-out Omicron BA.2 where ratio of hv 69/70 to k417n is above 95%
   mutate(`Omicron BA.2` = ifelse(hv_69_70/k417n >= 0.95 & !is.na(`Omicron BA.2`), NA, `Omicron BA.2`)) %>%
   select(-d80a, -e484k, -hv_69_70, -n501y, -k417n, -l452r) %>%
   pivot_longer(
-    cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`, `Omicron BA.2`),
+    cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron`, `Omicron BA.2`),
     names_to = 'variant',
     values_to = 'frequency'
   )
@@ -157,7 +160,7 @@ write.csv(variant_data_new, "data/clean_variant_data.csv", row.names = F)
 write.csv(variant_data_new, "metc-wastewater-covid-monitor/data/clean_variant_data.csv", row.names = F)
 
 
-### Omicron BA.1 and BA.2 sub-lineages tracking: hv69/70 to K417N
+### Omicron and BA.2 sub-lineages tracking: hv69/70 to K417N
 omi_ratio_data <-
 variant_split %>%
   # get key mutations: 
