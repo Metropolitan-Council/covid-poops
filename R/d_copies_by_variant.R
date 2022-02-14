@@ -37,7 +37,7 @@ copies_by_variant <-
   ) %>%
   # for each variant, get a seven-day running average: 
   group_by(variant) %>%
-  complete(variant,
+  complete(
            date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by = "days")) %>%
   # interpolate missing values up to 3 days:
   mutate(copies_gapfill = zoo::na.approx(copies, maxgap = 2, na.rm = F)) %>%
