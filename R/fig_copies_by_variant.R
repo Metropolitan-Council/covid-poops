@@ -46,7 +46,7 @@ load_varplot <-
   ) +  scale_x_date(name = "Date", breaks = "1 months", date_labels = "%b '%y") +
   labs(
     title = "COVID-19 Variants in Metro Plant Wastewater",
-    caption = paste0("\n\n\nViral load of each variant is estimated by multiplying the total viral load (shown in gray) by the frequency of each variant. Frequencies do not always add to 100%.\nShaded areas and lines are seven-day rolling averages. Points are daily data. \nLast sample date ", max(variant_data_new$date, na.rm = T), ".")
+    caption = paste0("\n\n\nViral load of each variant is estimated by multiplying the total viral load (shown in gray) by the frequency of each variant. Frequencies do not always add to 100%.\nShaded areas and lines are seven-day rolling averages. Points are daily data. \nLast sample date ", max(variant_data_date$date, na.rm = T), ".")
   ) +
   council_theme(use_showtext = T) +
   theme(

@@ -5,7 +5,7 @@ library(zoo)
 # samples for load and samples for variants are different, so we'll match at the date level.
 copies_by_variant <-
   # take the variant data, by date:
-  variant_data_new %>%
+  variant_data_date %>%
   select(date, variant, frequency) %>%
   # match to the load data, by date: 
   left_join(load_data %>% select(date, copies_day_person_M_mn)) %>%
