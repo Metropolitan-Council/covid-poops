@@ -44,6 +44,7 @@ fluidPage(
       br(),
       h3("COVID-19 variant tracker"),
       p("As the Delta variant of the SARS-CoV-2 virus declined, the Omicron variant quickly took its place as the dominant variant in wastewater samples at the Metro treatment plant in Saint Paul. The plant serves a large portion of the seven-county metro area. "),
+      radioButtons(inputId = "plotSel", label = "", choices = c("Show as percentages (%)", "Show as number of copies"), selected = "Show as number of copies", inline = T),
       plotlyOutput("variantPlot", height = "auto"),
       p("Points are daily data; lines are averages of the previous 7 days. Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron from the K417N mutation. Presence of K417N mutation before November 18 were inferred to be the Beta variant and are omitted from this image.")
     ),
@@ -89,7 +90,7 @@ fluidPage(
     tags$br(),
     "App last updated ",
     # get rid of this when I get the SAML error to go away:
-    "2022-01-31",
+    "2022-02-11",
     # gh::gh("GET /repos/Metropolitan-Council/covid-poops")[49][[1]] %>% as.Date(),
     style = "font-size: 1.5rem;
              display: block;

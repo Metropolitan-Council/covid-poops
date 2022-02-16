@@ -23,13 +23,13 @@ copies_by_variant <-
   rowwise() %>%
   mutate(`Other` = copies_day_person_M_mn -
            sum(
-             c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`),
+             c(`Alpha, Beta & Gamma`, Delta, `Omicron`),
                # `Omicron BA.2`), # turn this on when we start reporting BA2
              na.rm = T
            )) %>%
   # pivot back to long format: 
   pivot_longer(
-    cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`, 
+    cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron`, 
              # `Omicron BA.2`,  # turn this on when we start reporting BA2
              Other),
     names_to = "variant",
@@ -37,7 +37,7 @@ copies_by_variant <-
   ) %>%
   # for each variant, get a seven-day running average: 
   group_by(variant) %>%
-  complete(variant,
+  complete(
            date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by = "days")) %>%
   # interpolate missing values up to 3 days:
   mutate(copies_gapfill = zoo::na.approx(copies, maxgap = 2, na.rm = F)) %>%
