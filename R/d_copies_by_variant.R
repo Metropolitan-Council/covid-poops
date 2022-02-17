@@ -5,7 +5,7 @@ library(zoo)
 # samples for load and samples for variants are different, so we'll match at the date level.
 copies_by_variant <-
   # take the variant data, by date:
-  variant_data_new %>%
+  variant_data_date %>%
   select(date, variant, frequency) %>%
   # match to the load data, by date: 
   left_join(load_data %>% select(date, copies_day_person_M_mn)) %>%
@@ -23,21 +23,21 @@ copies_by_variant <-
   rowwise() %>%
   mutate(`Other` = copies_day_person_M_mn -
            sum(
-             c(`Alpha, Beta & Gamma`, Delta, `Omicron`),
-               # `Omicron BA.2`), # turn this on when we start reporting BA2
+             c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`,
+               `Omicron BA.2`), # turn this on when we start reporting BA2
              na.rm = T
            )) %>%
   # pivot back to long format: 
   pivot_longer(
-    cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron`, 
-             # `Omicron BA.2`,  # turn this on when we start reporting BA2
+    cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`, 
+             `Omicron BA.2`,  # turn this on when we start reporting BA2
              Other),
     names_to = "variant",
     values_to = "copies"
   ) %>%
   # for each variant, get a seven-day running average: 
   group_by(variant) %>%
-  complete(variant,
+  complete(
            date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by = "days")) %>%
   # interpolate missing values up to 3 days:
   mutate(copies_gapfill = zoo::na.approx(copies, maxgap = 2, na.rm = F)) %>%

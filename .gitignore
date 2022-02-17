@@ -59,5 +59,6 @@ rsconnect/
 
 data-wrangle.html
 *.dcf
+R/sharepointfilepath.R
 
 R/sharepointfilepath.R

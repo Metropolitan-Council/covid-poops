@@ -14,11 +14,11 @@ font_add("Arial Narrow Italic",
 
 showtext_auto()
 
-variant_data_new <- read_csv("data/clean_variant_data.csv", show_col_types = F)
+variant_data_date <- read_csv("data/clean_variant_data.csv", show_col_types = F)
 ## LARGE -----
 
 varplot <-
-  variant_data_new %>%
+  variant_data_date %>%
   filter(!variant == "Other") %>%
   filter(date >= "2021-06-01") %>%
   ggplot(aes(x = date, y = frequency, color = variant, fill = variant)) +
@@ -37,7 +37,7 @@ varplot <-
   scale_x_date(name = "Date", breaks = "1 months", date_labels = "%b '%y") +
   labs(
     title = "COVID-19 Variants in Metro Plant Wastewater",
-    caption = paste0("\nShaded areas and lines are seven-day rolling averages. Points are daily data.\nLast sample date ", max(variant_data_new$date, na.rm = T), ".")
+    caption = paste0("\nShaded areas and lines are seven-day rolling averages. Points are daily data.\nLast sample date ", max(variant_data_date$date, na.rm = T), ".")
   ) +
   council_theme(use_showtext = T) +
   theme(
@@ -80,7 +80,7 @@ ggsave("fig/variants_static_graph_large.png",
 
 ## SMALL -----
 
-variant_data_new %>%
+variant_data_date %>%
   filter(
     !variant == "Other",
     date >= "2021-06-01"
@@ -116,7 +116,7 @@ variant_data_new %>%
   scale_x_date(name = "Date", breaks = "1 months", date_labels = "%b '%y") +
   labs(
     title = "COVID-19 Variants in Metro Plant Wastewater",
-    caption = paste0("\nShaded areas and lines are seven-day rolling averages. Points are daily data.\nLast sample date ", max(variant_data_new$date, na.rm = T), ".")
+    caption = paste0("\nShaded areas and lines are seven-day rolling averages. Points are daily data.\nLast sample date ", max(variant_data_date$date, na.rm = T), ".")
   ) +
   council_theme(
     size_header = 7,
