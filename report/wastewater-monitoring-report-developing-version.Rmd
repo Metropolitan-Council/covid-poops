@@ -553,7 +553,8 @@ ratioplot <-
             family = font_family_list,
             color = councilR::colors$suppBlack
           )
-        )
+        ),
+        shapes = list(hline(1))
       ) %>%
       config(displayModeBar = FALSE)
 
