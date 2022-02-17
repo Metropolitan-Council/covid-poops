@@ -86,13 +86,19 @@ variant_data_run <-
     Delta = l452r,
     `Omicron BA.2` = case_when(
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       date >= "2022-02-01" &
 =======
+=======
+>>>>>>> Stashed changes
       
       # Assigning values for BA2: 
       # We start detecting BA 2 on 2/1: 
       date >= "2022-01-01" &
         # don't calculate when k417N is greater than hv 69/70: 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         k417n > hv_69_70  &
         # don't calculate when either hv69/70 or K417N data are missing: 
@@ -100,13 +106,19 @@ variant_data_run <-
       # omicron BA2 = k417N minus frequency of hv69/70
       ~ k417n - hv_69_70,
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       # omicron BA.2 not detected until recently - this date is a placeholder
       date >= "2022-02-01" &
 =======
+=======
+>>>>>>> Stashed changes
       
       # Assigning zeros for BA2: 
       date >= "2022-01-01" & 
         # only assign a zero when k417N is greater than hv 69/70: 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         k417n < hv_69_70 &
         # don't assign a zero when either hv69/70 or K417N data are missing: 
@@ -118,6 +130,7 @@ variant_data_run <-
     # turn this on when we start detecting BA.1/2:
     `Omicron BA.1` = case_when(
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       date >= "2021-11-18" &
         k417n > hv_69_70 &
         !is.na(hv_69_70) &
@@ -128,6 +141,8 @@ variant_data_run <-
            is.na(hv_69_70))
       ~ k417n
 =======
+=======
+>>>>>>> Stashed changes
       # before we detect BA2, it's just the K417 N frequency:
       date >= "2021-11-18" &
         date < "2022-01-01" 
@@ -141,6 +156,9 @@ variant_data_run <-
         !is.na(k417n)
       ~ k417n - (k417n - hv_69_70)
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     )
   ) %>%
