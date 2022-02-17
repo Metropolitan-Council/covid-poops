@@ -85,13 +85,13 @@ variant_data_run <-
     `Alpha, Beta & Gamma` = n501y,
     Delta = l452r,
     `Omicron BA.2` = case_when(
-      date >= "2022-02-08" &
+      date >= "2022-02-01" &
         k417n > hv_69_70  &
         !is.na(hv_69_70) &
         !is.na(k417n)
       ~ k417n - hv_69_70,
       # omicron BA.2 not detected until recently - this date is a placeholder
-      date >= "2022-02-08" &
+      date >= "2022-02-01" &
         k417n < hv_69_70 &
         !is.na(hv_69_70) &
         !is.na(k417n)  ~ 0
@@ -131,6 +131,7 @@ variant_data_sample <-
 # reshape-----
 variant_data_date <-
   variant_data_sample %>%
+  # turn this on when we detect Omicron BA.2: 
   # filter(!variant == "Omicron BA.2") %>%
   mutate(date = as.Date(date, format = "%m/%d/%Y")) %>%
   # average by date
@@ -176,13 +177,15 @@ variant_split %>%
   mutate(ratio = hv_69_70/k417n) %>%
   # get average ratio by sample, across runs: 
   group_by(sample_id, date) %>%
-  summarize(ratio = mean(ratio, na.rm = T)) %>%
+  mutate(average_ratio_bysample = mean(ratio, na.rm = T)) %>%
+  ungroup() %>%
   # format date: 
   mutate(date = as.Date(date, format = "%m/%d/%Y")) %>%
   # average by date, across samples: 
   group_by(date) %>%
-  summarize(ratio = mean(ratio, na.rm = T)) %>%
+  mutate(average_ratio = mean(average_ratio_bysample, na.rm = T)) %>%
   ungroup() %>%
+  select(-average_ratio_bysample) %>%
   # rolling 7 day average of ratio: 
   complete(date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by = "days")
   ) %>%
@@ -194,11 +197,8 @@ variant_split %>%
   arrange(date) %>%
   mutate(hover_text_ratio = paste0(
     format(date, "%b %d, %Y"), "<br>",
-    "<b>", "HV 69-70:K417N ratio", "</b> ", round(ratio, digits = 3)
-  )) %>%
-  mutate(hover_text_ratio_7day = paste0(
-    format(date, "%b %d, %Y"), "<br>",
-    "<b>", "7-day average", "</b> ", round(ratio_7day, digits = 3)
+    "<b>", "HV 69-70:K417N ratio", "</b> ", round(ratio, digits = 3), "<br>",
+    "Sample ", sample_id, ", run ", run_num
   )) %>%
   mutate(across(where(is.numeric), round, digits = 6)) %>%
   # just after Omicron showed up:
