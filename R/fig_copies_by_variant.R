@@ -18,7 +18,7 @@ showtext_auto()
 load_varplot <-
   copies_by_variant %>%
   filter(date >= "2021-01-01" & !variant == "Other") %>%
-  mutate(variant = factor(variant, levels = c("Other", "Alpha, Beta & Gamma", "Delta", "Omicron", "Omicron BA.2")))%>%
+  mutate(variant = factor(variant, levels = c("Other", "Alpha, Beta & Gamma", "Delta", "Omicron BA.1", "Omicron BA.2")))%>%
   ggplot(aes(x = date, y = copies)) +
   
   # gray background area - total
