@@ -107,7 +107,7 @@ server <- function(input, output) {
 
 
 
-  ## load -----
+  ## MAIN load -----
   output$loadPlot <- renderPlotly({
     ay <- list(
       tickfont = list(color = colors$councilBlue),
