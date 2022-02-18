@@ -2,111 +2,111 @@
 
 # Server -----
 server <- function(input, output) {
-  
-  
-   # plots-----
+
+
+  # plots-----
   # code here to select whether variantPlot = variantFreqPlot or variantLoadPlot
   output$variantPlot <- renderPlotly({
-    if(input$plotSel == "Show as percentages (%)") {
+    if (input$plotSel == "Show as percentages (%)") {
       variantFreqPlot
-    } else if (input$plotSel == "Show as number of copies"){
+    } else if (input$plotSel == "Show as number of copies") {
       variantLoadPlot
     }
   })
-  
+
   ## variant frequency -----
   variantFreqPlot <-
     # browser()
     variant_data %>%
-      plot_ly() %>%
-      add_trace(
-        type = "scatter",
-        mode = "markers",
-        x = ~date,
-        y = ~frequency,
-        split = ~variant,
-        color = ~variant,
-        alpha = 0.8,
-        colors = pal,
-        hoverinfo = "text",
-        text = ~hover_text_variant
-      ) %>%
-      add_trace(
-        type = "scatter",
-        mode = "lines",
-        x = ~date,
-        fill = "tozeroy",
-        y = ~frequency_7day,
-        split = ~variant,
-        color = ~variant,
-        alpha = 0.25,
-        colors = pal,
-        hoverinfo = "none"
-      ) %>%
-      layout(
-        annotations = ann_list,
-        hovermode = "closest",
-        hoverdistance = "10",
-        hoverlabel = hov_lab_list,
-        margin = list(
-          l = 50,
-          r = 100,
-          b = 50,
-          pad = 10
-        ),
-        xaxis = list(
-          title = list(
-            text = "", standoff = 25,
-            font = list(
-              size = 14,
-              family = font_family_list,
-              color = councilR::colors$suppBlack
-            )
-          ),
-          zerolinewidth = 2,
-          zeroline = TRUE,
-          showline = FALSE,
-          showgrid = FALSE,
-          tickfont = list(
-            size = 12,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          )
-        ),
-        yaxis = list(
-          title = list(
-            text = "<b>Frequency of marker genes (%)</b>",
-            standoff = 25,
-            font = list(
-              size = 14,
-              family = font_family_list,
-              color = councilR::colors$suppBlack
-            )
-          ),
-          tickformat = "1%",
-          tickfont = list(
-            size = 12,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          ),
-          gridcolor = "gray90",
-          zerolinecolor = "gray50",
-          zerolinewidth = 2,
-          range = c(0, 1.1)
-        ),
-        legend = list(
-          orientation = "h",
+    plot_ly() %>%
+    add_trace(
+      type = "scatter",
+      mode = "markers",
+      x = ~date,
+      y = ~frequency,
+      split = ~variant,
+      color = ~variant,
+      alpha = 0.8,
+      colors = pal,
+      hoverinfo = "text",
+      text = ~hover_text_variant
+    ) %>%
+    add_trace(
+      type = "scatter",
+      mode = "lines",
+      x = ~date,
+      fill = "tozeroy",
+      y = ~frequency_7day,
+      split = ~variant,
+      color = ~variant,
+      alpha = 0.25,
+      colors = pal,
+      hoverinfo = "none"
+    ) %>%
+    layout(
+      annotations = ann_list,
+      hovermode = "closest",
+      hoverdistance = "10",
+      hoverlabel = hov_lab_list,
+      margin = list(
+        l = 50,
+        r = 100,
+        b = 50,
+        pad = 10
+      ),
+      xaxis = list(
+        title = list(
+          text = "", standoff = 25,
           font = list(
             size = 14,
             family = font_family_list,
             color = councilR::colors$suppBlack
           )
+        ),
+        zerolinewidth = 2,
+        zeroline = TRUE,
+        showline = FALSE,
+        showgrid = FALSE,
+        tickfont = list(
+          size = 12,
+          family = font_family_list,
+          color = councilR::colors$suppBlack
         )
-      ) %>%
-      config(displayModeBar = FALSE)
-  
-  
-  
+      ),
+      yaxis = list(
+        title = list(
+          text = "<b>Frequency of marker genes (%)</b>",
+          standoff = 25,
+          font = list(
+            size = 14,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          )
+        ),
+        tickformat = "1%",
+        tickfont = list(
+          size = 12,
+          family = font_family_list,
+          color = councilR::colors$suppBlack
+        ),
+        gridcolor = "gray90",
+        zerolinecolor = "gray50",
+        zerolinewidth = 2,
+        range = c(0, 1.1)
+      ),
+      legend = list(
+        orientation = "h",
+        font = list(
+          size = 14,
+          family = font_family_list,
+          color = councilR::colors$suppBlack
+        )
+      )
+    ) %>%
+    config(displayModeBar = FALSE)
+
+
+
   ## load -----
   output$loadPlot <- renderPlotly({
     ay <- list(
@@ -114,7 +114,7 @@ server <- function(input, output) {
       overlaying = "y",
       side = "left",
       title = list(
-        text = "<b>Viral load in wastewater,</b> M copies/person/day", 
+        text = "<b>Viral load in wastewater,</b> M copies/person/day",
         standoff = 25,
         font = list(color = colors$councilBlue, size = 16)
       ),
@@ -122,7 +122,7 @@ server <- function(input, output) {
       zerolinecolor = colors$suppWhite,
       gridcolor = colors$suppWhite
     )
-    
+
     load_plot <-
       load_data %>%
       # left_join(case_data, by = "date") %>%
@@ -134,10 +134,14 @@ server <- function(input, output) {
         name = "Viral load",
         size = 1,
         yaxis = "y2",
-        marker = list(color ="rgba(0, 84, 164, .5)", 
-                      size = 8,
-                      line = list(color = colors$councilBlue,
-                                  width = 0.5)),
+        marker = list(
+          color = "rgba(0, 84, 164, .5)",
+          size = 8,
+          line = list(
+            color = colors$councilBlue,
+            width = 0.5
+          )
+        ),
         # fillcolor = ,
         # line = list(width = 2, color = colors$esBlue),
         hoverinfo = "text",
@@ -197,7 +201,7 @@ server <- function(input, output) {
         yaxis = list(
           side = "right",
           title = list(
-            text = "<b>COVID-19 cases</b> per 100K residents", 
+            text = "<b>COVID-19 cases</b> per 100K residents",
             standoff = 25,
             font = list(
               size = 16,
@@ -224,122 +228,120 @@ server <- function(input, output) {
         )
       ) %>%
       config(displayModeBar = F)
-    
+
     load_plot
   })
-  
+
   ## variant load -----
   variantLoadPlot <-
     # browser()
     loadxvariantplot <-
-      plot_ly() %>%
-      #total load:
-      add_trace(
-        data = load_data,
-        type = "scatter",
-        mode = "lines",
-        x = ~ date,
-        fill = "tozeroy",
-        y = ~ copies_day_person_7day,
-        alpha = 0.25,
-        line = list(width = 0.5, color = colors$suppGray),
-        color = ~ "Total load",
-        colors = pal,
-        name = "Total load",
-        hoverinfo = "text",
-        text = ~ hover_text_load_7day
-      ) %>%
-      add_trace(
-        data = copies_by_variant,
-        type = "scatter",
-        mode = "lines",
-        x = ~ date,
-        fill = "tozeroy",
-        y = ~ copies_7day,
-        split = ~ variant,
-        color = ~ variant,
-        alpha = 0.25,
-        colors = pal,
-        hoverinfo = "none"
-      ) %>%
-      
-      add_trace(
-        data = copies_by_variant,
-        type = "scatter",
-        mode = "markers",
-        x = ~ date,
-        y = ~ copies,
-        split = ~ variant,
-        color = ~ variant,
-        alpha = 0.8,
-        colors = pal,
-        hoverinfo = "text",
-        text = ~ hover_text_variant
-      ) %>%
-      
-      layout(
-        annotations = ann_list,
-        hovermode = "closest",
-        hoverdistance = "10",
-        hoverlabel = hov_lab_list,
-        margin = list(
-          l = 50,
-          r = 100,
-          b = 50,
-          pad = 10
-        ),
-        xaxis = list(
-          title = list(
-            text = "",
-            standoff = 25,
-            font = list(
-              size = 14,
-              family = font_family_list,
-              color = councilR::colors$suppBlack
-            )
-          ),
-          zerolinewidth = 2,
-          zeroline = TRUE,
-          showline = FALSE,
-          showgrid = FALSE,
-          tickfont = list(
-            size = 12,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          )
-        ),
-        yaxis = list(
-          title = list(
-            text = "<b>Viral load in wastewater,</b> M copies/person/day",
-            standoff = 25,
-            font = list(
-              size = 14,
-              family = font_family_list,
-              color = councilR::colors$suppBlack
-            )
-          ),
-          tickfont = list(
-            size = 12,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          ),
-          gridcolor = "gray90",
-          zerolinecolor = "gray50",
-          zerolinewidth = 2
-        ),
-        legend = list(
-          orientation = "h",
+    plot_ly() %>%
+    # total load:
+    add_trace(
+      data = load_data,
+      type = "scatter",
+      mode = "lines",
+      x = ~date,
+      fill = "tozeroy",
+      y = ~copies_day_person_7day,
+      alpha = 0.25,
+      line = list(width = 0.5, color = colors$suppGray),
+      color = ~"Total load",
+      colors = pal,
+      name = "Total load",
+      hoverinfo = "text",
+      text = ~hover_text_load_7day
+    ) %>%
+    add_trace(
+      data = copies_by_variant,
+      type = "scatter",
+      mode = "lines",
+      x = ~date,
+      fill = "tozeroy",
+      y = ~copies_7day,
+      split = ~variant,
+      color = ~variant,
+      alpha = 0.25,
+      colors = pal,
+      hoverinfo = "none"
+    ) %>%
+    add_trace(
+      data = copies_by_variant,
+      type = "scatter",
+      mode = "markers",
+      x = ~date,
+      y = ~copies,
+      split = ~variant,
+      color = ~variant,
+      alpha = 0.8,
+      colors = pal,
+      hoverinfo = "text",
+      text = ~hover_text_variant
+    ) %>%
+    layout(
+      annotations = ann_list,
+      hovermode = "closest",
+      hoverdistance = "10",
+      hoverlabel = hov_lab_list,
+      margin = list(
+        l = 50,
+        r = 100,
+        b = 50,
+        pad = 10
+      ),
+      xaxis = list(
+        title = list(
+          text = "",
+          standoff = 25,
           font = list(
             size = 14,
             family = font_family_list,
             color = councilR::colors$suppBlack
           )
+        ),
+        zerolinewidth = 2,
+        zeroline = TRUE,
+        showline = FALSE,
+        showgrid = FALSE,
+        tickfont = list(
+          size = 12,
+          family = font_family_list,
+          color = councilR::colors$suppBlack
         )
-      ) %>%
-      config(displayModeBar = FALSE)
-  
-  
-  
+      ),
+      yaxis = list(
+        title = list(
+          text = "<b>Viral load in wastewater,</b> M copies/person/day",
+          standoff = 25,
+          font = list(
+            size = 14,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          )
+        ),
+        tickfont = list(
+          size = 12,
+          family = font_family_list,
+          color = councilR::colors$suppBlack
+        ),
+        gridcolor = "gray90",
+        zerolinecolor = "gray50",
+        zerolinewidth = 2
+      ),
+      legend = list(
+        orientation = "h",
+        font = list(
+          size = 14,
+          family = font_family_list,
+          color = councilR::colors$suppBlack
+        )
+      )
+    ) %>%
+    config(displayModeBar = FALSE)
+
+
+
   ## case and load -----
   output$casesVload <- renderPlotly({
     cases_vs_load_plot <-
@@ -357,8 +359,8 @@ server <- function(input, output) {
         color = colors$esBlue,
         fill = colors$esBlue
       )
-    
-    
+
+
     ggplotly(cases_vs_load_plot) %>%
       layout(
         annotations = ann_list,
@@ -420,20 +422,25 @@ server <- function(input, output) {
       ) %>%
       config(displayModeBar = F)
   })
-  
+
   # tables -----
   ## Prevalence table -----
   output$loadData <- renderDT(server = FALSE, {
     load_data %>%
       left_join(case_data,
-                by = c("date",
-                       "covid_cases_total", 
-                       "covid_cases_new", 
-                       "covid_cases_per100K", 
-                       "covid_cases_7day", 
-                       "hover_text_case")) %>%
-      select(-hover_text_case, -hover_text_load,
-             -hover_text_load_7day) %>%
+        by = c(
+          "date",
+          "covid_cases_total",
+          "covid_cases_new",
+          "covid_cases_per100K",
+          "covid_cases_7day",
+          "hover_text_case"
+        )
+      ) %>%
+      select(
+        -hover_text_case, -hover_text_load,
+        -hover_text_load_7day
+      ) %>%
       DT::datatable(
         rownames = FALSE,
         extensions = "Buttons",
@@ -459,8 +466,8 @@ server <- function(input, output) {
       # round case rates to nearest digit:
       DT::formatRound(5:8, 0)
   })
-  
-  
+
+
   ## variant table -----
   output$variantData <- renderDT(server = FALSE, {
     variant_data %>%
@@ -488,12 +495,12 @@ server <- function(input, output) {
       DT::formatRound("frequency", 2) %>%
       DT::formatRound("frequency_7day", 2)
   })
-  
-  
+
+
   ## case table -----
   output$caseData <- renderDT(server = FALSE, {
     case_data %>%
-      select(-hover_text_case) %>% 
+      select(-hover_text_case) %>%
       DT::datatable(
         rownames = FALSE,
         extensions = "Buttons",
