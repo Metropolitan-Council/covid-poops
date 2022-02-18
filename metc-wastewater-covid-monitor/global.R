@@ -6,7 +6,7 @@ library(shiny)
 library(dplyr)
 library(lubridate)
 library(plotly)
-library(councilR) 
+library(councilR)
 library(DT)
 library(gh)
 
@@ -45,7 +45,8 @@ font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
 whiteSmoke <- "#F5F5F5"
 
 pal <- c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#666666")
-pal <- setNames(pal, c("Alpha, Beta & Gamma", "Delta", "Omicron", "Omicron BA.2", "Total load"))
+pal <- setNames(pal, c("Alpha, Beta & Gamma", "Delta", 
+                       "Omicron BA.1", "Omicron BA.2", "Total load"))
 
 
 
@@ -67,7 +68,7 @@ ann_list <- list(
     color = councilR::colors$suppBlack
   ),
   x = 1,
-  y = -0.13,
+  y = -0.2,
   showarrow = F,
   xref = "paper", yref = "paper",
   xanchor = "right", yanchor = "auto",

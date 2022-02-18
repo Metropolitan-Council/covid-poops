@@ -21,7 +21,7 @@ case_data <- read_csv("metc-wastewater-covid-monitor/data/case_data.csv", show_c
 ylim.cases <- c(0, max(case_data$covid_cases_7day, na.rm = T))
 ylim.load <- c(0, max(load_data$copies_day_person_M_mn, na.rm = T))
 
-#Scaling for secondary y-axis
+# Scaling for secondary y-axis
 b <- diff(ylim.cases) / diff(ylim.load)
 # Graph of load
 load_plot <-
@@ -43,7 +43,7 @@ load_plot <-
     lwd = 1.2,
     na.rm = T
   ) +
-    geom_point(
+  geom_point(
     aes(y = copies_day_person_M_mn),
     color = colors$councilBlue,
     alpha = 0.8,
@@ -85,7 +85,7 @@ load_plot <-
     ),
     axis.title.y.right = element_text(size = 64, color = "#888888", vjust = 1),
     axis.title.y.left = element_text(size = 64, color = colors$councilBlue, vjust = 1, angle = 90),
-    axis.text.x = element_text(size =48),
+    axis.text.x = element_text(size = 48),
     axis.title.x = element_text(size = 64),
     axis.text.y.right = element_text(size = 48, color = "#888888", vjust = 0),
     axis.text.y.left = element_text(size = 48, color = colors$councilBlue, vjust = 0),
@@ -118,7 +118,7 @@ ggsave("fig/cases_vs_load_large.png",
 
 ## SMALL ----
 small_load_plot <-
-load_data %>%
+  load_data %>%
   left_join(case_data, by = "date") %>%
   filter(date >= "2021-10-01") %>%
   ggplot(aes(x = date, y = copies_day_person_M_mn)) +
@@ -164,10 +164,10 @@ load_data %>%
   ) +
   scale_x_date(date_breaks = "month", date_labels = "%b '%y") +
   theme_council(
-    #size_header = 7,
-    #size_axis_text = 5,
-    #size_axis_title = 6,
-    #size_caption = 3,
+    # size_header = 7,
+    # size_axis_text = 5,
+    # size_axis_title = 6,
+    # size_caption = 3,
     use_showtext = T
   ) +
   theme(
@@ -184,7 +184,7 @@ load_data %>%
     axis.title.y.left = element_text(size = 18, color = colors$councilBlue, vjust = 1, angle = 90),
     axis.text.y.right = element_text(size = 18, color = "#888888", vjust = 0),
     axis.text.y.left = element_text(size = 18, color = colors$councilBlue, vjust = 0),
-    axis.text.x = element_text(size =18),
+    axis.text.x = element_text(size = 18),
     axis.title.x = element_text(size = 18),
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
@@ -197,8 +197,8 @@ load_data %>%
     )
   )
 
-ggsave("fig/cases_vs_load_small.png", 
-       small_load_plot,
+ggsave("fig/cases_vs_load_small.png",
+  small_load_plot,
   height = 800, width = 1200,
   units = "px", dpi = 300
 )
