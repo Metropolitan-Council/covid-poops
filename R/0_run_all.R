@@ -35,16 +35,21 @@ source("R/sharepointfilepath.R")
 
 rmarkdown::render("report/wastewater-monitoring-report.Rmd")
 rmarkdown::render("report/wastewater-monitoring-report.Rmd",
-                  output_file = file.path(paste0(sharepath, '/1 - Update data/wastewater-monitoring-report.html')))
-chrome_print('report/wastewater-monitoring-report.html', output = 'report/wastewater-monitoring-report.pdf')
-chrome_print('report/wastewater-monitoring-report.html', file.path(paste0(sharepath, '/1 - Update data/wastewater-monitoring-report.pdf')))
+  output_file = file.path(paste0(sharepath, "/1 - Update data/wastewater-monitoring-report.html"))
+)
+chrome_print("report/wastewater-monitoring-report.html", output = "report/wastewater-monitoring-report.pdf")
+chrome_print("report/wastewater-monitoring-report.html", file.path(paste0(sharepath, "/1 - Update data/wastewater-monitoring-report.pdf")))
 
 rmarkdown::render("report/wastewater-monitoring-report-developing-version.Rmd")
 rmarkdown::render("report/wastewater-monitoring-report-developing-version.Rmd",
-                  output_file = file.path(paste0(sharepath, '/1 - Update data/wastewater-monitoring-report-developing-version.html')))
-chrome_print('report/wastewater-monitoring-report-developing-version.html', 
-             output = 'report/wastewater-monitoring-report-developing-version.pdf')
-chrome_print('report/wastewater-monitoring-report-developing-version.html', 
-             file.path(paste0(sharepath, '/1 - Update data/wastewater-monitoring-report-developing-version.pdf')))
+  output_file = file.path(paste0(sharepath, "/1 - Update data/wastewater-monitoring-report-developing-version.html"))
+)
+chrome_print("report/wastewater-monitoring-report-developing-version.html",
+  output = "report/wastewater-monitoring-report-developing-version.pdf"
+)
+chrome_print(
+  "report/wastewater-monitoring-report-developing-version.html",
+  file.path(paste0(sharepath, "/1 - Update data/wastewater-monitoring-report-developing-version.pdf"))
+)
 
 tictoc::toc()

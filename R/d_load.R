@@ -7,7 +7,7 @@ library(tidyverse)
 source("R/sharepointfilepath.R")
 
 raw_load_data <- read_excel(file.path(paste0(sharepath, "/1 - Update data/A- Metro data - load and variants.xlsx")),
-                            sheet = "load",
+  sheet = "load",
   col_types = c(
     "text", "skip", "skip",
     "date", "skip", "numeric", "numeric",
@@ -25,7 +25,7 @@ raw_load_data <- read_excel(file.path(paste0(sharepath, "/1 - Update data/A- Met
 seq_date <- function(x) seq(min(x, na.rm = T), max(x, na.rm = T), by = "day")
 all_dates <- seq_date(raw_load_data$sample_start_date)
 
-load_data_bysample <- 
+load_data_bysample <-
   raw_load_data %>%
   mutate(flow_l_day = metro_flow_rate_mgd_on_sample_start_date * 3785411.8) %>%
   select(-metro_flow_rate_mgd_on_sample_start_date) %>%
@@ -48,7 +48,7 @@ load_data <-
   # average by date:
   group_by(sample_start_date) %>%
   add_tally(name = "n_samples") %>%
-  # average across multiple samples: 
+  # average across multiple samples:
   summarize(
     copies_day_person_M_mn = mean(copies_day_person_M, na.rm = T),
     copies_day_person_M_se = sd(copies_day_person_M, na.rm = T) / (n_samples)
@@ -58,16 +58,18 @@ load_data <-
   rename(date = sample_start_date) %>%
   # (fill in for missing dates)
   complete(date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by = "days")) %>%
-  # add 7-day running average: 
-  mutate(copies_day_person_7day = zoo::rollapply(copies_day_person_M_mn, 7, align = "right", mean, na.rm = T, partial = F, fill = 'extend')) %>%
+  # add 7-day running average:
+  mutate(copies_day_person_7day = zoo::rollapply(copies_day_person_M_mn, 7, align = "right", mean, na.rm = T, partial = F, fill = "extend")) %>%
   arrange(date) %>%
-  mutate(hover_text_load = paste0(
-    format(date, "%b %d, %Y"), "<br>",
-    "<b>", round(copies_day_person_M_mn, 2), "M</b> copies per person per day"
-  ),
-  hover_text_load_7day = paste0(
-    "7-day avg. load on ", format(date, "%b %d "), ":<br>",
-    "<b>", round(copies_day_person_7day, 1), "M</b> copies per person per day")
+  mutate(
+    hover_text_load = paste0(
+      format(date, "%b %d, %Y"), "<br>",
+      "<b>", round(copies_day_person_M_mn, 2), "M</b> copies per person per day"
+    ),
+    hover_text_load_7day = paste0(
+      "7-day avg. load on ", format(date, "%b %d "), ":<br>",
+      "<b>", round(copies_day_person_7day, 1), "M</b> copies per person per day"
+    )
   ) %>%
   filter(!is.na(date))
 

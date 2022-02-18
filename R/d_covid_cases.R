@@ -17,7 +17,7 @@ case_data <- raw_case_data %>%
   summarize(covid_cases_total = sum(covid_cases_total)) %>%
   mutate(covid_cases_new = covid_cases_total - lag(covid_cases_total, 1)) %>%
   mutate(covid_cases_per100K = 100000 * covid_cases_new / (3163104)) %>%
-  # population of 3163014 is from 2020 census - 
+  # population of 3163014 is from 2020 census -
   # Info at https://metrocouncil.org/Data-and-Maps/Research-and-Data/Census-Data.aspx; interactive application with data here https://metrotransitmn.shinyapps.io/census-2020/).
   # now getting a rolling average with a 7-day window:
   mutate(covid_cases_7day = zoo::rollapplyr(covid_cases_per100K, 7, mean, fill = c("extend", "extend", "extend"))) %>%
@@ -28,4 +28,3 @@ case_data <- raw_case_data %>%
 
 write.csv(case_data, "metc-wastewater-covid-monitor/data/case_data.csv", row.names = F)
 write.csv(case_data, "data/case_data.csv", row.names = F)
-
