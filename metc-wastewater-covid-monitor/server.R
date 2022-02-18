@@ -3,6 +3,8 @@
 # Server -----
 server <- function(input, output) {
   
+  
+   # plots-----
   # code here to select whether variantPlot = variantFreqPlot or variantLoadPlot
   output$variantPlot <- renderPlotly({
     if(input$plotSel == "Show as percentages (%)") {
@@ -12,7 +14,7 @@ server <- function(input, output) {
     }
   })
   
-  # variant frequency -----
+  ## variant frequency -----
   variantFreqPlot <-
     # browser()
     variant_data %>%
@@ -105,7 +107,7 @@ server <- function(input, output) {
   
   
   
-  # load -----
+  ## load -----
   output$loadPlot <- renderPlotly({
     ay <- list(
       tickfont = list(color = colors$councilBlue),
@@ -226,7 +228,7 @@ server <- function(input, output) {
     load_plot
   })
   
-  # variant load -----
+  ## variant load -----
   variantLoadPlot <-
     # browser()
     loadxvariantplot <-
@@ -338,7 +340,7 @@ server <- function(input, output) {
   
   
   
-  # case and load -----
+  ## case and load -----
   output$casesVload <- renderPlotly({
     cases_vs_load_plot <-
       # aggregate data to week:
@@ -419,7 +421,8 @@ server <- function(input, output) {
       config(displayModeBar = F)
   })
   
-  # Prevalence table -----
+  # tables -----
+  ## Prevalence table -----
   output$loadData <- renderDT(server = FALSE, {
     load_data %>%
       left_join(case_data,
@@ -458,7 +461,7 @@ server <- function(input, output) {
   })
   
   
-  # variant table -----
+  ## variant table -----
   output$variantData <- renderDT(server = FALSE, {
     variant_data %>%
       select(
@@ -487,7 +490,7 @@ server <- function(input, output) {
   })
   
   
-  # case table -----
+  ## case table -----
   output$caseData <- renderDT(server = FALSE, {
     case_data %>%
       select(-hover_text_case) %>% 
