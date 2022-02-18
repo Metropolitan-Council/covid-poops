@@ -172,9 +172,33 @@ server <- function(input, output) {
       ) %>%
       layout(
         autosize = T,
-        annotations = ann_list,
+        annotations = ann_list <- list(
+          text = paste(
+            "<br><br>",
+            "<i>", "Latest sample date",
+            max(c(
+              load_data$date,
+              variant_data$date
+              # case_data$date,
+              # combined_data$date
+            ), na.rm = T),
+            "</i>"
+          ),
+          font = list(
+            size = 11,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          ),
+          x = 1,
+          y = -0.12,
+          showarrow = F,
+          xref = "paper", yref = "paper",
+          xanchor = "right", yanchor = "auto",
+          xshift = 0, yshift = -25
+        )
+        ,
         showlegend = FALSE,
-        margin = list(l = 75, r = 75, b = 50, pad = 10),
+        margin = list(l = 75, r = 75, b = 75, pad = 10),
         hovermode = "closest",
         hoverdistance = "10",
         hoverlabel = hov_lab_list,
