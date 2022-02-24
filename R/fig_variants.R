@@ -8,17 +8,17 @@ font_add("HelveticaNeueLTStd", "HelveticaNeueLTStd-Lt.otf")
 font_add("HelveticaNeueLTStd", "HelveticaNeueLTStd-Lt.otf")
 font_add("Arial Narrow", "ARIALN.ttf")
 font_add("Arial Narrow Italic",
-         regular = "ARIALN.ttf",
-         italic = "ARIALNI.ttf"
+  regular = "ARIALN.ttf",
+  italic = "ARIALNI.ttf"
 )
 
 showtext_auto()
 
-variant_data_new <- read_csv("data/clean_variant_data.csv", show_col_types = F)
+variant_data_date <- read_csv("data/clean_variant_data.csv", show_col_types = F)
 ## LARGE -----
 
 varplot <-
-  variant_data_new %>%
+  variant_data_date %>%
   filter(!variant == "Other") %>%
   filter(date >= "2021-06-01") %>%
   ggplot(aes(x = date, y = frequency, color = variant, fill = variant)) +
@@ -37,7 +37,7 @@ varplot <-
   scale_x_date(name = "Date", breaks = "1 months", date_labels = "%b '%y") +
   labs(
     title = "COVID-19 Variants in Metro Plant Wastewater",
-    caption = paste0("\nShaded areas and lines are seven-day rolling averages. Points are daily data.\nLast sample date ", max(variant_data_new$date, na.rm = T), ".")
+    caption = paste0("\nShaded areas and lines are seven-day rolling averages. Points are daily data.\nLast sample date ", max(variant_data_date$date, na.rm = T), ".")
   ) +
   council_theme(use_showtext = T) +
   theme(
@@ -62,7 +62,7 @@ varplot <-
     legend.text = element_text(size = 48),
     legend.title = element_text(size = 48),
     axis.title.y = element_text(size = 64, vjust = 1),
-    axis.text.x = element_text(size =48),
+    axis.text.x = element_text(size = 48),
     axis.title.x = element_text(size = 64),
     axis.text.y = element_text(size = 48, vjust = 0)
   )
@@ -80,7 +80,7 @@ ggsave("fig/variants_static_graph_large.png",
 
 ## SMALL -----
 
-variant_data_new %>%
+variant_data_date %>%
   filter(
     !variant == "Other",
     date >= "2021-06-01"
@@ -116,7 +116,7 @@ variant_data_new %>%
   scale_x_date(name = "Date", breaks = "1 months", date_labels = "%b '%y") +
   labs(
     title = "COVID-19 Variants in Metro Plant Wastewater",
-    caption = paste0("\nShaded areas and lines are seven-day rolling averages. Points are daily data.\nLast sample date ", max(variant_data_new$date, na.rm = T), ".")
+    caption = paste0("\nShaded areas and lines are seven-day rolling averages. Points are daily data.\nLast sample date ", max(variant_data_date$date, na.rm = T), ".")
   ) +
   council_theme(
     size_header = 7,
@@ -151,7 +151,7 @@ variant_data_new %>%
     plot.title = element_text(size = 24, hjust = 0.5),
     axis.title.y = element_text(size = 18, vjust = 1),
     axis.text.y = element_text(size = 18, vjust = 0),
-    axis.text.x = element_text(size =18),
+    axis.text.x = element_text(size = 18),
     axis.title.x = element_text(size = 18),
     legend.text = element_text(size = 18),
     legend.title = element_text(size = 18),
@@ -169,4 +169,3 @@ ggsave("fig/variants_static_graph_small.png",
   dpi = 300,
   units = "px"
 )
-

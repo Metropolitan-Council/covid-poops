@@ -49,7 +49,7 @@ font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
 whiteSmoke <- "#F5F5F5"
 
 pal <- c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#666666")
-pal <- setNames(pal, c("Alpha, Beta & Gamma", "Delta", "Omicron", "Omicron BA.2", "Total load"))
+pal <- setNames(pal, c("Alpha, Beta & Gamma", "Delta", "Omicron BA.1", "Omicron BA.2", "Total load"))
 
 
 
@@ -443,31 +443,28 @@ loadxvariantplot <-
 div(loadxvariantplot, align = "center")
 ```
 \newpage
+
 ###### More information about variant detection
 Variant frequencies are inferred from the presence of key mutations in the SARS-CoV-2 genome. Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron from the K417N mutation. Some variants share mutations: presence of K417N mutation before November 18 were inferred to be the Beta variant.
 
 ###### Monitoring Omicron BA.1 and BA.2 sub-lineages
 
 ```{r ratio plot, message = FALSE, warning = FALSE}
-  # browser()
+
+hline <- function(y = 0, color = "black") {
+  list(
+    type = "line",
+    x0 = 0,
+    x1 = 1,
+    xref = "paper",
+    y0 = y,
+    y1 = y,
+    line = list(color = color)
+  )
+}
+
 ratioplot <- 
   plot_ly() %>%
-  #total load:
-  add_trace(
-    data = omi_ratio_data,
-    type = "scatter",
-    mode = "lines",
-    x = ~ date,
-    y = ~ ratio_7day,
-    alpha = 0.8,
-    line = list(width = 0.75, color = colors$suppBlack),
-    color = ~ "7-day Average",
-    colors = pal,
-    name = "7-day Average",
-    hoverinfo = "text",
-    text = ~ hover_text_ratio_7day
-  ) %>%
-  
   add_trace(
     data = omi_ratio_data,
     type = "scatter",
@@ -556,7 +553,8 @@ ratioplot <-
             family = font_family_list,
             color = councilR::colors$suppBlack
           )
-        )
+        ),
+        shapes = list(hline(1))
       ) %>%
       config(displayModeBar = FALSE)
 

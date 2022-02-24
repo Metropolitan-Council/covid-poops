@@ -1,7 +1,7 @@
 ---
 title: "Metro Wastewater COVID-19 Monitoring"
 author: "Metropolitan Council"
-date: "February 11, 2022"
+date: "February 18, 2022"
 output:
   html_document:
     css: ["www/rmd-report-style.css", "www/colors.css", "www/font.css"]
@@ -45,7 +45,7 @@ font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
 whiteSmoke <- "#F5F5F5"
 
 pal <- c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#666666")
-pal <- setNames(pal, c("Alpha, Beta & Gamma", "Delta", "Omicron", "Omicron BA.2", "Total load"))
+pal <- setNames(pal, c("Alpha, Beta & Gamma", "Delta", "Omicron BA.1", "Omicron BA.2", "Total load"))
 
 
 
@@ -97,7 +97,7 @@ hov_lab_list <- list(
 The daily amount of SARS-CoV-2 viral RNA flowing into the Metro Plant correlates closely with the number of new daily cases reported by the Minnesota Department of Health. The plant serves nearly 2 million people in Minneapolis, Saint Paul, and 64 other metro area communities.
 
 ###### How to read this graph:
-The blue line and points show the total amount of SAR S-CoV-2 viral RNA in wastewater flowing into the Metro Plant, in millions copies of the SARS-CoV-2 genome per person served by the wastewater area, per day. Blue points are daily values; the blue line is a running average of the previous 7 days. The gray line shows the average of the previous 7 days of new reported COVID-19 infections in the seven-county Metro area per 100,000 residents. Case data are provided by the Minnesota Department of Health and downloaded from [USA Facts] (www.usafacts.org). 
+The blue line and points show the total amount of SARS-CoV-2 viral RNA in wastewater flowing into the Metro Plant, in millions copies of the SARS-CoV-2 genome per person served by the wastewater plant, per day. Blue points are daily values; the blue line is a running average of the previous 7 days. The gray line shows the average of the previous 7 days of new reported COVID-19 infections in the seven-county Metro area per 100,000 residents. Case data are provided by the Minnesota Department of Health and downloaded from [USA Facts] (www.usafacts.org). 
 
 ```{r load plot, out.width = '80%', message = FALSE, warning = FALSE}
   ay <- list(
@@ -222,12 +222,10 @@ The blue line and points show the total amount of SAR S-CoV-2 viral RNA in waste
 ```
 \newpage
 ## COVID-19 Variants
-
-#### COVID-19 variant tracker
-In December 2021, Omicron rapidly replaced Delta as the dominant SARS-CoV-2 variant of concern in influent wastewater at the Metro treatment plant in Saint Paul.
+In December 2021, Omicron rapidly replaced Delta as the dominant SARS-CoV-2 variant of concern in influent wastewater at the Metro treatment plant in Saint Paul. Since early February, we have observed the appearance and increase of the Omicron sub-lineage BA.2.
 
 ###### How to read this graph:
-his graph shows the frequency of SARS-CoV-2 variants in Metro Plant wastewater. Points are daily data; lines and shaded areas are averages of the previous 7 days.
+This graph shows the frequency of SARS-CoV-2 variants in Metro Plant wastewater. This frequency is the percentage of the total viral RNA that was identified as being from each particular variant.  Points are daily data; lines and shaded areas are averages of the previous 7 days.
 
 ```{r variant plot, message = FALSE, warning = FALSE}
 variant_plot <- 
@@ -256,7 +254,8 @@ variant_data %>%
         color = ~variant,
         alpha = 0.25,
         colors = pal,
-        hoverinfo = "none"
+        hoverinfo = "none",
+        showlegend = F
       ) %>%
       layout(
         # annotations = ann_list,
@@ -363,7 +362,8 @@ loadxvariantplot <-
         color = ~ variant,
         alpha = 0.25,
         colors = pal,
-        hoverinfo = "none"
+        hoverinfo = "none",
+        showlegend = FALSE
       ) %>%
 
       add_trace(
@@ -445,7 +445,4 @@ div(loadxvariantplot, align = "center")
 ```
 \newpage
 ###### More information about variant detection
-Variant frequencies are inferred from the presence of key mutations in the SARS-CoV-2 genome. Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron from the K417N mutation. Some variants share mutations: presence of K417N mutation before November 18 were inferred to be the Beta variant.
-
-###### Monitoring Omicron BA.1 and BA.2 sub-lineages
-Metropolitan Council and the University of Minnesota Genomics Center continue to monitor for the BA.1 and BA.2 sub-lineages of Omicron.
+Variant frequencies are inferred from the presence of key mutations in the SARS-CoV-2 genome. Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron from the K417N mutation. Some variants share mutations: presence of K417N mutation before November 18 were inferred to be the Beta variant. The two sub-lineages of Omicron (BA.1 and BA.2) are distinguished by the HV 69/70 deletion: Omicron BA.1 contains both the K417N mutation and the HV 69/70 deletion. Omicron BA.2 has the K417N mutation but not the HV 69/70 deletion.
