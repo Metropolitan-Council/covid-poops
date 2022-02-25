@@ -1,7 +1,7 @@
 ---
 title: "Metro Wastewater COVID-19 Monitoring"
 author: "Metropolitan Council"
-date: "February 18, 2022"
+date: "February 25, 2022"
 output:
   html_document:
     css: ["www/rmd-report-style.css", "www/colors.css", "www/font.css"]
@@ -325,7 +325,7 @@ div(variant_plot, align = "center")
 \newpage
 ## COVID-19 Load by Variant
 #### Another way of looking at the variant data
-The dominance of various SARS-CoV-2 variants has ebbed and flowed over time. The current dominant variant, Omicron, became dominant in late December. The total amount of SARS-CoV-2 virus in wastewater has also been higher during the Omicron wave relative to earlier periods of the COVID-19 Pandemic, consistent with higher case counts in the region.
+The dominance of various SARS-CoV-2 variants has ebbed and flowed over time. The current dominant variant, Omicron, became dominant in late December. The total amount of SARS-CoV-2 virus in wastewater has been higher during the Omicron wave relative to earlier periods of the COVID-19 pandemic, consistent with higher case counts in the region. But the wastewater load has dropped by approximately 97% since the Omicron peak in early January, and reported cases are sharply lower, as well.
 
 ###### How to read this graph:
 This graph shows the measured number of copies per person per day of each variant in wastewater. Points are daily data; lines and shaded areas are averages of the previous 7 days. The gray area in the background is the 7-day average total viral load. Variant proportions do not always add to 100%, so slight discrepancies between the total viral load and that of the individual variants are expected.
