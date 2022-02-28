@@ -29,14 +29,14 @@ fluidPage(
     # h1("Wastewater Treatment COVID-19 Monitoring Dashboard"),
     # h3('App Subtitle'),
     # Show a plot of the generated distribution
-
+    
     tabPanel(
       "COVID-19 Load",
       br(),
       h3("Tracking COVID-19 Prevalence with Metro Plant Wastewater"),
       p("The number of reported cases of COVID-19 infections in the seven-county metro area corresponds to the prevalence of the virus in wastewater samples at the Metro treatment plant in Saint Paul. The plant serves a large portion of the seven-county metro area. "),
       plotlyOutput("loadPlot", height = "auto"),
-      p("The blue line and points show the total amount of SARS-CoV-2 viral RNA in wastewater flowing into the Metro Plant, in millions copies of the SARS-CoV-2 genome per person served by the wastewater area, per day. Blue points are daily values; the blue line is a running average of the previous 7 days. The gray line shows the average of the previous 7 days of new reported COVID-19 infections in the seven-county Metro area per 100,000 residents. Case data are provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org). New cases tend to lag wastewater detection trends by about 6-8 days.")
+      p("The blue line and points show the total amount of SARS-CoV-2 viral RNA in wastewater flowing into the Metro Plant, in millions copies of the SARS-CoV-2 genome per person served by the wastewater area, per day. Blue points are daily values; the blue line is a running average of the previous 7 days. The gray line shows the average of the previous 7 days of new reported COVID-19 infections in the seven-county Metro area per 100,000 residents. Case data are provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org).")
       # p("Data last updated 2022-01-13.")
     ),
     tabPanel(
@@ -48,7 +48,7 @@ fluidPage(
       plotlyOutput("variantPlot", height = "auto"),
       p("Points are daily data; lines are averages of the previous 7 days. Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron from the K417N mutation. Presence of K417N mutation before November 18 were inferred to be the Beta variant and are omitted from this image.")
     ),
-
+    
     # tabPanel(
     #   "Load vs. Reported Cases",
     #   br(),
@@ -67,13 +67,13 @@ fluidPage(
       p("SARS-CoV-2 prevalence in wastewater influent is determined from multiple samples of wastewater each day. Units are in millions of copies of N1 and N2 genes, per person in the sewage treatment area, per day. Viral load data are from Metropolitan Council and the University of Minnesota Genomics Center. Cases are a per-capita (per 100,000 people) 7-day rolling average case rates for the 7-county Metropolitan Council area, provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org)."),
       br(),
       DTOutput("loadData"),
-
+      
       # variants -----
       h3("Variants"),
       p("Variant presence and frequency are inferred from the N501Y mutation (Alpha, Beta and Gamma); the L452R mutation (Delta); and the K417N mutation (Omicron). K417N mutations present before November 18, 2020 are assumed to be Beta variants, and are marked as Other in the variant column."),
       br(),
       DTOutput("variantData"),
-
+      
       # # cases -----
       # h3("Cases"),
       # p("Data updated ... Data source ... "),
