@@ -3,6 +3,8 @@ library(magick)
 library(ggtext)
 library(showtext)
 library(councilR)
+# Font sizes may not render correctly on Mac
+
 
 font_add("HelveticaNeueLTStd", "HelveticaNeueLTStd-Lt.otf")
 font_add("HelveticaNeueLTStd", "HelveticaNeueLTStd-Lt.otf")
