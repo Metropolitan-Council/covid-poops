@@ -1,4 +1,5 @@
 # Create figures!
+# Font sizes may not render correctly on Mac
 
 library(cowplot)
 library(magick)

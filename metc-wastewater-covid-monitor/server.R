@@ -2,8 +2,8 @@
 
 # Server -----
 server <- function(input, output) {
-
-
+  
+  
   # plots-----
   # code here to select whether variantPlot = variantFreqPlot or variantLoadPlot
   output$variantPlot <- renderPlotly({
@@ -13,7 +13,7 @@ server <- function(input, output) {
       variantLoadPlot
     }
   })
-
+  
   ## variant frequency -----
   variantFreqPlot <-
     # browser()
@@ -104,9 +104,9 @@ server <- function(input, output) {
       )
     ) %>%
     config(displayModeBar = FALSE)
-
-
-
+  
+  
+  
   ## MAIN load -----
   output$loadPlot <- renderPlotly({
     ay <- list(
@@ -120,9 +120,10 @@ server <- function(input, output) {
       ),
       zerolinewidth = 1,
       zerolinecolor = colors$suppWhite,
-      gridcolor = colors$suppWhite
+      gridcolor = colors$suppWhite,
+      rangemode = "nonnegative"
     )
-
+    
     load_plot <-
       load_data %>%
       # left_join(case_data, by = "date") %>%
@@ -195,8 +196,7 @@ server <- function(input, output) {
           xref = "paper", yref = "paper",
           xanchor = "right", yanchor = "auto",
           xshift = 0, yshift = -25
-        )
-        ,
+        ),
         showlegend = FALSE,
         margin = list(l = 75, r = 75, b = 75, pad = 10),
         hovermode = "closest",
@@ -240,7 +240,8 @@ server <- function(input, output) {
             color = councilR::colors$suppBlack
           ),
           gridcolor = colors$suppWhite,
-          zerolinecolor = colors$suppWhite
+          zerolinecolor = colors$suppWhite,
+          rangemode = "nonnegative"
         ),
         legend = list(
           orientation = "h",
@@ -252,10 +253,10 @@ server <- function(input, output) {
         )
       ) %>%
       config(displayModeBar = F)
-
+    
     load_plot
   })
-
+  
   ## variant load -----
   variantLoadPlot <-
     # browser()
@@ -342,7 +343,8 @@ server <- function(input, output) {
             size = 14,
             family = font_family_list,
             color = councilR::colors$suppBlack
-          )
+          ),
+          rangemode = "nonnegative"
         ),
         tickfont = list(
           size = 12,
@@ -363,9 +365,9 @@ server <- function(input, output) {
       )
     ) %>%
     config(displayModeBar = FALSE)
-
-
-
+  
+  
+  
   ## case and load -----
   output$casesVload <- renderPlotly({
     cases_vs_load_plot <-
@@ -383,8 +385,8 @@ server <- function(input, output) {
         color = colors$esBlue,
         fill = colors$esBlue
       )
-
-
+    
+    
     ggplotly(cases_vs_load_plot) %>%
       layout(
         annotations = ann_list,
@@ -424,7 +426,8 @@ server <- function(input, output) {
               size = 14,
               family = font_family_list,
               color = councilR::colors$suppBlack
-            )
+            ),
+            rangemode = "nonnegative"
           ),
           # tickformat = "%",
           zerolinewidth = 2,
@@ -434,7 +437,8 @@ server <- function(input, output) {
             color = councilR::colors$suppBlack
           ),
           gridcolor = "gray90",
-          zerolinecolor = "gray50"
+          zerolinecolor = "gray50",
+          rangemode = "nonnegative"
         ),
         legend = list(
           font = list(
@@ -446,20 +450,20 @@ server <- function(input, output) {
       ) %>%
       config(displayModeBar = F)
   })
-
+  
   # tables -----
   ## Prevalence table -----
   output$loadData <- renderDT(server = FALSE, {
     load_data %>%
       left_join(case_data,
-        by = c(
-          "date",
-          "covid_cases_total",
-          "covid_cases_new",
-          "covid_cases_per100K",
-          "covid_cases_7day",
-          "hover_text_case"
-        )
+                by = c(
+                  "date",
+                  "covid_cases_total",
+                  "covid_cases_new",
+                  "covid_cases_per100K",
+                  "covid_cases_7day",
+                  "hover_text_case"
+                )
       ) %>%
       select(
         -hover_text_case, -hover_text_load,
@@ -490,8 +494,8 @@ server <- function(input, output) {
       # round case rates to nearest digit:
       DT::formatRound(5:8, 0)
   })
-
-
+  
+  
   ## variant table -----
   output$variantData <- renderDT(server = FALSE, {
     variant_data %>%
@@ -519,8 +523,8 @@ server <- function(input, output) {
       DT::formatRound("frequency", 2) %>%
       DT::formatRound("frequency_7day", 2)
   })
-
-
+  
+  
   ## case table -----
   output$caseData <- renderDT(server = FALSE, {
     case_data %>%
