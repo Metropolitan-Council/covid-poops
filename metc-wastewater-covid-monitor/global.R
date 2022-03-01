@@ -68,7 +68,7 @@ ann_list <- list(
     color = councilR::colors$suppBlack
   ),
   x = 1,
-  y = -0.2,
+  y = -0.19,
   showarrow = F,
   xref = "paper", yref = "paper",
   xanchor = "right", yanchor = "auto",
