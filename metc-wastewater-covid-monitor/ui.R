@@ -78,24 +78,24 @@ fluidPage(
       # h3("Cases"),
       # p("Data updated ... Data source ... "),
       # DTOutput("caseData")
-    )
-  ),
-  tags$div(
-    "This project is open-source. See our GitHub repository here",
-    tags$a(
-      href = "https://github.com/Metropolitan-Council/covid-poops",
-      shiny::icon("external-link-alt", lib = "font-awesome"),
-      target = "_blank"
     ),
-    tags$br(),
-    "App last updated ",
-    "2022-02-25",
-    # using gh::gh() causes SAML error in production
-    # gh::gh("GET /repos/Metropolitan-Council/covid-poops")[49][[1]] %>% as.Date(),
-    style = "font-size: 1.5rem;
+    footer =  tags$div(
+        "This project is open-source. See our GitHub repository here",
+        tags$a(
+          href = "https://github.com/Metropolitan-Council/covid-poops",
+          shiny::icon("external-link-alt", lib = "font-awesome"),
+          target = "_blank"
+        ),
+        tags$br(),
+        "App last updated ",
+        "2022-03-01",
+        # using gh::gh() causes SAML error in production
+        # gh::gh("GET /repos/Metropolitan-Council/covid-poops")[49][[1]] %>% as.Date(),
+        style = "font-size: 1.5rem;
              display: block;
              text-align: right;
              padding: 1%;",
-    align = "right"
-  ),
+        align = "right"
+      )
+  )
 )
