@@ -82,26 +82,26 @@ variant_data_run <-
     Delta = l452r,
     `Omicron BA.2` = case_when(
 
-      # Assigning values for BA2: 
-      # We start detecting BA 2 on 1/1: 
+      # Assigning values for BA2:
+      # We start detecting BA 2 on 1/1:
       date >= "2022-01-01" &
-        # only calculate when k417N is greater than than hv 69/70: 
+        # only calculate when k417N is greater than than hv 69/70:
 
-        k417n > hv_69_70  &
-        # only calculate when hv69/70 and K417N data are present: 
+        k417n > hv_69_70 &
+        # only calculate when hv69/70 and K417N data are present:
         !is.na(hv_69_70) & !is.na(k417n)
       # omicron BA2 = k417N minus frequency of hv69/70
       ~ k417n - hv_69_70,
 
 
-      # Assigning zeros for BA2: 
-      date >= "2022-01-01" & 
-        # only assign a zero when k417N is less than than hv 69/70: 
+      # Assigning zeros for BA2:
+      date >= "2022-01-01" &
+        # only assign a zero when k417N is less than than hv 69/70:
 
         k417n < hv_69_70 &
-        # only assign a zero when both hv69/70 or K417N data are present: 
+        # only assign a zero when both hv69/70 or K417N data are present:
         !is.na(hv_69_70) & !is.na(k417n) ~ 0
-      
+
       # The rest of the time, BA 2 will be NA.
     ),
     # turn this on when we start detecting BA.1/2:
@@ -109,18 +109,17 @@ variant_data_run <-
 
       # before we detect BA2, it's just the K417 N frequency:
       date >= "2021-11-18" &
-        date < "2022-01-01" 
-        ~ k417n,
-      
-      # After we detect BA2, it's the K417 N frequency minus BA2 frequency: 
+        date < "2022-01-01"
+      ~ k417n,
+
+      # After we detect BA2, it's the K417 N frequency minus BA2 frequency:
       date >= "2021-11-18" &
-        date >= "2022-01-01" & 
+        date >= "2022-01-01" &
         k417n > hv_69_70 &
         !is.na(hv_69_70) &
         !is.na(k417n)
-      
-      ~ k417n - (k417n - hv_69_70)
 
+      ~ k417n - (k417n - hv_69_70)
     )
   ) %>%
   # option to NA-out Omicron BA.2 where ratio of hv 69/70 to k417n is above 95%

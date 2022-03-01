@@ -2,8 +2,8 @@
 
 # Server -----
 server <- function(input, output) {
-  
-  
+
+
   # plots-----
   # code here to select whether variantPlot = variantFreqPlot or variantLoadPlot
   output$variantPlot <- renderPlotly({
@@ -13,7 +13,7 @@ server <- function(input, output) {
       variantLoadPlot
     }
   })
-  
+
   ## MAIN load -----
   output$loadPlot <- renderPlotly({
     ay <- list(
@@ -30,7 +30,7 @@ server <- function(input, output) {
       gridcolor = colors$suppWhite,
       rangemode = "nonnegative"
     )
-    
+
     load_plot <-
       load_data %>%
       # left_join(case_data, by = "date") %>%
@@ -160,10 +160,10 @@ server <- function(input, output) {
         )
       ) %>%
       config(displayModeBar = F)
-    
+
     load_plot
   })
-  
+
   ## variant load -----
   variantLoadPlot <-
     # browser()
@@ -274,7 +274,7 @@ server <- function(input, output) {
       )
     ) %>%
     config(displayModeBar = FALSE)
-  
+
   ## variant frequency -----
   variantFreqPlot <-
     # browser()
@@ -317,7 +317,7 @@ server <- function(input, output) {
       ),
       xaxis = list(
         title = list(
-          text = "", 
+          text = "",
           standoff = 25,
           font = list(
             size = 14,
@@ -368,10 +368,10 @@ server <- function(input, output) {
       )
     ) %>%
     config(displayModeBar = FALSE)
-  
-  
-  
-  
+
+
+
+
   ## case and load -----
   output$casesVload <- renderPlotly({
     cases_vs_load_plot <-
@@ -389,8 +389,8 @@ server <- function(input, output) {
         color = colors$esBlue,
         fill = colors$esBlue
       )
-    
-    
+
+
     ggplotly(cases_vs_load_plot) %>%
       layout(
         annotations = ann_list,
@@ -454,20 +454,20 @@ server <- function(input, output) {
       ) %>%
       config(displayModeBar = F)
   })
-  
+
   # tables -----
   ## Prevalence table -----
   output$loadData <- renderDT(server = FALSE, {
     load_data %>%
       left_join(case_data,
-                by = c(
-                  "date",
-                  "covid_cases_total",
-                  "covid_cases_new",
-                  "covid_cases_per100K",
-                  "covid_cases_7day",
-                  "hover_text_case"
-                )
+        by = c(
+          "date",
+          "covid_cases_total",
+          "covid_cases_new",
+          "covid_cases_per100K",
+          "covid_cases_7day",
+          "hover_text_case"
+        )
       ) %>%
       select(
         -hover_text_case, -hover_text_load,
@@ -498,8 +498,8 @@ server <- function(input, output) {
       # round case rates to nearest digit:
       DT::formatRound(5:8, 0)
   })
-  
-  
+
+
   ## variant table -----
   output$variantData <- renderDT(server = FALSE, {
     variant_data %>%
@@ -527,8 +527,8 @@ server <- function(input, output) {
       DT::formatRound("frequency", 2) %>%
       DT::formatRound("frequency_7day", 2)
   })
-  
-  
+
+
   ## case table -----
   output$caseData <- renderDT(server = FALSE, {
     case_data %>%
