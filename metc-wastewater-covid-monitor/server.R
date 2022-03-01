@@ -439,7 +439,6 @@ server <- function(input, output) {
             family = font_family_list,
             color = councilR::colors$suppBlack
           ),
-          rangemode = "nonnegative",
           gridcolor = "gray90",
           zerolinecolor = "gray50",
           rangemode = "nonnegative"
