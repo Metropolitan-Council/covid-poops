@@ -288,12 +288,7 @@ Source: MDH and USA Facts (case data); Metropolitan Council and U of M Genomics 
   )
 
 ggsave("fig/cases_vs_load_instagram.png",
-       insta_plot,
-       height = 1080, width = 1080,
-       units = "px", dpi = 300
+  insta_plot,
+  height = 1080, width = 1080,
+  units = "px", dpi = 300
 )
-
-
-
-
-
