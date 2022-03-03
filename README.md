@@ -23,10 +23,12 @@ processing. `0_run_all.R` runs all scripts and saves final data.
 
 <PRE class="fansi fansi-output"><CODE>#&gt; <span style='color: #0000BB; font-weight: bold;'>R</span>
 #&gt; ├── <span style='color: #00BB00;'>0_run_all.R</span>
+#&gt; ├── <span style='color: #00BB00;'>d_copies_by_variant.R</span>
 #&gt; ├── <span style='color: #00BB00;'>d_covid_cases.R</span>
 #&gt; ├── <span style='color: #00BB00;'>d_load.R</span>
 #&gt; ├── <span style='color: #00BB00;'>d_variants.R</span>
 #&gt; ├── <span style='color: #00BB00;'>fig_cases_vs_load.R</span>
+#&gt; ├── <span style='color: #00BB00;'>fig_copies_by_variant.R</span>
 #&gt; ├── <span style='color: #00BB00;'>fig_sewershed.R</span>
 #&gt; └── <span style='color: #00BB00;'>fig_variants.R</span>
 </CODE></PRE>
@@ -59,8 +61,15 @@ By contributing to this project, you agree to abide by its terms.
 
 ## Contributors
 
-[@ashleyasmus](https://github.com/ashleyasmus), and
-[@eroten](https://github.com/eroten).
+Special thanks to our community contributors!
+
+[@ashleyasmus](https://github.com/ashleyasmus),
+[@ehesch](https://github.com/ehesch),
+[@eroten](https://github.com/eroten),
+[@JonathanEhrlichMC](https://github.com/JonathanEhrlichMC),
+[@jpflanigan](https://github.com/jpflanigan),
+[@knumat](https://github.com/knumat), and
+[@lfletch0025](https://github.com/lfletch0025).
 
 ------------------------------------------------------------------------
 

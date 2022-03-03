@@ -36,7 +36,7 @@ fluidPage(
       h3("Tracking COVID-19 Prevalence with Metro Plant Wastewater"),
       p("The number of reported cases of COVID-19 infections in the seven-county metro area corresponds to the prevalence of the virus in wastewater samples at the Metro treatment plant in Saint Paul. The plant serves a large portion of the seven-county metro area. "),
       plotlyOutput("loadPlot", height = "auto"),
-      p("The blue line and points show the total amount of SARS-CoV-2 viral RNA in wastewater flowing into the Metro Plant, in millions copies of the SARS-CoV-2 genome per person served by the wastewater area, per day. Blue points are daily values; the blue line is a running average of the previous 7 days. The gray line shows the average of the previous 7 days of new reported COVID-19 infections in the seven-county Metro area per 100,000 residents. Case data are provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org). New cases tend to lag wastewater detection trends by about 6-8 days.")
+      p("The blue line and points show the total amount of SARS-CoV-2 viral RNA in wastewater flowing into the Metro Plant, in millions copies of the SARS-CoV-2 genome per person served by the wastewater area, per day. Blue points are daily values; the blue line is a running average of the previous 7 days. The gray line shows the average of the previous 7 days of new reported COVID-19 infections in the seven-county Metro area per 100,000 residents. Case data are provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org).")
       # p("Data last updated 2022-01-13.")
     ),
     tabPanel(
@@ -78,24 +78,24 @@ fluidPage(
       # h3("Cases"),
       # p("Data updated ... Data source ... "),
       # DTOutput("caseData")
-    )
-  ),
-  tags$div(
-    "This project is open-source. See our GitHub repository here",
-    tags$a(
-      href = "https://github.com/Metropolitan-Council/covid-poops",
-      shiny::icon("external-link-alt", lib = "font-awesome"),
-      target = "_blank"
     ),
-    tags$br(),
-    "App last updated ",
-    "2022-02-25",
-    # using gh::gh() causes SAML error in production
-    # gh::gh("GET /repos/Metropolitan-Council/covid-poops")[49][[1]] %>% as.Date(),
-    style = "font-size: 1.5rem;
+    footer = tags$div(
+      "This project is open-source. See our GitHub repository here",
+      tags$a(
+        href = "https://github.com/Metropolitan-Council/covid-poops",
+        shiny::icon("external-link-alt", lib = "font-awesome"),
+        target = "_blank"
+      ),
+      tags$br(),
+      "App last updated ",
+      "2022-03-01",
+      # using gh::gh() causes SAML error in production
+      # gh::gh("GET /repos/Metropolitan-Council/covid-poops")[49][[1]] %>% as.Date(),
+      style = "font-size: 1.5rem;
              display: block;
              text-align: right;
              padding: 1%;",
-    align = "right"
-  ),
+      align = "right"
+    )
+  )
 )

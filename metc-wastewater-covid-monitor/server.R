@@ -14,99 +14,6 @@ server <- function(input, output) {
     }
   })
 
-  ## variant frequency -----
-  variantFreqPlot <-
-    # browser()
-    variant_data %>%
-    plot_ly() %>%
-    add_trace(
-      type = "scatter",
-      mode = "markers",
-      x = ~date,
-      y = ~frequency,
-      split = ~variant,
-      color = ~variant,
-      alpha = 0.8,
-      colors = pal,
-      hoverinfo = "text",
-      text = ~hover_text_variant
-    ) %>%
-    add_trace(
-      type = "scatter",
-      mode = "lines",
-      x = ~date,
-      fill = "tozeroy",
-      y = ~frequency_7day,
-      split = ~variant,
-      color = ~variant,
-      alpha = 0.25,
-      colors = pal,
-      hoverinfo = "none"
-    ) %>%
-    layout(
-      annotations = ann_list,
-      hovermode = "closest",
-      hoverdistance = "10",
-      hoverlabel = hov_lab_list,
-      margin = list(
-        l = 50,
-        r = 100,
-        b = 50,
-        pad = 10
-      ),
-      xaxis = list(
-        title = list(
-          text = "", standoff = 25,
-          font = list(
-            size = 14,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          )
-        ),
-        zerolinewidth = 2,
-        zeroline = TRUE,
-        showline = FALSE,
-        showgrid = FALSE,
-        tickfont = list(
-          size = 12,
-          family = font_family_list,
-          color = councilR::colors$suppBlack
-        )
-      ),
-      yaxis = list(
-        title = list(
-          text = "<b>Frequency of marker genes (%)</b>",
-          standoff = 25,
-          font = list(
-            size = 14,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          )
-        ),
-        tickformat = "1%",
-        tickfont = list(
-          size = 12,
-          family = font_family_list,
-          color = councilR::colors$suppBlack
-        ),
-        gridcolor = "gray90",
-        zerolinecolor = "gray50",
-        zerolinewidth = 2,
-        range = c(0, 1.1)
-      ),
-      legend = list(
-        orientation = "h",
-        font = list(
-          size = 14,
-          family = font_family_list,
-          color = councilR::colors$suppBlack
-        )
-      )
-    ) %>%
-    config(displayModeBar = FALSE)
-
-
-
   ## MAIN load -----
   output$loadPlot <- renderPlotly({
     ay <- list(
@@ -120,7 +27,8 @@ server <- function(input, output) {
       ),
       zerolinewidth = 1,
       zerolinecolor = colors$suppWhite,
-      gridcolor = colors$suppWhite
+      gridcolor = colors$suppWhite,
+      rangemode = "nonnegative"
     )
 
     load_plot <-
@@ -195,8 +103,7 @@ server <- function(input, output) {
           xref = "paper", yref = "paper",
           xanchor = "right", yanchor = "auto",
           xshift = 0, yshift = -25
-        )
-        ,
+        ),
         showlegend = FALSE,
         margin = list(l = 75, r = 75, b = 75, pad = 10),
         hovermode = "closest",
@@ -240,7 +147,8 @@ server <- function(input, output) {
             color = councilR::colors$suppBlack
           ),
           gridcolor = colors$suppWhite,
-          zerolinecolor = colors$suppWhite
+          zerolinecolor = colors$suppWhite,
+          rangemode = "nonnegative"
         ),
         legend = list(
           orientation = "h",
@@ -311,7 +219,7 @@ server <- function(input, output) {
       margin = list(
         l = 50,
         r = 100,
-        b = 50,
+        b = 115,
         pad = 10
       ),
       xaxis = list(
@@ -349,12 +257,15 @@ server <- function(input, output) {
           family = font_family_list,
           color = councilR::colors$suppBlack
         ),
+        rangemode = "nonnegative",
         gridcolor = "gray90",
         zerolinecolor = "gray50",
         zerolinewidth = 2
       ),
       legend = list(
         orientation = "h",
+        y = -0.2,
+        xanchor = "left",
         font = list(
           size = 14,
           family = font_family_list,
@@ -363,6 +274,101 @@ server <- function(input, output) {
       )
     ) %>%
     config(displayModeBar = FALSE)
+
+  ## variant frequency -----
+  variantFreqPlot <-
+    # browser()
+    variant_data %>%
+    plot_ly() %>%
+    add_trace(
+      type = "scatter",
+      mode = "markers",
+      x = ~date,
+      y = ~frequency,
+      split = ~variant,
+      color = ~variant,
+      alpha = 0.8,
+      colors = pal,
+      hoverinfo = "text",
+      text = ~hover_text_variant
+    ) %>%
+    add_trace(
+      type = "scatter",
+      mode = "lines",
+      x = ~date,
+      fill = "tozeroy",
+      y = ~frequency_7day,
+      split = ~variant,
+      color = ~variant,
+      alpha = 0.25,
+      colors = pal,
+      hoverinfo = "none"
+    ) %>%
+    layout(
+      annotations = ann_list,
+      hovermode = "closest",
+      hoverdistance = "10",
+      hoverlabel = hov_lab_list,
+      margin = list(
+        l = 50,
+        r = 100,
+        b = 115,
+        pad = 10
+      ),
+      xaxis = list(
+        title = list(
+          text = "",
+          standoff = 25,
+          font = list(
+            size = 14,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          )
+        ),
+        zerolinewidth = 2,
+        zeroline = TRUE,
+        showline = FALSE,
+        showgrid = FALSE,
+        tickfont = list(
+          size = 12,
+          family = font_family_list,
+          color = councilR::colors$suppBlack
+        )
+      ),
+      yaxis = list(
+        title = list(
+          text = "<b>Frequency of marker genes (%)</b>",
+          standoff = 25,
+          font = list(
+            size = 14,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          )
+        ),
+        tickformat = "1%",
+        tickfont = list(
+          size = 12,
+          family = font_family_list,
+          color = councilR::colors$suppBlack
+        ),
+        gridcolor = "gray90",
+        zerolinecolor = "gray50",
+        zerolinewidth = 2,
+        range = c(0, 1.1)
+      ),
+      legend = list(
+        orientation = "h",
+        y = -0.2,
+        xanchor = "left",
+        font = list(
+          size = 14,
+          family = font_family_list,
+          color = councilR::colors$suppBlack
+        )
+      )
+    ) %>%
+    config(displayModeBar = FALSE)
+
 
 
 
@@ -434,7 +440,8 @@ server <- function(input, output) {
             color = councilR::colors$suppBlack
           ),
           gridcolor = "gray90",
-          zerolinecolor = "gray50"
+          zerolinecolor = "gray50",
+          rangemode = "nonnegative"
         ),
         legend = list(
           font = list(
