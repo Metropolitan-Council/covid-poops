@@ -209,7 +209,8 @@ server <- function(input, output) {
       alpha = 0.8,
       colors = pal,
       hoverinfo = "text",
-      text = ~hover_text_variant
+      text = ~hover_text_variant,
+      showlegend = F
     ) %>%
     layout(
       annotations = ann_list,
@@ -290,7 +291,8 @@ server <- function(input, output) {
       alpha = 0.8,
       colors = pal,
       hoverinfo = "text",
-      text = ~hover_text_variant
+      text = ~hover_text_variant,
+      showlegend = F
     ) %>%
     add_trace(
       type = "scatter",
