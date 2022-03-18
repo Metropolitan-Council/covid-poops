@@ -73,7 +73,7 @@ load_varplot <-
     legend.text = element_text(size = 48),
     # legend.title = element_text(size = 48),
     axis.title.y = element_text(size = 64, vjust = 1),
-    axis.text.x = element_text(size = 48),
+    axis.text.x = element_text(size = 40),
     axis.title.x = element_text(size = 64),
     axis.text.y = element_text(size = 48, vjust = 0),
     legend.title = element_blank() # turn off legend title

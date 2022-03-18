@@ -155,7 +155,7 @@ variant_data_date %>%
     axis.text.y = element_text(size = 18, vjust = 0),
     axis.text.x = element_text(size = 18),
     axis.title.x = element_text(size = 18),
-    legend.text = element_text(size = 18),
+    legend.text = element_text(size = 14),
     legend.title = element_text(size = 18),
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
