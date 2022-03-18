@@ -12,7 +12,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 
 This repository contains the code for cleaning, transforming and
 visualizing data from Environmental Services, whose researchers are
-monitoring COVID-19 prealence in the metro area by analyzing SARS CoV-2
+monitoring COVID-19 prevalence in the metro area by analyzing SARS CoV-2
 viral RNA load in Metro Plant wastewater.
 
 ## Structure
