@@ -63,15 +63,7 @@ By contributing to this project, you agree to abide by its terms.
 
 Special thanks to our community contributors!
 
-[@ashleyasmus](https://github.com/ashleyasmus),
-[@ehesch](https://github.com/ehesch),
-[@eroten](https://github.com/eroten),
-[@JonathanEhrlichMC](https://github.com/JonathanEhrlichMC),
-[@jpflanigan](https://github.com/jpflanigan),
-[@knumat](https://github.com/knumat), and
-[@lfletch0025](https://github.com/lfletch0025).
-
-------------------------------------------------------------------------
+## [@adamstener](https://github.com/adamstener), [@ashleyasmus](https://github.com/ashleyasmus), [@ehesch](https://github.com/ehesch), [@eroten](https://github.com/eroten), [@JonathanEhrlichMC](https://github.com/JonathanEhrlichMC), [@jpflanigan](https://github.com/jpflanigan), [@knumat](https://github.com/knumat), and [@lfletch0025](https://github.com/lfletch0025).
 
 <a href="https://metrocouncil.org" target="_blank"><img src="metc-wastewater-covid-monitor/www/main-logo.png" style="margin-left: 50%;margin-right: 50%;">
 
