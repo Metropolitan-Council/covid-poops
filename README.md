@@ -12,7 +12,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 
 This repository contains the code for cleaning, transforming and
 visualizing data from Environmental Services, whose researchers are
-monitoring COVID-19 prealence in the metro area by analyzing SARS CoV-2
+monitoring COVID-19 prevalence in the metro area by analyzing SARS CoV-2
 viral RNA load in Metro Plant wastewater.
 
 ## Structure
@@ -63,15 +63,7 @@ By contributing to this project, you agree to abide by its terms.
 
 Special thanks to our community contributors!
 
-[@ashleyasmus](https://github.com/ashleyasmus),
-[@ehesch](https://github.com/ehesch),
-[@eroten](https://github.com/eroten),
-[@JonathanEhrlichMC](https://github.com/JonathanEhrlichMC),
-[@jpflanigan](https://github.com/jpflanigan),
-[@knumat](https://github.com/knumat), and
-[@lfletch0025](https://github.com/lfletch0025).
-
-------------------------------------------------------------------------
+## [@adamstener](https://github.com/adamstener), [@ashleyasmus](https://github.com/ashleyasmus), [@ehesch](https://github.com/ehesch), [@eroten](https://github.com/eroten), [@JonathanEhrlichMC](https://github.com/JonathanEhrlichMC), [@jpflanigan](https://github.com/jpflanigan), [@knumat](https://github.com/knumat), and [@lfletch0025](https://github.com/lfletch0025).
 
 <a href="https://metrocouncil.org" target="_blank"><img src="metc-wastewater-covid-monitor/www/main-logo.png" style="margin-left: 50%;margin-right: 50%;">
 
