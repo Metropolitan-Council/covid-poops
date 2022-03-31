@@ -352,7 +352,7 @@ div(variant_plot, align = "center")
 \newpage
 ## COVID-19 Load by Variant
 #### Another way of looking at the variant data
-The dominance of various SARS-CoV-2 variants has ebbed and flowed over time. The current dominant variant, Omicron, became dominant in late December. The total amount of SARS-CoV-2 virus in wastewater has been higher during the Omicron wave relative to earlier periods of the COVID-19 pandemic, consistent with higher case counts in the region. But the wastewater load has dropped by more than 98% since the Omicron peak in early January, and reported cases are sharply lower, as well.
+The dominance of various SARS-CoV-2 variants has ebbed and flowed over time. The current dominant variant, Omicron, became dominant in late December. The total amount of SARS-CoV-2 virus in wastewater was higher during the Omicron BA.1 wave compared to earlier periods of the COVID-19 pandemic, consistent with higher case counts in the region. The wastewater load dropped by more than 98% after the peak of the Omicron BA.1 subvariant in early January, but it has now started to increase again, driven by the increasing prevalence of Omicron BA.2. 
 
 ###### How to read this graph:
 This graph shows the measured number of copies per person per day of each variant in wastewater. Points are daily data; lines and shaded areas are averages of the previous 7 days. The gray area in the background is the 7-day average total viral load. Variant proportions do not always add to 100%, so slight discrepancies between the total viral load and that of the individual variants are expected.
