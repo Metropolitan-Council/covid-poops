@@ -15,6 +15,14 @@ visualizing data from Environmental Services, whose researchers are
 monitoring COVID-19 prevalence in the metro area by analyzing SARS CoV-2
 viral RNA load in Metro Plant wastewater.
 
+## Data update schedule
+
+All data used in the interactive Shiny app lives in
+`/metc-wastewater-covid-monitor/data`. Though samples are taken daily,
+samples are processed and analyzed in the University of Minnesota
+Genomics Center lab once a week. We aim to release the weekly data
+update every Friday before noon.
+
 ## Structure
 
 All processing scripts for data and figures are in ./R. The prefix “d”
