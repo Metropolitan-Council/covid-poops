@@ -39,7 +39,7 @@ server <- function(input, output) {
         mode = "markers",
         x = ~date,
         y = ~copies_day_person_M_mn,
-        name = "Viral load",
+        name = "Daily viral load",
         size = 1,
         yaxis = "y2",
         marker = list(
@@ -59,7 +59,7 @@ server <- function(input, output) {
         mode = "lines",
         x = ~date,
         y = ~copies_day_person_7day,
-        name = "Viral load",
+        name = "7-day average viral load",
         size = 1,
         yaxis = "y2",
         # fill = "tozeroy",
@@ -104,7 +104,7 @@ server <- function(input, output) {
           xanchor = "right", yanchor = "auto",
           xshift = 0, yshift = -25
         ),
-        showlegend = FALSE,
+        showlegend = TRUE,
         margin = list(l = 75, r = 75, b = 75, pad = 10),
         hovermode = "closest",
         hoverdistance = "10",
@@ -112,8 +112,8 @@ server <- function(input, output) {
         yaxis2 = ay,
         xaxis = list(
           title = list(
-            text = "Date",
-            standoff = 25,
+            text = "",
+            standoff = 40,
             font = list(
               size = 14,
               family = font_family_list,
