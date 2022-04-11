@@ -71,7 +71,7 @@ server <- function(input, output) {
       add_trace(
         x = ~date,
         y = ~covid_cases_7day,
-        name = "Cases per 100,000",
+        name = "7-day average cases per 100,000",
         fill = "tozeroy",
         fillcolor = "rgba(160, 160, 160, .3)",
         line = list(width = 0.5, color = colors$suppGray),
