@@ -59,6 +59,6 @@ Please note that the covid-poops project is released with a [Contributor Code of
 
 Special thanks to our community contributors!  
 
-[&#x0040;adamstener](https://github.com/adamstener), [&#x0040;ashleyasmus](https://github.com/ashleyasmus), [&#x0040;ehesch](https://github.com/ehesch), [&#x0040;eroten](https://github.com/eroten), [&#x0040;JonathanEhrlichMC](https://github.com/JonathanEhrlichMC), [&#x0040;jpflanigan](https://github.com/jpflanigan), [&#x0040;knumat](https://github.com/knumat), and [&#x0040;lfletch0025](https://github.com/lfletch0025).
+[&#x0040;adamstener](https://github.com/adamstener), [&#x0040;ashleyasmus](https://github.com/ashleyasmus), [&#x0040;eggsurplus](https://github.com/eggsurplus), [&#x0040;ehesch](https://github.com/ehesch), [&#x0040;enebo](https://github.com/enebo), [&#x0040;eroten](https://github.com/eroten), [&#x0040;JonathanEhrlichMC](https://github.com/JonathanEhrlichMC), [&#x0040;jpflanigan](https://github.com/jpflanigan), [&#x0040;knumat](https://github.com/knumat), [&#x0040;Lex137](https://github.com/Lex137), and [&#x0040;lfletch0025](https://github.com/lfletch0025).  
 -----
 <a href="https://metrocouncil.org" target="_blank"><img src="metc-wastewater-covid-monitor/www/main-logo.png" style="margin-left: 50%;margin-right: 50%;"><div></div></a>
