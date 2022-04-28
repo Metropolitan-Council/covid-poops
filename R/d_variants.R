@@ -63,7 +63,13 @@ variant_split <-
     raw_variant_data %>%
       select(date, contains("k417n")) %>%
       mutate(mutation = "k417n") %>%
-      rename_all(~ gsub("k417n_", "", .))
+      rename_all(~ gsub("k417n_", "", .)) 
+    #turn this on when we start detecting BA.2.12.1:
+    #%>%
+    #raw_variant_data %>%
+    #  select(date, contains("l452q")) %>%
+    #  mutate(mutation = "l452q") %>%
+    #  rename_all(~ gsub("l452q_", "", .))
   )
 
 
@@ -121,12 +127,17 @@ variant_data_run <-
 
       ~ k417n - (k417n - hv_69_70)
     )
+    #turn this on when we start detecting BA.2.12.1:
+    #,
+    #'Omicron BA.2.12.1' = l452q
   ) %>%
   # option to NA-out Omicron BA.2 where ratio of hv 69/70 to k417n is above 95%
   # mutate(`Omicron BA.2` = ifelse(hv_69_70/k417n >= 0.95 & !is.na(`Omicron BA.2`), NA, `Omicron BA.2`)) %>%
   select(-d80a, -e484k, -hv_69_70, -n501y, -k417n, -l452r) %>%
   pivot_longer(
     cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`, `Omicron BA.2`),
+    #Turn on when we start detecting BA.2.12.1
+    #cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`, `Omicron BA.2`, 'Omicron BA.2.12.1'),
     names_to = "variant",
     values_to = "frequency"
   )
