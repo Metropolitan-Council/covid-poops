@@ -1,7 +1,7 @@
 ---
 title: "Metro Wastewater COVID-19 Monitoring"
 author: "Metropolitan Council"
-date: "April 22, 2022"
+date: "April 29, 2022"
 output:
   html_document:
     css: ["www/rmd-report-style.css", "www/colors.css", "www/font.css"]
@@ -47,6 +47,9 @@ whiteSmoke <- "#F5F5F5"
 pal <- c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#666666")
 pal <- setNames(pal, c("Alpha, Beta & Gamma", "Delta", "Omicron BA.1", "Omicron BA.2", "Total load"))
 
+#Turn on when start detecting BA.2.12.1
+#pal <- c("#84BB25", "#1D94B7", "#6D3571", "#D64776", '#92BED2', "#666666")
+#pal <- setNames(pal, c("Alpha, Beta & Gamma", "Delta", "Omicron BA.1", "Omicron BA.2", "Omicron BA.2.12.1", "Total load"))
 
 
 ann_list <- list(

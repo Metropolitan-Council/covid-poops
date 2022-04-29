@@ -29,10 +29,12 @@ varplot <-
   geom_point() +
   scale_color_manual(
     values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776"),
+    #values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", '#92BED2'), # Turn this on when start detecting BA.2.12.1
     name = "Variant "
   ) +
   scale_fill_manual(
     values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776"),
+    #values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", '#92BED2'), # Turn this on when start detecting BA.2.12.1
     name = "Variant "
   ) +
   scale_y_continuous(name = "Variant frequency (%)", labels = scales::percent, limits = c(0, 1.05)) +
@@ -105,10 +107,12 @@ variant_data_date %>%
   geom_point(size = 1) +
   scale_color_manual(
     values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776"),
+    #values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", '#92BED2'), # Turn this on when start detecting BA.2.12.1
     name = "Variant "
   ) +
   scale_fill_manual(
     values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776"),
+    #values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", '#92BED2'), # Turn this on when start detecting BA.2.12.1
     name = "Variant "
   ) +
   scale_y_continuous(
