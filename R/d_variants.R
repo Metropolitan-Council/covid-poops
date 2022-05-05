@@ -126,11 +126,19 @@ variant_data_run <-
       # After we detect BA2, it's the K417 N frequency minus BA2 frequency:
       date >= "2021-11-18" &
         date >= "2022-01-01" &
+        date <= "2022-04-25" &
         k417n > hv_69_70 &
         !is.na(hv_69_70) &
         !is.na(k417n)
 
-      ~ k417n - (k417n - hv_69_70)
+      ~ k417n - (k417n - hv_69_70),
+      #After we start possibliy detecting BA.4 or BA.5, it's the hv_69_70 minus L452R frequency
+      date > "2022-04-25" &
+        hv_69_70 >= l452r 
+      ~ hv_69_70 - l452r,
+      date > "2022-04-25" &
+        hv_69_70 < l452r 
+      ~ 0
     )
     #turn this on when we start detecting BA.2.12.1:
     #,
