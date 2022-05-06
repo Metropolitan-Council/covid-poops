@@ -85,7 +85,12 @@ variant_data_run <-
   # assign variants to mutations:
   mutate(
     `Alpha, Beta & Gamma` = n501y,
-    Delta = l452r,
+    Delta = case_when(
+      # Only use l452r for delta until 4/25/22
+      date <= "2022-04-25"
+      ~ l452r 
+      # The rest of the time, Delta will be NA.
+      ),
     `Omicron BA.2` = case_when(
 
       # Assigning values for BA2:
@@ -121,11 +126,19 @@ variant_data_run <-
       # After we detect BA2, it's the K417 N frequency minus BA2 frequency:
       date >= "2021-11-18" &
         date >= "2022-01-01" &
+        date <= "2022-04-25" &
         k417n > hv_69_70 &
         !is.na(hv_69_70) &
         !is.na(k417n)
 
-      ~ k417n - (k417n - hv_69_70)
+      ~ k417n - (k417n - hv_69_70),
+      #After we start possibliy detecting BA.4 or BA.5, it's the hv_69_70 minus L452R frequency
+      date > "2022-04-25" &
+        hv_69_70 >= l452r 
+      ~ hv_69_70 - l452r,
+      date > "2022-04-25" &
+        hv_69_70 < l452r 
+      ~ 0
     )
     #turn this on when we start detecting BA.2.12.1:
     #,
@@ -148,6 +161,7 @@ variant_data_sample <-
   group_by(sample_id, date, variant) %>%
   summarize(frequency = mean(frequency, na.rm = T)) %>%
   filter(!is.na(sample_id) & !is.na(date)) %>%
+  mutate_all(~ifelse(is.nan(.), NA, .)) %>%
   arrange(date)
 
 
@@ -170,7 +184,7 @@ variant_data_date <-
   # interpolate missing values up to 3 days:
   mutate(frequency_gapfill = zoo::na.approx(frequency, maxgap = 2, na.rm = F)) %>%
   # now getting a rolling average with a 7-day window:
-  mutate(frequency_7day = zoo::rollapply(frequency_gapfill, 7, align = "right", mean, na.rm = T, partial = T, fill = "extend")) %>%
+  mutate(frequency_7day = zoo::rollapply(frequency_gapfill, 7, align = "right", mean, na.rm = T, partial = F, fill = "extend")) %>%
   ungroup() %>%
   arrange(date, variant) %>%
   filter(!variant == "Other") %>%
@@ -178,7 +192,13 @@ variant_data_date <-
     format(date, "%b %d, %Y"), "<br>",
     "<b>", variant, "</b> ", round(frequency * 100, digits = 2), "%"
   )) %>%
-  mutate(across(where(is.numeric), round, digits = 6))
+  mutate(across(where(is.numeric), round, digits = 6)) %>%
+  mutate(
+      frequency_7day = ifelse(
+      # Only use l452r for delta until 4/25/22
+      variant == "Delta" &
+      date > "2022-04-25", NA, frequency_7day ))
+
 
 write.csv(variant_data_date, "data/clean_variant_data.csv", row.names = F)
 write.csv(variant_data_date, "metc-wastewater-covid-monitor/data/clean_variant_data.csv", row.names = F)
