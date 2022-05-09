@@ -388,7 +388,49 @@ server <- function(input, output) {
                                          "zoomOut2d"))
   
   
-  
+  ## sewershed map
+  output$map <- renderLeaflet({
+    pal <- colorFactor(c("#D6582A", "#B37F2E", "#0066A3", "#009AC7"),
+                       domain = sewershed$WWTP)
+    map <- leaflet() %>%
+      addMapPane("Main", zIndex = 400) %>%
+      addMapPane(name = "Carto Positron", zIndex = 430) %>%
+      addProviderTiles("CartoDB.PositronOnlyLabels",
+                       options = leafletOptions(pane = "Carto Positron"),
+                       group = "Carto Positron"
+      ) %>%
+      addProviderTiles("CartoDB.PositronNoLabels",
+                       group = "Carto Positron"
+      ) %>%
+      addPolygons(
+        data = sewershed,
+        fillColor = ~pal(WWTP),
+        weight = 2,
+        opacity = 1,
+        color = "white",
+        dashArray = "",
+        fillOpacity = 0.8,
+        highlightOptions = highlightOptions(
+          weight = 5,
+          color = "white",
+          dashArray = "",
+          fillOpacity = 0.6,
+          bringToFront = TRUE),
+        label = ~WWTP,
+        labelOptions = labelOptions(
+          style = list("font-weight" = "normal", padding = "3px 8px"),
+          textsize = "15px",
+          direction = "auto")) %>%
+      addLegend(
+        data = sewershed,
+        title = "Wastewater Treatment Plant Service Area",
+        position = "bottomright",
+        pal = pal,
+        values = ~WWTP,
+        opacity = 0.7
+      ) %>%
+      leaflet.extras::addFullscreenControl(pseudoFullscreen = TRUE)
+  })
   
   ## case and load -----
   output$casesVload <- renderPlotly({
