@@ -19,3 +19,4 @@ simple_shed <-
   st_simplify()
 
 saveRDS(simple_shed, file = "data/simple_wwtp_sewershed.rds")
+saveRDS(simple_shed, file = "metc-wastewater-covid-monitor/data/simple_wwtp_sewershed.rds")
