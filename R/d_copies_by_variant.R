@@ -25,19 +25,15 @@ copies_by_variant <-
     sum(
       c(
         `Alpha, Beta & Gamma`, Delta, `Omicron BA.1`,
-        `Omicron BA.2`
-        #,
-        #'Omicron BA.2.12.1'
-      ), # turn this on when we start reporting BA.2.12.1
-      
+        `Omicron BA.2 (Excluding BA.2.12.1)`, `Omicron BA.2.12.1`
+      ), 
       na.rm = T
     )) %>%
   # pivot back to long format:
   pivot_longer(
     cols = c(
       `Alpha, Beta & Gamma`, Delta, `Omicron BA.1`,
-      `Omicron BA.2`, # turn this on when we start reporting BA2
-      #'Omicron BA.2.12.1', # turn this on when we start reporting BA2
+      `Omicron BA.2 (Excluding BA.2.12.1)`, `Omicron BA.2.12.1`,
       Other
     ),
     names_to = "variant",

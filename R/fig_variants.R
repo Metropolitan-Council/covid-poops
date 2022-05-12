@@ -28,13 +28,11 @@ varplot <-
   geom_area(position = "identity", aes(x = date, y = frequency_7day, group = variant, fill = variant, color = variant), alpha = 0.25, na.rm = T, lty = "blank") +
   geom_point() +
   scale_color_manual(
-    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776"),
-    #values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", '#92BED2'), # Turn this on when start detecting BA.2.12.1
+    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740"),
     name = "Variant "
   ) +
   scale_fill_manual(
-    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776"),
-    #values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", '#92BED2'), # Turn this on when start detecting BA.2.12.1
+    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740"),
     name = "Variant "
   ) +
   scale_y_continuous(name = "Variant frequency (%)", labels = scales::percent, limits = c(0, 1.05)) +
@@ -63,8 +61,9 @@ varplot <-
       family = "Arial Narrow Italic"
     ),
     legend.justification = c(0, 0),
-    legend.text = element_text(size = 48),
-    legend.title = element_text(size = 48),
+    legend.text = element_text(size = 44),
+    legend.title = element_text(size = 44),
+    legend.spacing.x = unit(0.25, "cm"),
     axis.title.y = element_text(size = 64, vjust = 1),
     axis.text.x = element_text(size = 48),
     axis.title.x = element_text(size = 64),
@@ -106,13 +105,11 @@ variant_data_date %>%
   ) +
   geom_point(size = 1) +
   scale_color_manual(
-    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776"),
-    #values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", '#92BED2'), # Turn this on when start detecting BA.2.12.1
+    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740"),
     name = "Variant "
   ) +
   scale_fill_manual(
-    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776"),
-    #values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", '#92BED2'), # Turn this on when start detecting BA.2.12.1
+    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740"),
     name = "Variant "
   ) +
   scale_y_continuous(
@@ -152,7 +149,8 @@ variant_data_date %>%
     legend.position = "bottom",
     legend.direction = "horizontal",
     legend.margin = margin(),
-    legend.key.height = unit(10, "pt"),
+    legend.key.height = unit(5, "pt"),
+    legend.key.width = unit(0.7, "line"),
     legend.justification = c(0, 0),
     plot.title = element_text(size = 24, hjust = 0.5),
     axis.title.y = element_text(size = 18, vjust = 1),
@@ -160,7 +158,8 @@ variant_data_date %>%
     axis.text.x = element_text(size = 18),
     axis.title.x = element_text(size = 18),
     legend.text = element_text(size = 14),
-    legend.title = element_text(size = 18),
+    legend.spacing.x = unit(0.1, "cm"),
+    legend.title = element_text(size = 14),
     panel.grid.major.y = element_blank(),
     panel.grid.minor.y = element_blank(),
     panel.grid = element_blank()

@@ -23,8 +23,7 @@ copies_by_variant <- read.csv("data/copies_by_variant.csv") %>%
 load_varplot <-
   copies_by_variant %>%
   filter(date >= "2021-01-01" & !variant == "Other") %>%
-  mutate(variant = factor(variant, levels = c("Other", "Alpha, Beta & Gamma", "Delta", "Omicron BA.1", "Omicron BA.2"))) %>%
-  #mutate(variant = factor(variant, levels = c("Other", "Alpha, Beta & Gamma", "Delta", "Omicron BA.1", "Omicron BA.2", 'Omicron BA.2.12.1'))) %>% # Turn this on when start detecting BA.2.12.1
+  mutate(variant = factor(variant, levels = c("Other", "Alpha, Beta & Gamma", "Delta", "Omicron BA.1", "Omicron BA.2 (Excluding BA.2.12.1)", "Omicron BA.2.12.1"))) %>% # Turn this on when start detecting BA.2.12.1
   ggplot(aes(x = date, y = copies)) +
 
   # gray background area - total
@@ -33,14 +32,12 @@ load_varplot <-
   geom_area(position = "identity", aes(x = date, y = copies_7day, group = variant, fill = variant, color = variant), alpha = 0.5, na.rm = T, lty = "blank") +
   geom_point(aes(color = variant, fill = variant)) +
   scale_color_manual(
-    values = c("gray50", "#84BB25", "#1D94B7", "#6D3571", "#D64776"),
-    #values = c("gray50", "#84BB25", "#1D94B7", "#6D3571", "#D64776", '#92bed2'), # Turn this on when start detecting BA.2.12.1
+    values = c("gray50", "#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740"),
     # name = "Variant ",
     drop = F
   ) +
   scale_fill_manual(
-    values = c("gray50", "#84BB25", "#1D94B7", "#6D3571", "#D64776"),
-    #values = c("gray50", "#84BB25", "#1D94B7", "#6D3571", "#D64776", '#92bed2'), # Turn this on when start detecting BA.2.12.1
+    values = c("gray50", "#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740"),
     # name = "Variant ",
     drop = F
   ) +
@@ -99,10 +96,9 @@ load_varplot_ig <-
   filter(date >= "2021-01-01" & !variant == "Other") %>%
   mutate(variant = factor(variant, levels = c(
     "Other", "Alpha, Beta & Gamma",
-    "Delta", "Omicron BA.1", "Omicron BA.2"
+    "Delta", "Omicron BA.1", "Omicron BA.2 (Excluding BA.2.12.1)", "Omicron BA.2.12.1"
   ))) %>%
-  #mutate(variant = factor(variant, levels = c("Other", "Alpha, Beta & Gamma", "Delta", "Omicron BA.1", "Omicron BA.2", 'Omicron BA.2.12.1'))) %>% # Turn this on when start detecting BA.2.12.1
-  ggplot(aes(x = date, y = copies)) +
+   ggplot(aes(x = date, y = copies)) +
 
   # gray background area - total
   geom_area(
@@ -123,14 +119,12 @@ load_varplot_ig <-
   ) +
   geom_point(aes(color = variant, fill = variant), alpha = 0.5, lwd = 0.5) +
   scale_color_manual(
-    values = c("gray50", "#84BB25", "#1D94B7", "#6D3571", "#D64776"),
-    #values = c("gray50", "#84BB25", "#1D94B7", "#6D3571", "#D64776", '#92bed2'), # Turn this on when start detecting BA.2.12.1
+    values = c("gray50", "#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740"),
     # name = "Variant ",
     drop = F
   ) +
   scale_fill_manual(
-    values = c("gray50", "#84BB25", "#1D94B7", "#6D3571", "#D64776"),
-    #values = c("gray50", "#84BB25", "#1D94B7", "#6D3571", "#D64776", '#92bed2'), # Turn this on when start detecting BA.2.12.1
+    values = c("gray50", "#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740"),
     # name = "Variant ",
     drop = F
   ) +
