@@ -44,18 +44,11 @@ font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
 
 whiteSmoke <- "#F5F5F5"
 
-pal <- c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#666666")
+pal <- c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#666666")
 pal <- setNames(pal, c(
   "Alpha, Beta & Gamma", "Delta",
-  "Omicron BA.1", "Omicron BA.2", "Total load"
+  "Omicron BA.1", "Omicron BA.2 (Excluding BA.2.12.1)", "Omicron BA.2.12.1", "Total load"
 ))
-
-#Turn on when start detecting BA.2.12.1
-#pal <- c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#92BED2", "#666666")
-#pal <- setNames(pal, c(
- # "Alpha, Beta & Gamma", "Delta",
-# "Omicron BA.1", "Omicron BA.2", "Omicron BA.2.12.1", "Total load"
-#))
 
 ann_list <- list(
   text = paste(
@@ -79,7 +72,7 @@ ann_list <- list(
   showarrow = F,
   xref = "paper", yref = "paper",
   xanchor = "right", yanchor = "auto",
-  xshift = 0, yshift = -25
+  xshift = 0, yshift = -55
 )
 
 hov_lab_list <- list(
