@@ -38,8 +38,6 @@ fluidPage(
         tags$li("Omicron BA.2 made up 92% of of the SARS-CoV-2 RNA"),
         tags$li("Omicron BA.2.12.1 made up 47% of of the SARS-CoV-2 RNA, up from 36% the previous week"),
         tags$li("Omicron BA.4 and BA.5 (not yet shown below) together made up 7% of the SARS-CoV-2 RNA")
-               column(4, leafletOutput("map")))
-      # p("Data last updated 2022-01-13.")
     ),
     tabPanel(
       "COVID-19 Variants",
