@@ -28,26 +28,28 @@ fluidPage(
     ),
 
     tabPanel(
-      "COVID-19 Load",
-      br(),
-      h3("Tracking COVID-19 Prevalence with Metro Plant Wastewater"),
+      "COVID-19 Trends",
+      # h4("COVID-19 Wastewater Surveillance"),
+      wellPanel(
+        br(),
+      h5("Scientists in the Met Council’s Environmental Services are monitoring COVID-19 prevalence in wastewater influent samples from the Metro Plant in Saint Paul. The plant serves nearly two million people in the seven-county metro area."),
       h4("Key facts: May 20 Data Update"),
-      plotlyOutput("loadPlot", height = "auto"),
+      p("The most recent data update includes samples taken May 10-16. During this sampling period:"),
       tags$ul(
         tags$li("The viral load increased by 58% over the previous week"),
         tags$li("Omicron BA.2 made up 92% of of the SARS-CoV-2 RNA"),
         tags$li("Omicron BA.2.12.1 made up 47% of of the SARS-CoV-2 RNA, up from 36% the previous week"),
         tags$li("Omicron BA.4 and BA.5 (not yet shown below) together made up 7% of the SARS-CoV-2 RNA")
-    ),
-    tabPanel(
-      "COVID-19 Variants",
-      br(),
-      h3("COVID-19 variant tracker"),
-      p("As the Delta variant of the SARS-CoV-2 virus declined, the Omicron variant quickly took its place as the dominant variant in wastewater samples at the Metro treatment plant in Saint Paul. The plant serves a large portion of the seven-county metro area. "),
-      radioButtons(inputId = "plotSel", label = "", choices = c("Show as percentages (%)", "Show as number of copies"), selected = "Show as number of copies", inline = T),
-      plotlyOutput("variantPlot", height = "auto"),
-      p("Points are daily data; lines are averages of the previous 7 days. Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron from the K417N mutation. Some variants share mutations: the presence of the K417N mutation before November 18 was inferred to be the Beta variant (data not shown). The two sub-lineages of Omicron (BA.1 and BA.2) are distinguished by the HV 69/70 deletion: Omicron BA.1 contains both the K417N mutation and the HV 69/70 deletion. Omicron BA.2 has the K417N mutation but not the HV 69/70 deletion. Omicron BA.2.12.1 is distinguished by the L452Q mutation.")
-    ),
+        ),
+       h4("Select a chart"),
+       radioButtons(
+          inputId = "plotSel",
+          label = NULL,
+          choices = c(
+            "Total COVID-19 load",
+            "COVID-19 load by variant",
+            "COVID-19 variant frequencies (%)"
+          ),
           selected = "Total COVID-19 load",
           inline = T
         ),
