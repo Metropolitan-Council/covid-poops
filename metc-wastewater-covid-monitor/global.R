@@ -10,6 +10,7 @@ library(councilR)
 library(DT)
 library(gh)
 library(sf)
+library(shinyBS)
 
 
 # if you get error message
