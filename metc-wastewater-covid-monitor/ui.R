@@ -25,10 +25,6 @@ fluidPage(
       tags$link(rel = "stylesheet", type = "text/css", href = "colors.css"),
       includeHTML("www/google-analytics.html")
     ),
-    # Application title
-    # h1("Wastewater Treatment COVID-19 Monitoring Dashboard"),
-    # h3('App Subtitle'),
-    # Show a plot of the generated distribution
 
     tabPanel(
       "COVID-19 Load",
@@ -53,16 +49,13 @@ fluidPage(
       plotlyOutput("variantPlot", height = "auto"),
       p("Points are daily data; lines are averages of the previous 7 days. Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron from the K417N mutation. Some variants share mutations: the presence of the K417N mutation before November 18 was inferred to be the Beta variant (data not shown). The two sub-lineages of Omicron (BA.1 and BA.2) are distinguished by the HV 69/70 deletion: Omicron BA.1 contains both the K417N mutation and the HV 69/70 deletion. Omicron BA.2 has the K417N mutation but not the HV 69/70 deletion. Omicron BA.2.12.1 is distinguished by the L452Q mutation.")
     ),
-
-    # tabPanel(
-    #   "Load vs. Reported Cases",
-    #   br(),
-    #   h3("A strong relationship between SARS-CoV-2 daily load and reported COVID-19 cases"),
-    #   h4("Metro Plant influent SARS-CoV-2 daily load versus new cases in the sewered service area, weekly mean values from 11 April 2021 to present."),
-    #   p("Here is some text to explain what is going on."),
-    #   plotlyOutput("casesVload", height = "auto"),
-    #   p("Data updated ... Data source ... ")
-    # ),
+          selected = "Total COVID-19 load",
+          inline = T
+        ),
+        plotlyOutput("mainPlot", height = "auto"),
+        bsCollapsePanel(h6("About the data"), 
+                        textOutput("figCaption"))
+    )),
     tabPanel(
       "Download Data",
       br(),
