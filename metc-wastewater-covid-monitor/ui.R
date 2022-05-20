@@ -1,4 +1,5 @@
 
+
 fluidPage(
   navbarPage(
     fluid = TRUE,
@@ -30,13 +31,13 @@ fluidPage(
       "COVID-19 Load",
       br(),
       h3("Tracking COVID-19 Prevalence with Metro Plant Wastewater"),
-      p("The number of reported cases of COVID-19 infections in the seven-county metro area corresponds to the prevalence of the virus in wastewater samples at the Metro treatment plant in Saint Paul. The plant serves a large portion of the seven-county metro area. "),
+      h4("Key facts: May 20 Data Update"),
       plotlyOutput("loadPlot", height = "auto"),
-      p("The blue line and points show the total amount of SARS-CoV-2 viral RNA in wastewater flowing into the Metro Plant, in millions copies of the SARS-CoV-2 genome per person served by the wastewater area, per day. Blue points are daily values; the blue line is a running average of the previous 7 days. The gray line shows the average of the previous 7 days of new reported COVID-19 infections in the seven-county Metro area per 100,000 residents. Case data are provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org)."),
-      br(),
-      h3("COVID-19 Levels around the Metro"),
-      fluidRow(column(8, 
-                      p("a graph of load by sewershed could go here....................................................................")),
+      tags$ul(
+        tags$li("The viral load increased by 58% over the previous week"),
+        tags$li("Omicron BA.2 made up 92% of of the SARS-CoV-2 RNA"),
+        tags$li("Omicron BA.2.12.1 made up 47% of of the SARS-CoV-2 RNA, up from 36% the previous week"),
+        tags$li("Omicron BA.4 and BA.5 (not yet shown below) together made up 7% of the SARS-CoV-2 RNA")
                column(4, leafletOutput("map")))
       # p("Data last updated 2022-01-13.")
     ),
