@@ -464,108 +464,21 @@ server <- function(input, output) {
       ) %>%
       leaflet.extras::addFullscreenControl(pseudoFullscreen = TRUE)
   })
-  
-  ## case and load -----
-  output$casesVload <- renderPlotly({
-    cases_vs_load_plot <-
-      # aggregate data to week:
-      combined_data %>%
-      # scatterplot:
-      ggplot(aes(
-        x = covid_cases_7day,
-        y = copies_day_person_M_mn
-        # label = hover_text_predict
-      )) +
-      geom_point() +
-      geom_smooth(
-        method = "lm", se = F,
-        color = colors$esBlue,
-        fill = colors$esBlue
-      )
-    
-    
-    ggplotly(cases_vs_load_plot) %>%
-      layout(
-        annotations = ann_list,
-        hovermode = "closest",
-        hoverdistance = "10",
-        hoverlabel = hov_lab_list,
-        margin = list(
-          l = 50,
-          r = 100,
-          b = 75,
-          pad = 10
-        ),
-        xaxis = list(
-          title = list(
-            text = "COVID Cases, 7 day", standoff = 25,
-            font = list(
-              size = 14,
-              family = font_family_list,
-              color = councilR::colors$suppBlack
-            )
-          ),
-          zerolinewidth = 2,
-          zeroline = TRUE,
-          showline = FALSE,
-          showgrid = FALSE,
-          tickfont = list(
-            size = 12,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          )
-        ),
-        yaxis = list(
-          title = list(
-            text = "<b>Copies per day per person</b>",
-            standoff = 25,
-            font = list(
-              size = 14,
-              family = font_family_list,
-              color = councilR::colors$suppBlack
-            )
-          ),
-          # tickformat = "%",
-          zerolinewidth = 2,
-          tickfont = list(
-            size = 12,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          ),
-          gridcolor = "gray90",
-          zerolinecolor = "gray50",
-          rangemode = "nonnegative"
-        ),
-        legend = list(
-          font = list(
-            size = 14,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          )
-        )
-      ) %>%
-      config(displayModeBar = "hover",
-             displaylogo = FALSE,
-             showSendToCloud = FALSE,
-             showEditInChartStudio = FALSE,
-             modeBarButtonsToRemove = list("lasso2d",
-                                           "zoomIn2d",
-                                           "zoomOut2d"))
-  })
-  
+
+
   # tables -----
-  ## Prevalence table -----
+  ## prevalence table -----
   output$loadData <- renderDT(server = FALSE, {
     load_data %>%
       left_join(case_data,
-                by = c(
-                  "date",
-                  "covid_cases_total",
-                  "covid_cases_new",
-                  "covid_cases_per100K",
-                  "covid_cases_7day",
-                  "hover_text_case"
-                )
+        by = c(
+          "date",
+          "covid_cases_total",
+          "covid_cases_new",
+          "covid_cases_per100K",
+          "covid_cases_7day",
+          "hover_text_case"
+        )
       ) %>%
       select(
         -hover_text_case, -hover_text_load,
