@@ -24,7 +24,7 @@ raw_variant_data <-
     skip = 1
   ) %>%
   set_names(header) %>%
-  select(1:21) %>%
+  select(1:24) %>%
   # get rid of trailing numbers in header:
   rename_all(~ gsub("_[[:digit:]]$|_[[:digit:]][[:digit:]]$", "", .)) %>%
   rename_all(~ gsub("[[:digit:]]sample|[[:digit:]][[:digit:]]sample", "sample", .)) %>%
@@ -68,6 +68,11 @@ variant_split <-
       select(date, contains("l452q")) %>%
       mutate(mutation = "l452q") %>%
       rename_all(~ gsub("l452q_", "", .))  %>%
+      mutate(sample = as.character(sample)),
+    raw_variant_data %>%
+      select(date, contains("t95i")) %>%
+      mutate(mutation = "t95i") %>%
+      rename_all(~ gsub("t95i_", "", .))  %>%
       mutate(sample = as.character(sample))
   )
 
@@ -138,18 +143,27 @@ variant_data_run <-
       date >= "2021-11-18" &
         date >= "2022-01-01" &
         date <= "2022-04-25" &
-        k417n > hv_69_70 &
+          k417n > hv_69_70 &
         !is.na(hv_69_70) &
         !is.na(k417n)
 
       ~ k417n - (k417n - hv_69_70),
+      
       #After we start possibliy detecting BA.4 or BA.5, it's the hv_69_70 minus L452R frequency
       date > "2022-04-25" &
+      date < "2022-05-10" &
         hv_69_70 >= l452r 
       ~ hv_69_70 - l452r,
+
       date > "2022-04-25" &
+      date < "2022-05-10" &
         hv_69_70 < l452r 
-      ~ 0
+      ~ 0,
+    
+        #After we start detecting BA.4 and BA.5 and have the frequency of T95I, it is the the frequency of T95I
+      date >= "2022-05-10"
+      ~ t95i
+      
     ),
     'Omicron BA.2.12.1' = case_when (
       date >= '2022-04-12'
@@ -158,7 +172,7 @@ variant_data_run <-
   ) %>%
   # option to NA-out Omicron BA.2 where ratio of hv 69/70 to k417n is above 95%
   # mutate(`Omicron BA.2` = ifelse(hv_69_70/k417n >= 0.95 & !is.na(`Omicron BA.2`), NA, `Omicron BA.2`)) %>%
-  select(-d80a, -e484k, -hv_69_70, -n501y, -k417n, -l452r, -l452q) %>%
+  select(-d80a, -e484k, -hv_69_70, -n501y, -k417n, -l452r, -l452q, -t95i) %>%
   pivot_longer(
     cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`, `Omicron BA.2 (Excluding BA.2.12.1)`, 'Omicron BA.2.12.1'),
     names_to = "variant",
