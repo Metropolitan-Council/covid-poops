@@ -509,8 +509,8 @@ server <- function(input, output) {
       # round case rates to nearest digit:
       DT::formatRound(5:8, 0)
   })
-  
-  
+
+
   ## variant table -----
   output$variantData <- renderDT(server = FALSE, {
     variant_data %>%
@@ -538,8 +538,8 @@ server <- function(input, output) {
       DT::formatRound("frequency", 2) %>%
       DT::formatRound("frequency_7day", 2)
   })
-  
-  
+
+
   ## case table -----
   output$caseData <- renderDT(server = FALSE, {
     case_data %>%
@@ -555,4 +555,4 @@ server <- function(input, output) {
         )
       )
   })
-}
+ }
