@@ -54,9 +54,10 @@ fluidPage(
           inline = T
         ),
         plotlyOutput("mainPlot", height = "auto"),
+        br(),
         bsCollapsePanel(h6("About the data"), 
                         textOutput("figCaption"))
-    )),
+      )),
     tabPanel(
       "Download Data",
       br(),
