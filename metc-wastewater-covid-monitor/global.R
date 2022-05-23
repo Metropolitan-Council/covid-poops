@@ -11,6 +11,7 @@ library(DT)
 library(gh)
 library(sf)
 library(shinyBS)
+library(leaflet)
 
 
 # if you get error message
