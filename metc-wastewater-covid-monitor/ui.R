@@ -32,12 +32,12 @@ fluidPage(
       # h4("COVID-19 Wastewater Surveillance"),
       wellPanel(
         br(),
-      h5("Scientists in the Met Council’s Environmental Services are monitoring COVID-19 prevalence in wastewater influent samples from the Metro Plant in Saint Paul. The plant serves nearly two million people in the seven-county metro area."),
-      h4("Key facts: May 20 Data Update"),
-      p("The most recent data update includes samples taken May 10-16. During this sampling period:"),
-      tags$ul(
-        tags$li("The viral load increased by 58% over the previous week"),
-        tags$li("Omicron BA.2 made up 92% of of the SARS-CoV-2 RNA"),
+        h2("Key Facts"),
+        h4("May 20, 2022"),
+        p("Scientists in the Met Council’s Environmental Services are monitoring COVID-19 prevalence in wastewater influent samples from the Metro Plant in Saint Paul. The plant serves nearly two million people in the seven-county metro area. The most recent data update includes samples taken May 10-16, 2022. During this sampling period:"),
+        tags$ul(
+          tags$li("The viral load increased by 58% over the previous week"),
+          tags$li("Omicron BA.2 made up 92% of of the SARS-CoV-2 RNA"),
         tags$li("Omicron BA.2.12.1 made up 47% of of the SARS-CoV-2 RNA, up from 36% the previous week"),
         tags$li("Omicron BA.4 and BA.5 (not yet shown below) together made up 7% of the SARS-CoV-2 RNA")
         ),
@@ -54,9 +54,10 @@ fluidPage(
           inline = T
         ),
         plotlyOutput("mainPlot", height = "auto"),
+        br(),
         bsCollapsePanel(h6("About the data"), 
                         textOutput("figCaption"))
-    )),
+      )),
     tabPanel(
       "Download Data",
       br(),
@@ -93,7 +94,7 @@ fluidPage(
       ),
       tags$br(),
       "App last updated ",
-      "2022-05-20",
+      "2022-05-23",
       # using gh::gh() causes SAML error in production
       # gh::gh("GET /repos/Metropolitan-Council/covid-poops")[49][[1]] %>% as.Date(),
       style = "font-size: 1.5rem;
