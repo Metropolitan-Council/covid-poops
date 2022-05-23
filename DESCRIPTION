@@ -10,6 +10,9 @@ Imports:
     plotly,
     DT,
     gh,
-    councilR
+    councilR,
+    leaflet,
+    sf,
+    shinyBS
 Remotes:
   Metropolitan-Council/councilR
