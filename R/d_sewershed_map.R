@@ -7,9 +7,16 @@ pooshed <- councilR::import_from_gpkg("https://resources.gisdata.mn.gov/pub/gdrs
 
 simple_shed <-
   pooshed %>%
+  st_make_valid()
+
+simple_shed <-
+  simple_shed %>%
   group_by(WWTP) %>% # WWTP = wastewater treatment plant
   summarize(geom = st_union(geom)) %>%
+  filter(!WWTP %in% c("WATER")) %>%
+  filter(!is.na(WWTP)) %>%
+  st_make_valid() %>%
   st_simplify()
 
-
-nrow(pooshed)
+saveRDS(simple_shed, file = "data/simple_wwtp_sewershed.rds")
+saveRDS(simple_shed, file = "metc-wastewater-covid-monitor/data/simple_wwtp_sewershed.rds")

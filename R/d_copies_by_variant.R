@@ -26,7 +26,7 @@ copies_by_variant <-
       c(
         `Alpha, Beta & Gamma`, Delta, `Omicron BA.1`,
         `Omicron BA.2 (Excluding BA.2.12.1)`, `Omicron BA.2.12.1`
-      ), 
+      ),
       na.rm = T
     )) %>%
   # pivot back to long format:

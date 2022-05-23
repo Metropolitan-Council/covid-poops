@@ -2,176 +2,196 @@
 
 # Server -----
 server <- function(input, output) {
+
+  # dynamic output ----
   
-  
-  # plots-----
+  ## select plot -----
   # code here to select whether variantPlot = variantFreqPlot or variantLoadPlot
-  output$variantPlot <- renderPlotly({
-    if (input$plotSel == "Show as percentages (%)") {
+  output$mainPlot <- renderPlotly({
+    if (input$plotSel == "COVID-19 variant frequencies (%)") {
       variantFreqPlot
-    } else if (input$plotSel == "Show as number of copies") {
+    } else if (input$plotSel == "COVID-19 load by variant") {
       variantLoadPlot
+    } else if (input$plotSel == "Total COVID-19 load") {
+      loadPlot
     }
   })
   
-  ## MAIN load -----
-  output$loadPlot <- renderPlotly({
-    ay <- list(
-      tickfont = list(color = colors$councilBlue),
-      overlaying = "y",
-      side = "left",
-      title = list(
-        text = "<b>Viral load in wastewater,</b> M copies/person/day",
-        standoff = 25,
-        font = list(color = colors$councilBlue, size = 16)
-      ),
-      zerolinewidth = 1,
-      zerolinecolor = colors$suppWhite,
-      gridcolor = colors$suppWhite,
-      rangemode = "nonnegative"
-    )
-    
-    load_plot <-
-      load_data %>%
-      # left_join(case_data, by = "date") %>%
-      plot_ly(type = "scatter", mode = "lines") %>%
-      add_trace(
-        mode = "markers",
-        x = ~date,
-        y = ~copies_day_person_M_mn,
-        name = "Daily viral load",
-        size = 1,
-        yaxis = "y2",
-        marker = list(
-          color = "rgba(0, 84, 164, .5)",
-          size = 8,
-          line = list(
-            color = colors$councilBlue,
-            width = 0.5
-          )
-        ),
-        # fillcolor = ,
-        # line = list(width = 2, color = colors$esBlue),
-        hoverinfo = "text",
-        text = ~hover_text_load
-      ) %>%
-      add_trace(
-        mode = "lines",
-        x = ~date,
-        y = ~copies_day_person_7day,
-        name = "7-day average viral load",
-        size = 1,
-        yaxis = "y2",
-        # fill = "tozeroy",
-        # fillcolor = "rgba(0, 154, 199, .5)",
-        line = list(width = 2, color = colors$councilBlue),
-        hoverinfo = "text",
-        text = ~hover_text_load_7day
-      ) %>%
-      add_trace(
-        x = ~date,
-        y = ~covid_cases_7day,
-        name = "7-day average cases per 100,000",
-        fill = "tozeroy",
-        fillcolor = "rgba(160, 160, 160, .3)",
-        line = list(width = 0.5, color = colors$suppGray),
-        hoverinfo = "text",
-        text = ~hover_text_case
-      ) %>%
-      layout(
-        autosize = T,
-        annotations = ann_list <- list(
-          text = paste(
-            "<br><br>",
-            "<i>", "Latest sample date",
-            max(c(
-              load_data$date,
-              variant_data$date
-            ), na.rm = T),
-            "</i>"
-          ),
-          font = list(
-            size = 11,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          ),
-          x = 1,
-          y = -0.12,
-          showarrow = F,
-          xref = "paper", yref = "paper",
-          xanchor = "right", yanchor = "auto",
-          xshift = 0, yshift = -25
-        ),
-        showlegend = TRUE,
-        margin = list(l = 75, r = 75, b = 75, pad = 10),
-        hovermode = "closest",
-        hoverdistance = "10",
-        hoverlabel = hov_lab_list,
-        yaxis2 = ay,
-        xaxis = list(
-          title = list(
-            text = "",
-            standoff = 40,
-            font = list(
-              size = 14,
-              family = font_family_list,
-              color = councilR::colors$suppBlack
-            )
-          ),
-          zerolinewidth = 2,
-          gridcolor = colors$suppWhite,
-          zerolinecolor = colors$suppWhite,
-          tickfont = list(
-            size = 12,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          )
-        ),
-        yaxis = list(
-          side = "right",
-          title = list(
-            text = "<b>COVID-19 cases</b> per 100K residents",
-            standoff = 25,
-            font = list(
-              size = 16,
-              family = font_family_list,
-              color = councilR::colors$suppBlack
-            )
-          ),
-          zerolinewidth = 1,
-          tickfont = list(
-            size = 14,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          ),
-          gridcolor = colors$suppWhite,
-          zerolinecolor = colors$suppWhite,
-          rangemode = "nonnegative"
-        ),
-        legend = list(
-          orientation = "h",
-          font = list(
-            size = 14,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          )
-        )
-      ) %>%
-      config(displayModeBar = "hover",
-             displaylogo = FALSE,
-             showSendToCloud = FALSE,
-             showEditInChartStudio = FALSE,
-             modeBarButtonsToRemove = list("lasso2d",
-                                           "zoomIn2d",
-                                           "zoomOut2d"))
-    
-    load_plot
+
+  ## select caption ----
+  # code here to select whether variantPlot = variantFreqPlot or variantLoadPlot
+  output$figCaption <- renderText({
+    if (input$plotSel == "COVID-19 variant frequencies (%)") {
+      "Points are daily data; lines are averages of the previous 7 days. Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron from the K417N mutation. Some variants share mutations: the presence of the K417N mutation before November 18 was inferred to be the Beta variant (data not shown). The two sub-lineages of Omicron (BA.1 and BA.2) are distinguished by the HV 69/70 deletion: Omicron BA.1 contains both the K417N mutation and the HV 69/70 deletion. Omicron BA.2 has the K417N mutation but not the HV 69/70 deletion. Omicron BA.2.12.1 is distinguished by the L452Q mutation."
+    } else if (input$plotSel == "COVID-19 load by variant") {
+      "Points are daily data; lines are averages of the previous 7 days. Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron from the K417N mutation. Some variants share mutations: the presence of the K417N mutation before November 18 was inferred to be the Beta variant (data not shown). The two sub-lineages of Omicron (BA.1 and BA.2) are distinguished by the HV 69/70 deletion: Omicron BA.1 contains both the K417N mutation and the HV 69/70 deletion. Omicron BA.2 has the K417N mutation but not the HV 69/70 deletion. Omicron BA.2.12.1 is distinguished by the L452Q mutation."
+    } else if (input$plotSel == "Total COVID-19 load") {
+      "The blue line and points show the total amount of SARS-CoV-2 viral RNA in wastewater flowing into the Metro Plant, in millions copies of the SARS-CoV-2 genome per person served by the wastewater area, per day. Blue points are daily values; the blue line is a running average of the previous 7 days. The gray line shows the average of the previous 7 days of new reported COVID-19 infections in the seven-county Metro area per 100,000 residents. Case data are provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org)."
+    }
   })
-  
+
+  # plots ----
+  ## load and cases -----
+
+  ay <- list(
+    tickfont = list(color = colors$councilBlue,
+                    size = 16,
+                    family = font_family_list),
+    overlaying = "y",
+    side = "left",
+    title = list(
+      text = "Viral load in wastewater<br>M copies/person/day",
+      standoff = 0,
+      font = list(color = colors$councilBlue, size = 16)
+    ),
+    zerolinewidth = 0,
+    zerolinecolor = colors$suppWhite,
+    gridcolor = colors$suppWhite,
+    rangemode = "nonnegative"
+  )
+
+  loadPlot <-
+    load_data %>%
+    # left_join(case_data, by = "date") %>%
+    plot_ly(type = "scatter", mode = "lines") %>%
+    add_trace(
+      mode = "markers",
+      x = ~date,
+      y = ~copies_day_person_M_mn,
+      name = "Viral load, Metro Plant service area",
+      size = 1,
+      yaxis = "y2",
+      marker = list(
+        color = "rgba(0, 84, 164, .5)",
+        size = 8,
+        line = list(
+          color = colors$councilBlue,
+          width = 0.5
+        )
+      ),
+      # fillcolor = ,
+      # line = list(width = 2, color = colors$esBlue),
+      hoverinfo = "text",
+      text = ~hover_text_load
+    ) %>%
+    add_trace(
+      mode = "lines",
+      x = ~date,
+      y = ~copies_day_person_7day,
+      name = "7-day avg. viral load",
+      size = 1,
+      yaxis = "y2",
+      # fill = "tozeroy",
+      # fillcolor = "rgba(0, 154, 199, .5)",
+      line = list(width = 2, color = colors$councilBlue),
+      hoverinfo = "text",
+      text = ~hover_text_load_7day
+    ) %>%
+    add_trace(
+      x = ~date,
+      y = ~covid_cases_7day,
+      name = "7-day avg. cases per capita, 7-county metro area",
+      fill = "tozeroy",
+      fillcolor = "rgba(160, 160, 160, .3)",
+      line = list(width = 0.5, color = colors$suppGray),
+      hoverinfo = "text",
+      text = ~hover_text_case
+    ) %>%
+    layout(
+      autosize = T,
+      annotations = ann_list <- list(
+        text = paste(
+          "<br>",
+          "<i>", "Latest sample date",
+          max(c(
+            load_data$date,
+            variant_data$date
+          ), na.rm = T),
+          "</i>"
+        ),
+        font = list(
+          size = 16,
+          family = font_family_list,
+          color = councilR::colors$suppBlack
+        ),
+        x = 1,
+        y = -0.12,
+        showarrow = F,
+        xref = "paper", yref = "paper",
+        xanchor = "right", yanchor = "auto",
+        xshift = 0, yshift = -40
+      ),
+      showlegend = TRUE,
+      margin = list(l = 100, r = 50, b = 50, pad = 10),
+      hovermode = "closest",
+      hoverdistance = "10",
+      hoverlabel = hov_lab_list,
+      yaxis2 = ay,
+      xaxis = list(
+        title = list(
+          text = "",
+          standoff = 40,
+          font = list(
+            size = 16,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          )
+        ),
+        zerolinewidth = 2,
+        gridcolor = colors$suppWhite,
+        zerolinecolor = colors$suppWhite,
+        tickfont = list(
+          size = 16,
+          family = font_family_list,
+          color = councilR::colors$suppBlack
+        )
+      ),
+      yaxis = list(
+        side = "right",
+        title = list(
+          text = "COVID-19 cases<br>per 100K residents",
+          standoff = 25,
+          font = list(
+            size = 16,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          )
+        ),
+        zerolinewidth = 1,
+        tickfont = list(
+          size = 16,
+          family = font_family_list,
+          color = councilR::colors$suppBlack
+        ),
+        gridcolor = colors$suppWhite,
+        zerolinecolor = colors$suppWhite,
+        rangemode = "nonnegative"
+      ),
+      legend = list(
+        orientation = "h",
+        font = list(
+          size = 16,
+          family = font_family_list,
+          color = councilR::colors$suppBlack
+        )
+      )
+    ) %>%
+    config(
+      displayModeBar = "hover",
+      displaylogo = FALSE,
+      showSendToCloud = FALSE,
+      showEditInChartStudio = FALSE,
+      modeBarButtonsToRemove = list(
+        "lasso2d",
+        "zoomIn2d",
+        "zoomOut2d"
+      )
+    )
+
+
   ## variant load -----
   variantLoadPlot <-
     # browser()
-    loadxvariantplot <-
     plot_ly() %>%
     # total load:
     add_trace(
@@ -223,8 +243,8 @@ server <- function(input, output) {
       hoverlabel = hov_lab_list,
       margin = list(
         l = 50,
-        r = 100,
-        b = 115,
+        r = 50,
+        b = 50,
         pad = 10
       ),
       xaxis = list(
@@ -232,60 +252,65 @@ server <- function(input, output) {
           text = "",
           standoff = 25,
           font = list(
-            size = 14,
+            size = 16,
             family = font_family_list,
             color = councilR::colors$suppBlack
           )
         ),
         zerolinewidth = 2,
+        zerolinecolor = colors$suppWhite,
         zeroline = TRUE,
         showline = FALSE,
         showgrid = FALSE,
         tickfont = list(
-          size = 12,
+          size = 16,
           family = font_family_list,
           color = councilR::colors$suppBlack
         )
       ),
       yaxis = list(
         title = list(
-          text = "<b>Viral load in wastewater,</b> M copies/person/day",
-          standoff = 25,
+          text = "Viral load in wastewater<br> M copies/person/day",
+          standoff = 10,
           font = list(
-            size = 14,
+            size = 16,
             family = font_family_list,
             color = councilR::colors$suppBlack
           )
         ),
         tickfont = list(
-          size = 12,
+          size = 16,
           family = font_family_list,
           color = councilR::colors$suppBlack
         ),
         rangemode = "nonnegative",
-        gridcolor = "gray90",
-        zerolinecolor = "gray50",
+        gridcolor = colors$suppWhite,
+        zerolinecolor = colors$suppWhite,
         zerolinewidth = 2
       ),
       legend = list(
         orientation = "h",
-        y = -0.2,
+        # y = -0.3,
         xanchor = "left",
         font = list(
-          size = 14,
+          size = 16,
           family = font_family_list,
           color = councilR::colors$suppBlack
         )
       )
     ) %>%
-    config(displayModeBar = "hover",
-           displaylogo = FALSE,
-           showSendToCloud = FALSE,
-           showEditInChartStudio = FALSE,
-           modeBarButtonsToRemove = list("lasso2d",
-                                         "zoomIn2d",
-                                         "zoomOut2d"))
-  
+    config(
+      displayModeBar = "hover",
+      displaylogo = FALSE,
+      showSendToCloud = FALSE,
+      showEditInChartStudio = FALSE,
+      modeBarButtonsToRemove = list(
+        "lasso2d",
+        "zoomIn2d",
+        "zoomOut2d"
+      )
+    )
+
   ## variant frequency -----
   variantFreqPlot <-
     # browser()
@@ -323,8 +348,8 @@ server <- function(input, output) {
       hoverlabel = hov_lab_list,
       margin = list(
         l = 50,
-        r = 100,
-        b = 115,
+        r = 50,
+        b = 50,
         pad = 10
       ),
       xaxis = list(
@@ -332,165 +357,128 @@ server <- function(input, output) {
           text = "",
           standoff = 25,
           font = list(
-            size = 14,
+            size = 16,
             family = font_family_list,
             color = councilR::colors$suppBlack
           )
         ),
-        zerolinewidth = 2,
-        zeroline = TRUE,
+        zerolinewidth = 0,
+        zeroline = F,
         showline = FALSE,
         showgrid = FALSE,
         tickfont = list(
-          size = 12,
+          size = 16,
           family = font_family_list,
           color = councilR::colors$suppBlack
         )
       ),
       yaxis = list(
         title = list(
-          text = "<b>Frequency of marker genes (%)</b>",
-          standoff = 25,
+          text = "Variant frequency (%)<br>indicated by maker genes",
+          standoff = 10,
           font = list(
-            size = 14,
+            size = 16,
             family = font_family_list,
             color = councilR::colors$suppBlack
           )
         ),
         tickformat = "1%",
         tickfont = list(
-          size = 12,
+          size = 16,
           family = font_family_list,
           color = councilR::colors$suppBlack
         ),
-        gridcolor = "gray90",
-        zerolinecolor = "gray50",
-        zerolinewidth = 2,
+        gridcolor = colors$suppWhite,
+        zerolinecolor = colors$suppWhite,
+        zerolinewidth = 0,
         range = c(0, 1.1)
       ),
       legend = list(
         orientation = "h",
-        y = -0.2,
+        # y = -0.2,
         xanchor = "left",
         font = list(
-          size = 14,
+          size = 16,
           family = font_family_list,
           color = councilR::colors$suppBlack
         )
       )
     ) %>%
-    config(displayModeBar = "hover",
-           displaylogo = FALSE,
-           showSendToCloud = FALSE,
-           showEditInChartStudio = FALSE,
-           modeBarButtonsToRemove = list("lasso2d",
-                                         "zoomIn2d",
-                                         "zoomOut2d"))
-  
-  
-  
-  
-  ## case and load -----
-  output$casesVload <- renderPlotly({
-    cases_vs_load_plot <-
-      # aggregate data to week:
-      combined_data %>%
-      # scatterplot:
-      ggplot(aes(
-        x = covid_cases_7day,
-        y = copies_day_person_M_mn
-        # label = hover_text_predict
-      )) +
-      geom_point() +
-      geom_smooth(
-        method = "lm", se = F,
-        color = colors$esBlue,
-        fill = colors$esBlue
+    config(
+      displayModeBar = "hover",
+      displaylogo = FALSE,
+      showSendToCloud = FALSE,
+      showEditInChartStudio = FALSE,
+      modeBarButtonsToRemove = list(
+        "lasso2d",
+        "zoomIn2d",
+        "zoomOut2d"
       )
-    
-    
-    ggplotly(cases_vs_load_plot) %>%
-      layout(
-        annotations = ann_list,
-        hovermode = "closest",
-        hoverdistance = "10",
-        hoverlabel = hov_lab_list,
-        margin = list(
-          l = 50,
-          r = 100,
-          b = 75,
-          pad = 10
+    )
+
+
+  # map ------
+  output$map <- leaflet::renderLeaflet({
+    pal <- leaflet::colorFactor(c("#D6582A", "#B37F2E", "#0066A3", "#009AC7"),
+      domain = sewershed$WWTP
+    )
+    map <- leaflet::leaflet() %>%
+      leaflet::addMapPane("Main", zIndex = 400) %>%
+      leaflet::addMapPane(name = "Carto Positron", zIndex = 430) %>%
+      leaflet::addProviderTiles("CartoDB.PositronOnlyLabels",
+        options = leaflet::leafletOptions(pane = "Carto Positron"),
+        group = "Carto Positron"
+      ) %>%
+      leaflet::addProviderTiles("CartoDB.PositronNoLabels",
+        group = "Carto Positron"
+      ) %>%
+      leaflet::addPolygons(
+        data = sewershed,
+        fillColor = ~ pal(WWTP),
+        weight = 2,
+        opacity = 1,
+        color = "white",
+        dashArray = "",
+        fillOpacity = 0.8,
+        highlightOptions = leaflet::highlightOptions(
+          weight = 5,
+          color = "white",
+          dashArray = "",
+          fillOpacity = 0.6,
+          bringToFront = TRUE
         ),
-        xaxis = list(
-          title = list(
-            text = "COVID Cases, 7 day", standoff = 25,
-            font = list(
-              size = 14,
-              family = font_family_list,
-              color = councilR::colors$suppBlack
-            )
-          ),
-          zerolinewidth = 2,
-          zeroline = TRUE,
-          showline = FALSE,
-          showgrid = FALSE,
-          tickfont = list(
-            size = 12,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          )
-        ),
-        yaxis = list(
-          title = list(
-            text = "<b>Copies per day per person</b>",
-            standoff = 25,
-            font = list(
-              size = 14,
-              family = font_family_list,
-              color = councilR::colors$suppBlack
-            )
-          ),
-          # tickformat = "%",
-          zerolinewidth = 2,
-          tickfont = list(
-            size = 12,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          ),
-          gridcolor = "gray90",
-          zerolinecolor = "gray50",
-          rangemode = "nonnegative"
-        ),
-        legend = list(
-          font = list(
-            size = 14,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          )
+        label = ~WWTP,
+        labelOptions = leaflet::labelOptions(
+          style = list("font-weight" = "normal", padding = "3px 8px"),
+          textsize = "15px",
+          direction = "auto"
         )
       ) %>%
-      config(displayModeBar = "hover",
-             displaylogo = FALSE,
-             showSendToCloud = FALSE,
-             showEditInChartStudio = FALSE,
-             modeBarButtonsToRemove = list("lasso2d",
-                                           "zoomIn2d",
-                                           "zoomOut2d"))
+      leaflet::addLegend(
+        data = sewershed,
+        title = "Wastewater Treatment Plant Service Area",
+        position = "bottomright",
+        pal = pal,
+        values = ~WWTP,
+        opacity = 0.7
+      ) %>%
+      leaflet.extras::addFullscreenControl(pseudoFullscreen = TRUE)
   })
-  
+
+
   # tables -----
-  ## Prevalence table -----
+  ## prevalence table -----
   output$loadData <- renderDT(server = FALSE, {
     load_data %>%
       left_join(case_data,
-                by = c(
-                  "date",
-                  "covid_cases_total",
-                  "covid_cases_new",
-                  "covid_cases_per100K",
-                  "covid_cases_7day",
-                  "hover_text_case"
-                )
+        by = c(
+          "date",
+          "covid_cases_total",
+          "covid_cases_new",
+          "covid_cases_per100K",
+          "covid_cases_7day",
+          "hover_text_case"
+        )
       ) %>%
       select(
         -hover_text_case, -hover_text_load,
@@ -521,8 +509,8 @@ server <- function(input, output) {
       # round case rates to nearest digit:
       DT::formatRound(5:8, 0)
   })
-  
-  
+
+
   ## variant table -----
   output$variantData <- renderDT(server = FALSE, {
     variant_data %>%
@@ -550,8 +538,8 @@ server <- function(input, output) {
       DT::formatRound("frequency", 2) %>%
       DT::formatRound("frequency_7day", 2)
   })
-  
-  
+
+
   ## case table -----
   output$caseData <- renderDT(server = FALSE, {
     case_data %>%
@@ -567,4 +555,4 @@ server <- function(input, output) {
         )
       )
   })
-}
+ }
