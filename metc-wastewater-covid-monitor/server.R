@@ -3,56 +3,68 @@
 # Server -----
 server <- function(input, output) {
 
-  # dynamic output ----
-  
-  ## select plot -----
-  # code here to select whether variantPlot = variantFreqPlot or variantLoadPlot
-  output$mainPlot <- renderPlotly({
-    if (input$plotSel == "COVID-19 variant frequencies (%)") {
-      variantFreqPlot
-    } else if (input$plotSel == "COVID-19 load by variant") {
-      variantLoadPlot
-    } else if (input$plotSel == "Total COVID-19 load") {
-      loadPlot
-    }
+  # captions ----
+  output$figCaption_variant <- renderText({
+      "Points are daily data; lines are averages of the previous 7 days. Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron from the K417N mutation. Some variants share mutations: the presence of the K417N mutation before November 18 was inferred to be the Beta variant (data not shown). The two sub-lineages of Omicron (BA.1 and BA.2) are distinguished by the HV 69/70 deletion: Omicron BA.1 contains both the K417N mutation and the HV 69/70 deletion. Omicron BA.2 has the K417N mutation but not the HV 69/70 deletion. Omicron BA.2.12.1 is distinguished by the L452Q mutation."
   })
   
-
-  ## select caption ----
-  # code here to select whether variantPlot = variantFreqPlot or variantLoadPlot
-  output$figCaption <- renderText({
-    if (input$plotSel == "COVID-19 variant frequencies (%)") {
-      "Points are daily data; lines are averages of the previous 7 days. Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron from the K417N mutation. Some variants share mutations: the presence of the K417N mutation before November 18 was inferred to be the Beta variant (data not shown). The two sub-lineages of Omicron (BA.1 and BA.2) are distinguished by the HV 69/70 deletion: Omicron BA.1 contains both the K417N mutation and the HV 69/70 deletion. Omicron BA.2 has the K417N mutation but not the HV 69/70 deletion. Omicron BA.2.12.1 is distinguished by the L452Q mutation."
-    } else if (input$plotSel == "COVID-19 load by variant") {
-      "Points are daily data; lines are averages of the previous 7 days. Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron from the K417N mutation. Some variants share mutations: the presence of the K417N mutation before November 18 was inferred to be the Beta variant (data not shown). The two sub-lineages of Omicron (BA.1 and BA.2) are distinguished by the HV 69/70 deletion: Omicron BA.1 contains both the K417N mutation and the HV 69/70 deletion. Omicron BA.2 has the K417N mutation but not the HV 69/70 deletion. Omicron BA.2.12.1 is distinguished by the L452Q mutation."
-    } else if (input$plotSel == "Total COVID-19 load") {
-      "The blue line and points show the total amount of SARS-CoV-2 viral RNA in wastewater flowing into the Metro Plant, in millions copies of the SARS-CoV-2 genome per person served by the wastewater area, per day. Blue points are daily values; the blue line is a running average of the previous 7 days. The gray line shows the average of the previous 7 days of new reported COVID-19 infections in the seven-county Metro area per 100,000 residents. Case data are provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org)."
-    }
+  output$figCaption_variant2 <- renderText({
+    "Points are daily data; lines are averages of the previous 7 days. Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron from the K417N mutation. Some variants share mutations: the presence of the K417N mutation before November 18 was inferred to be the Beta variant (data not shown). The two sub-lineages of Omicron (BA.1 and BA.2) are distinguished by the HV 69/70 deletion: Omicron BA.1 contains both the K417N mutation and the HV 69/70 deletion. Omicron BA.2 has the K417N mutation but not the HV 69/70 deletion. Omicron BA.2.12.1 is distinguished by the L452Q mutation."
   })
+  
+  output$figCaption_load <- renderText({
+      "Points are daily data; lines are averages of the previous 7 days. Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron from the K417N mutation. Some variants share mutations: the presence of the K417N mutation before November 18 was inferred to be the Beta variant (data not shown). The two sub-lineages of Omicron (BA.1 and BA.2) are distinguished by the HV 69/70 deletion: Omicron BA.1 contains both the K417N mutation and the HV 69/70 deletion. Omicron BA.2 has the K417N mutation but not the HV 69/70 deletion. Omicron BA.2.12.1 is distinguished by the L452Q mutation."
+  })
+  
 
   # plots ----
   ## load and cases -----
 
-  ay <- list(
+  left_axis_text <- list(
     tickfont = list(color = colors$councilBlue,
                     size = 16,
                     family = font_family_list),
     overlaying = "y",
     side = "left",
-    title = list(
-      text = "Viral load in wastewater<br>M copies/person/day",
-      standoff = 0,
-      font = list(color = colors$councilBlue, size = 16)
-    ),
     zerolinewidth = 0,
     zerolinecolor = colors$suppWhite,
     gridcolor = colors$suppWhite,
     rangemode = "nonnegative"
   )
-
-  loadPlot <-
+  
+  left_axis_title <- list(
+    x = 0,
+    y = 1.1,
+    text = "Viral load in wastewater<br>M copies/person/day",
+    xref = "paper",
+    yref = "paper",
+    showarrow = F,
+    align = "left",
+    font = list(
+      size = 16,
+      family = font_family_list,
+      color = councilR::colors$councilBlue
+    )
+  )
+  
+  right_axis_title <- list(
+    x = 1,
+    y = 1.1,
+    text = "COVID-19 cases<br>per 100K residents",
+    xref = "paper",
+    yref = "paper",
+    showarrow = F,
+    align = "right",
+    font = list(
+      size = 16,
+      family = font_family_list,
+      color = councilR::colors$suppBlack
+    )
+  ) 
+  
+  output$loadPlot <-
+  renderPlotly({
     load_data %>%
-    # left_join(case_data, by = "date") %>%
     plot_ly(type = "scatter", mode = "lines") %>%
     add_trace(
       mode = "markers",
@@ -69,8 +81,6 @@ server <- function(input, output) {
           width = 0.5
         )
       ),
-      # fillcolor = ,
-      # line = list(width = 2, color = colors$esBlue),
       hoverinfo = "text",
       text = ~hover_text_load
     ) %>%
@@ -81,8 +91,6 @@ server <- function(input, output) {
       name = "7-day avg. viral load",
       size = 1,
       yaxis = "y2",
-      # fill = "tozeroy",
-      # fillcolor = "rgba(0, 154, 199, .5)",
       line = list(width = 2, color = colors$councilBlue),
       hoverinfo = "text",
       text = ~hover_text_load_7day
@@ -98,36 +106,16 @@ server <- function(input, output) {
       text = ~hover_text_case
     ) %>%
     layout(
+      annotations = list(left_axis_title, right_axis_title),
       autosize = T,
-      annotations = ann_list <- list(
-        text = paste(
-          "<br>",
-          "<i>", "Latest sample date",
-          max(c(
-            load_data$date,
-            variant_data$date
-          ), na.rm = T),
-          "</i>"
-        ),
-        font = list(
-          size = 16,
-          family = font_family_list,
-          color = councilR::colors$suppBlack
-        ),
-        x = 1,
-        y = -0.12,
-        showarrow = F,
-        xref = "paper", yref = "paper",
-        xanchor = "right", yanchor = "auto",
-        xshift = 0, yshift = -40
-      ),
       showlegend = TRUE,
-      margin = list(l = 100, r = 50, b = 50, pad = 10),
+      margin = list(t = 50, l = 50, r = 50, b = 10, pad = 0),
       hovermode = "closest",
       hoverdistance = "10",
       hoverlabel = hov_lab_list,
-      yaxis2 = ay,
+      yaxis2 = left_axis_text,
       xaxis = list(
+        range = ~c(min(date)-4, max(date) + 4),
         title = list(
           text = "",
           standoff = 40,
@@ -137,7 +125,7 @@ server <- function(input, output) {
             color = councilR::colors$suppBlack
           )
         ),
-        zerolinewidth = 2,
+        zerolinewidth = 0,
         gridcolor = colors$suppWhite,
         zerolinecolor = colors$suppWhite,
         tickfont = list(
@@ -149,15 +137,14 @@ server <- function(input, output) {
       yaxis = list(
         side = "right",
         title = list(
-          text = "COVID-19 cases<br>per 100K residents",
-          standoff = 25,
+          text = "",
           font = list(
             size = 16,
             family = font_family_list,
             color = councilR::colors$suppBlack
           )
         ),
-        zerolinewidth = 1,
+        zerolinewidth = 0,
         tickfont = list(
           size = 16,
           family = font_family_list,
@@ -169,6 +156,7 @@ server <- function(input, output) {
       ),
       legend = list(
         orientation = "h",
+        x = 0, y = -0.15,
         font = list(
           size = 16,
           family = font_family_list,
@@ -187,11 +175,12 @@ server <- function(input, output) {
         "zoomOut2d"
       )
     )
+  })
 
 
   ## variant load -----
-  variantLoadPlot <-
-    # browser()
+  output$variantLoadPlot <-
+  renderPlotly({
     plot_ly() %>%
     # total load:
     add_trace(
@@ -245,7 +234,7 @@ server <- function(input, output) {
         l = 50,
         r = 50,
         b = 50,
-        pad = 10
+        pad = 0
       ),
       xaxis = list(
         title = list(
@@ -310,10 +299,11 @@ server <- function(input, output) {
         "zoomOut2d"
       )
     )
+  })
 
   ## variant frequency -----
-  variantFreqPlot <-
-    # browser()
+  output$variantFreqPlot <-
+  renderPlotly({
     variant_data %>%
     plot_ly() %>%
     add_trace(
@@ -415,7 +405,7 @@ server <- function(input, output) {
         "zoomOut2d"
       )
     )
-
+  })
 
   # map ------
   output$map <- leaflet::renderLeaflet({
