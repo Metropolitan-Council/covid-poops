@@ -1,13 +1,12 @@
 
 
+
 fluidPage(
   navbarPage(
     fluid = TRUE,
     title = div(
-      img(
-        src = "main-logo.png",
-        height = "60px", alt = "MetCouncil logo"
-      )
+      img(src = "main-logo.png",
+          height = "60px", alt = "MetCouncil logo")
     ),
     id = "navBar",
     collapsible = TRUE,
@@ -26,50 +25,57 @@ fluidPage(
       tags$link(rel = "stylesheet", type = "text/css", href = "colors.css"),
       includeHTML("www/google-analytics.html")
     ),
-
+    
     tabPanel(
       "COVID-19 Trends",
+      br(),
       wellPanel(
-       br(),
-       h2("Select a chart"),
-
-       tabsetPanel(
-         type = "pills",
-         tabPanel(
-           "Total COVID-19 load",
-           em("Last sample date: May 16, 2022."),
-           plotlyOutput("loadPlot", height = "auto"),
-           bsCollapsePanel(h6("About the data"),
-                           textOutput("figCaption_load"))
-         ),
+        h2("Select a chart"),
         
-         tabPanel(
-           "COVID-19 load by variant",
-           em("Last sample date: May 16, 2022."),
-           plotlyOutput("variantLoadPlot", height = "auto"),
-           bsCollapsePanel(h6("About the data"),
-                           textOutput("figCaption_variant"))
-         ),
-
-         tabPanel(
-           "COVID-19 variant frequencies (%)",
-           em("Last sample date: May 16, 2022."),
-           plotlyOutput("variantFreqPlot", height = "auto"),
-           bsCollapsePanel(h6("About the data"),
-                           textOutput("figCaption_variant2"))
-         )
-       ),
-       
-       h2("Key Facts"),
-       h4("May 20, 2022"),
-       p("Scientists in the Met Council's Environmental Services are monitoring COVID-19 prevalence in wastewater influent samples from the Metro Plant in Saint Paul. The plant serves nearly two million people in the seven-county metro area. The most recent data update includes samples taken May 10-16, 2022. During this sampling period:"),
-       tags$ul(
-         tags$li("The viral load increased by 58% over the previous week"),
-         tags$li("Omicron BA.2 made up 92% of of the SARS-CoV-2 RNA"),
-         tags$li("Omicron BA.2.12.1 made up 47% of of the SARS-CoV-2 RNA, up from 36% the previous week"),
-         tags$li("Omicron BA.4 and BA.5 (not yet shown) together made up 7% of the SARS-CoV-2 RNA")
-       )
-      )),
+        tabsetPanel(
+          type = "pills",
+          tabPanel(
+            "Total COVID-19 Prevalence",
+            em("Last sample date: May 16, 2022."),
+            plotlyOutput("loadPlot", height = "auto"),
+            bsCollapsePanel(h6("About the data"),
+                            textOutput("figCaption_load"))
+          ),
+          
+          tabPanel(
+            "Prevalence by Variant",
+            em("Last sample date: May 16, 2022."),
+            plotlyOutput("variantLoadPlot", height = "auto"),
+            bsCollapsePanel(h6("About the data"),
+                            textOutput("figCaption_variant"))
+          ),
+          
+          tabPanel(
+            "Variant Frequencies (%)",
+            em("Last sample date: May 16, 2022."),
+            plotlyOutput("variantFreqPlot", height = "auto"),
+            bsCollapsePanel(h6("About the data"),
+                            textOutput("figCaption_variant2"))
+          )
+        ),
+        
+        h2("Key Facts"),
+        h4("May 20, 2022"),
+        p(
+          "Scientists in the Met Council's Environmental Services are monitoring COVID-19 prevalence in wastewater influent samples from the Metro Plant in Saint Paul. The plant serves nearly two million people in the seven-county metro area. The most recent data update includes samples taken May 10-16, 2022. During this sampling period:"
+        ),
+        tags$ul(
+          tags$li("The viral load increased by 58% over the previous week"),
+          tags$li("Omicron BA.2 made up 92% of of the SARS-CoV-2 RNA"),
+          tags$li(
+            "Omicron BA.2.12.1 made up 47% of of the SARS-CoV-2 RNA, up from 36% the previous week"
+          ),
+          tags$li(
+            "Omicron BA.4 and BA.5 (not yet shown) together made up 7% of the SARS-CoV-2 RNA"
+          )
+        )
+      )
+    ),
     tabPanel(
       "Download Data",
       br(),
@@ -83,7 +89,7 @@ fluidPage(
       ),
       br(),
       DTOutput("loadData"),
-
+      
       # variants -----
       h3("Variants"),
       p(
@@ -91,7 +97,7 @@ fluidPage(
       ),
       br(),
       DTOutput("variantData"),
-
+      
       # # cases -----
       # h3("Cases"),
       # p("Data updated ... Data source ... "),
