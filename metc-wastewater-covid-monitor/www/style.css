@@ -366,12 +366,13 @@ hr {
     min-width: 800px;
     max-width: 1200px;
     padding: 5px;
-    margin-left: 10%;
-    width: 80%;
-    margin-right: 10%;
+    width: 100%;
 }
 
 .well {
+    width: 80%;
+    margin-left: 10%;
+    margin-right: 10%;
     min-height: 20px;
     max-width: 1200px;
     padding: 19px;
