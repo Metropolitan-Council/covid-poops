@@ -29,34 +29,46 @@ fluidPage(
 
     tabPanel(
       "COVID-19 Trends",
-      # h4("COVID-19 Wastewater Surveillance"),
       wellPanel(
-        br(),
-        h2("Key Facts"),
-        h4("May 20, 2022"),
-        p("Scientists in the Met Council’s Environmental Services are monitoring COVID-19 prevalence in wastewater influent samples from the Metro Plant in Saint Paul. The plant serves nearly two million people in the seven-county metro area. The most recent data update includes samples taken May 10-16, 2022. During this sampling period:"),
-        tags$ul(
-          tags$li("The viral load increased by 58% over the previous week"),
-          tags$li("Omicron BA.2 made up 92% of of the SARS-CoV-2 RNA"),
-        tags$li("Omicron BA.2.12.1 made up 47% of of the SARS-CoV-2 RNA, up from 36% the previous week"),
-        tags$li("Omicron BA.4 and BA.5 (not yet shown below) together made up 7% of the SARS-CoV-2 RNA")
-        ),
-       h4("Select a chart"),
-       radioButtons(
-          inputId = "plotSel",
-          label = NULL,
-          choices = c(
-            "Total COVID-19 load",
-            "COVID-19 load by variant",
-            "COVID-19 variant frequencies (%)"
-          ),
-          selected = "Total COVID-19 load",
-          inline = T
-        ),
-        plotlyOutput("mainPlot", height = "auto"),
-        br(),
-        bsCollapsePanel(h6("About the data"), 
-                        textOutput("figCaption"))
+       br(),
+       h2("Select a chart"),
+
+       tabsetPanel(
+         type = "pills",
+         tabPanel(
+           "Total COVID-19 load",
+           em("Last sample date: May 16, 2022."),
+           plotlyOutput("loadPlot", height = "auto"),
+           bsCollapsePanel(h6("About the data"),
+                           textOutput("figCaption_load"))
+         ),
+        
+         tabPanel(
+           "COVID-19 load by variant",
+           em("Last sample date: May 16, 2022."),
+           plotlyOutput("variantLoadPlot", height = "auto"),
+           bsCollapsePanel(h6("About the data"),
+                           textOutput("figCaption_variant"))
+         ),
+
+         tabPanel(
+           "COVID-19 variant frequencies (%)",
+           em("Last sample date: May 16, 2022."),
+           plotlyOutput("variantFreqPlot", height = "auto"),
+           bsCollapsePanel(h6("About the data"),
+                           textOutput("figCaption_variant2"))
+         )
+       ),
+       
+       h2("Key Facts"),
+       h4("May 20, 2022"),
+       p("Scientists in the Met Council's Environmental Services are monitoring COVID-19 prevalence in wastewater influent samples from the Metro Plant in Saint Paul. The plant serves nearly two million people in the seven-county metro area. The most recent data update includes samples taken May 10-16, 2022. During this sampling period:"),
+       tags$ul(
+         tags$li("The viral load increased by 58% over the previous week"),
+         tags$li("Omicron BA.2 made up 92% of of the SARS-CoV-2 RNA"),
+         tags$li("Omicron BA.2.12.1 made up 47% of of the SARS-CoV-2 RNA, up from 36% the previous week"),
+         tags$li("Omicron BA.4 and BA.5 (not yet shown) together made up 7% of the SARS-CoV-2 RNA")
+       )
       )),
     tabPanel(
       "Download Data",
