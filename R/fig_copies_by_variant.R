@@ -98,7 +98,7 @@ load_varplot_ig <-
     "Other", "Alpha, Beta & Gamma",
     "Delta", "Omicron BA.1", "Omicron BA.2 (Excluding BA.2.12.1)", "Omicron BA.2.12.1"
   ))) %>%
-   ggplot(aes(x = date, y = copies)) +
+  ggplot(aes(x = date, y = copies)) +
 
   # gray background area - total
   geom_area(

@@ -9,6 +9,9 @@ library(plotly)
 library(councilR)
 library(DT)
 library(gh)
+library(sf)
+library(shinyBS)
+library(leaflet)
 
 
 # if you get error message
@@ -39,6 +42,8 @@ copies_by_variant <- read.csv("data/copies_by_variant.csv") %>%
   mutate(date = as.Date(date)) %>%
   mutate(across(where(is.numeric), round, digits = 2))
 
+sewershed <- readRDS("data/simple_wwtp_sewershed.rds") %>%
+  filter(WWTP %in% c("Blue Lake", "Seneca", "Empire", "Metro"))
 
 font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
 
