@@ -60,7 +60,7 @@ fluidPage(
         ),
         
         h2("Key Facts"),
-        h4("May 20, 2022"),
+        h4("May 27, 2022"),
         p(
           "Scientists in the Met Council's Environmental Services are monitoring COVID-19 prevalence in wastewater influent samples from the Metro Plant in Saint Paul. The plant serves nearly two million people in the seven-county metro area. The most recent data update includes samples taken May 10-16, 2022. During this sampling period:"
         ),
