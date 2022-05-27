@@ -1,13 +1,13 @@
 
 
+
 fluidPage(
   navbarPage(
+    
     fluid = TRUE,
     title = div(
-      img(
-        src = "main-logo.png",
-        height = "60px", alt = "MetCouncil logo"
-      )
+      img(src = "main-logo.png",
+          height = "60px", alt = "MetCouncil logo")
     ),
     id = "navBar",
     collapsible = TRUE,
@@ -20,44 +20,68 @@ fluidPage(
       "body {padding-top: 75px;}",
       ".sidebar {max-width: 100px;}"
     ),
+    
     tags$head(
       tags$link(rel = "stylesheet", type = "text/css", href = "style.css"),
       tags$link(rel = "stylesheet", type = "text/css", href = "font.css"),
       tags$link(rel = "stylesheet", type = "text/css", href = "colors.css"),
-      includeHTML("www/google-analytics.html")
-    ),
-
+      includeHTML("www/google-analytics.html"),
+      tags$html(lang = "en")),
+    
     tabPanel(
       "COVID-19 Trends",
-      # h4("COVID-19 Wastewater Surveillance"),
-      wellPanel(
-        br(),
-        h2("Key Facts"),
-        h4("May 20, 2022"),
-        p("Scientists in the Met Council’s Environmental Services are monitoring COVID-19 prevalence in wastewater influent samples from the Metro Plant in Saint Paul. The plant serves nearly two million people in the seven-county metro area. The most recent data update includes samples taken May 10-16, 2022. During this sampling period:"),
-        tags$ul(
-          tags$li("The viral load increased by 58% over the previous week"),
-          tags$li("Omicron BA.2 made up 92% of of the SARS-CoV-2 RNA"),
-        tags$li("Omicron BA.2.12.1 made up 47% of of the SARS-CoV-2 RNA, up from 36% the previous week"),
-        tags$li("Omicron BA.4 and BA.5 (not yet shown below) together made up 7% of the SARS-CoV-2 RNA")
-        ),
-       h4("Select a chart"),
-       radioButtons(
-          inputId = "plotSel",
-          label = NULL,
-          choices = c(
-            "Total COVID-19 load",
-            "COVID-19 load by variant",
-            "COVID-19 variant frequencies (%)"
+      br(),
+      fluidRow(
+        h2("COVID-19 Surveillance at the Metro Plant"),
+        
+        tabsetPanel(
+          type = "pills",
+          tabPanel(
+            "COVID-19 Prevalence",
+            HTML("<h6><section style='font-size:14pt'>This graph shows the amount of SARS-CoV-2 viral RNA detected in Metro Plant wastewater influent (blue line) and the number of COVID-19 cases in the seven-county area (gray line).</h3>"
+            ),
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: May 23, 2022.</h3>"
+            ),
+            plotlyOutput("loadPlot", height = "auto")
           ),
-          selected = "Total COVID-19 load",
-          inline = T
-        ),
-        plotlyOutput("mainPlot", height = "auto"),
-        br(),
-        bsCollapsePanel(h6("About the data"), 
-                        textOutput("figCaption"))
-      )),
+          
+          tabPanel(
+            "Variant Prevalence",
+            HTML("<h6><section style='font-size:14pt'>This graph shows the estimated amount of SARS-CoV-2 viral RNA by COVID-19 variant, sub-variant and lineage. The total amount of SARS-CoV-2 viral RNA in Metro Plant wastewater influent is shown in the background in gray.</h3>"
+            ),
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: May 23, 2022.</h3>"
+            ),
+            plotlyOutput("variantLoadPlot", height = "auto")
+          ),
+          
+          tabPanel(
+            "Variant Frequencies (%)",
+            HTML("<h6><section style='font-size:14pt'>This graph shows the estimated percent of SARS-CoV-2 viral RNA contributed by COVID-19 variant, sub-variant and lineage.</h3>"
+            ),
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: May 23, 2022.</h3>"
+            ),
+            plotlyOutput("variantFreqPlot", height = "auto")
+          ),
+          tabPanel(
+            "This Week's Summary",
+            h6("May 27, 2022"),
+            p(
+              "The most recent data update includes samples taken May 17-23, 2022. During this sampling period:"
+            ),
+            tags$ul(
+              tags$li("The viral RNA load in Metro Plant influent is now trending lower, decreasing last week by 38% compared to the previous week"),
+              tags$li("The Omicron subvariant BA.2 made up 88% of the SARS-CoV-2 RNA in Metro Plant influent"),
+              tags$li(
+                "BA.2 sub-lineage BA.2.12.1 made up 57% of the SARS-CoV-2 RNA in Metro Plant influent, up from 47% the previous week"
+              ),
+              tags$li(
+                "Omicron sub-variants BA.4 and BA.5 (not yet shown below) together made up 11% of the SARS-CoV-2 RNA in Metro Plant influent, up from 7% a week earlier"
+              )
+            )
+          )
+        )
+      )
+    ),
     tabPanel(
       "Download Data",
       br(),
@@ -71,7 +95,7 @@ fluidPage(
       ),
       br(),
       DTOutput("loadData"),
-
+      
       # variants -----
       h3("Variants"),
       p(
@@ -79,12 +103,22 @@ fluidPage(
       ),
       br(),
       DTOutput("variantData"),
-
+      
       # # cases -----
       # h3("Cases"),
       # p("Data updated ... Data source ... "),
       # DTOutput("caseData")
     ),
+    # tabPanel(
+    #   "FAQ",
+    #   br(),
+    #   h5("How often is data updated?"),
+    #   p("Weekly"),
+    #   h5('How is "viral load" calculated?'),
+    #   p("Million copies per person per day"),
+    #   h5("How are variants identified?"),
+    #   p("Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron from the K417N mutation. Some variants share mutations: the presence of the K417N mutation before November 18 was inferred to be the Beta variant (data not shown). The two sub-lineages of Omicron (BA.1 and BA.2) are distinguished by the HV 69/70 deletion: Omicron BA.1 contains both the K417N mutation and the HV 69/70 deletion. Omicron BA.2 has the K417N mutation but not the HV 69/70 deletion. Omicron BA.2.12.1 is distinguished by the L452Q mutation.")
+    # ),
     footer = tags$div(
       "This project is open-source. See our GitHub repository here",
       tags$a(
@@ -94,14 +128,13 @@ fluidPage(
       ),
       tags$br(),
       "App last updated ",
-      "2022-05-23",
+      "2022-05-27",
       # using gh::gh() causes SAML error in production
       # gh::gh("GET /repos/Metropolitan-Council/covid-poops")[49][[1]] %>% as.Date(),
       style = "font-size: 1.5rem;
              display: block;
              text-align: right;
-             padding: 1%;",
-      align = "right"
+             padding: 1%;"
     )
   )
 )
