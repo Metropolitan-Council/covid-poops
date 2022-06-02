@@ -25,7 +25,7 @@ copies_by_variant <-
     sum(
       c(
         `Alpha, Beta & Gamma`, Delta, `Omicron BA.1`,
-        `Omicron BA.2 (Excluding BA.2.12.1)`, `Omicron BA.2.12.1`
+        `Omicron BA.2 (Excluding BA.2.12.1)`, `Omicron BA.2.12.1`, `Omicron BA.4 and BA.5`
       ),
       na.rm = T
     )) %>%
@@ -33,7 +33,7 @@ copies_by_variant <-
   pivot_longer(
     cols = c(
       `Alpha, Beta & Gamma`, Delta, `Omicron BA.1`,
-      `Omicron BA.2 (Excluding BA.2.12.1)`, `Omicron BA.2.12.1`,
+      `Omicron BA.2 (Excluding BA.2.12.1)`, `Omicron BA.2.12.1`, `Omicron BA.4 and BA.5`,
       Other
     ),
     names_to = "variant",

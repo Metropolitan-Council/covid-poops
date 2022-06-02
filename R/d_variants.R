@@ -166,13 +166,17 @@ variant_data_run <-
     "Omicron BA.2.12.1" = case_when(
       date >= "2022-04-12"
       ~ l452q
+    ),
+    "Omicron BA.4 and BA.5" = case_when(
+      date >= "2022-05-10"
+      ~ hv_69_70 - t95i
     )
   ) %>%
   # option to NA-out Omicron BA.2 where ratio of hv 69/70 to k417n is above 95%
   # mutate(`Omicron BA.2` = ifelse(hv_69_70/k417n >= 0.95 & !is.na(`Omicron BA.2`), NA, `Omicron BA.2`)) %>%
   select(-d80a, -e484k, -hv_69_70, -n501y, -k417n, -l452r, -l452q, -t95i) %>%
   pivot_longer(
-    cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`, `Omicron BA.2 (Excluding BA.2.12.1)`, "Omicron BA.2.12.1"),
+    cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`, `Omicron BA.2 (Excluding BA.2.12.1)`, "Omicron BA.2.12.1" ,"Omicron BA.4 and BA.5"),
     names_to = "variant",
     values_to = "frequency"
   )

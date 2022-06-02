@@ -28,11 +28,11 @@ varplot <-
   geom_area(position = "identity", aes(x = date, y = frequency_7day, group = variant, fill = variant, color = variant), alpha = 0.25, na.rm = T, lty = "blank") +
   geom_point() +
   scale_color_manual(
-    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740"),
+    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#000080"),
     name = "Variant "
   ) +
   scale_fill_manual(
-    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740"),
+    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#000080"),
     name = "Variant "
   ) +
   scale_y_continuous(name = "Variant frequency (%)", labels = scales::percent, limits = c(0, 1.05)) +
@@ -105,11 +105,11 @@ variant_data_date %>%
   ) +
   geom_point(size = 1) +
   scale_color_manual(
-    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740"),
+    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#000080"),
     name = "Variant "
   ) +
   scale_fill_manual(
-    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740"),
+    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#000080"),
     name = "Variant "
   ) +
   scale_y_continuous(
