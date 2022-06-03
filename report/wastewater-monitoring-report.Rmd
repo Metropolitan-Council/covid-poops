@@ -1,7 +1,7 @@
 ---
 title: "Metro Wastewater COVID-19 Monitoring"
 author: "Metropolitan Council"
-date: "May 27, 2022"
+date: "June 3, 2022"
 output:
   html_document:
     css: ["www/rmd-report-style.css", "www/colors.css", "www/font.css"]
@@ -44,8 +44,8 @@ font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
 
 whiteSmoke <- "#F5F5F5"
 
-pal <- c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#666666")
-pal <- setNames(pal, c("Alpha, Beta & Gamma", "Delta", "Omicron BA.1", "Omicron BA.2 (Excluding BA.2.12.1)", "Omicron BA.2.12.1", "Total load"))
+pal <- c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#092D4E", "#666666")
+pal <- setNames(pal, c("Alpha, Beta & Gamma", "Delta", "Omicron BA.1", "Omicron BA.2 (Excluding BA.2.12.1)", "Omicron BA.2.12.1", "Omicron BA.4 and BA.5", "Total load"))
 
 ann_list <- list(
   text = paste(
@@ -247,7 +247,7 @@ The blue line and points show the total amount of SARS-CoV-2 viral RNA in wastew
 ```
 \newpage
 ## COVID-19 Variants
-In December 2021, Omicron rapidly replaced Delta as the dominant SARS-CoV-2 variant of concern in influent wastewater at the Metro treatment plant in Saint Paul. Since early February, we have observed the appearance and increase of the Omicron sub-lineage BA.2.  Now beginning in April, we are observing the increase in Omicron BA.2.12.1.
+The dominance of various SARS-CoV-2 variants in wastewater entering the Metro Plant in Saint Paul has ebbed and flowed over time. Omicron BA.1 replaced Delta as the dominant variant in late December 2021. In February 2022, we observed the appearance and increase of Omicron BA.2. In April, sub-lineage BA.2.12.1 increased in prevalence, and has since become the dominant subvariant. Currently, we are observing the increase of Omicron subvariants BA.4 and BA.5.
 
 ###### How to read this graph:
 This graph shows the frequency of SARS-CoV-2 variants in Metro Plant wastewater. This frequency is the percentage of the total viral RNA that was identified as being from each particular variant.  Points are daily data; lines and shaded areas are averages of the previous 7 days.
@@ -350,7 +350,7 @@ div(variant_plot, align = "center")
 \newpage
 ## COVID-19 Load by Variant
 #### Another way of looking at the variant data
-The dominance of various SARS-CoV-2 variants has ebbed and flowed over time. The current dominant variant, Omicron, became dominant in late December. The total amount of SARS-CoV-2 virus in wastewater was higher during the Omicron BA.1 wave compared to earlier periods of the COVID-19 pandemic, consistent with higher case counts in the region. The wastewater load dropped by more than 98% after the peak of the Omicron BA.1 subvariant in early January, but it has now started to increase again, driven by the increasing prevalence of Omicron BA.2.
+This plot shows the total amount (“load”) of each variant entering the Metro Plant, over time. Omicron BA.2.12.1 is currently the dominant variant in Metro Plant wastewater, but BA.4 and BA.5 are increasing and will likely soon overtake BA.2.12.1.
 
 ###### How to read this graph:
 This graph shows the measured number of copies per person per day of each variant in wastewater. Points are daily data; lines and shaded areas are averages of the previous 7 days. The gray area in the background is the 7-day average total viral load. Variant proportions do not always add to 100%, so slight discrepancies between the total viral load and that of the individual variants are expected.
