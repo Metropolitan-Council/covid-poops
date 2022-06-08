@@ -9,6 +9,7 @@ library(plotly)
 library(councilR)
 library(DT)
 library(gh)
+#library(shinyBS)
 
 
 # if you get error message

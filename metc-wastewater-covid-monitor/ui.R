@@ -115,13 +115,11 @@ fluidPage(
     # tabPanel(
     #   "FAQ",
     #   br(),
-    #   h5("How often is data updated?"),
-    #   p("Weekly"),
-    #   h5('How is "viral load" calculated?'),
-    #   p("Million copies per person per day"),
-    #   h5("How are variants identified?"),
-    #   p("Alpha, Beta and Gamma frequencies are inferred from the presence of the N501Y mutation; Delta from the L452R mutation; and Omicron from the K417N mutation. Some variants share mutations: the presence of the K417N mutation before November 18 was inferred to be the Beta variant (data not shown). The two sub-lineages of Omicron (BA.1 and BA.2) are distinguished by the HV 69/70 deletion: Omicron BA.1 contains both the K417N mutation and the HV 69/70 deletion. Omicron BA.2 has the K417N mutation but not the HV 69/70 deletion. Omicron BA.2.12.1 is distinguished by the L452Q mutation.")
-    # ),
+    #   bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold;'>What can wastewater tell us about COVID-19 infections?</h3>"), 
+    #                   htmlOutput("faqAnswer1")),
+    #   bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold;'>Who monitors the presence of the virus in wastewater?</h3>"), 
+    #                   htmlOutput("faqAnswer2"))
+    #  ),
     footer = tags$div(
       "This project is open-source. See our GitHub repository here",
       tags$a(
