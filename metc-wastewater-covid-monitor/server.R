@@ -472,4 +472,23 @@ server <- function(input, output) {
         )
       )
   })
+  
+  
+  # ## FAQ -----
+  # output$faqAnswer1 <- renderUI({ 
+  #   str1 <- "Wastewater surveillance measures the levels of viruses and bacteria in wastewater, otherwise known as sewage, and is used to evaluate community infection trends."
+  #   str2 <- "With respect to the SARS-CoV-2 virus that causes the COVID-19 disease, wastewater surveillance tells us about the presence and prevalence of the virus shed by people with and without symptoms. By measuring viral levels in untreated wastewater public health officials can determine whether infections are increasing and decreasing in a sewershed, which is the area served by a wastewater treatment plant."
+  #   str3 <- "Observing these trends helps public officials make informed policy decisions to reduce and prevent future spread. It also helps the public to make choices about how to ensure their own personal safety."
+  #   str4 <-  "Wastewater sampling does not confirm individual cases or provide detailed information about how and where outbreaks occur. But it is an unbiased measure of disease prevalence in a sewer service area."
+  #   HTML(paste(str1, str2, str3, str4, sep = '<br/><br/>'))
+  #  })
+  # 
+  # output$faqAnswer2 <- renderUI({ 
+  #   str1 <- "In the Twin Cities metro area, the Metropolitan Council’s Environmental Services Division collects and treats wastewater. With the outbreak of COVID-19 pandemic research staff at the largest of the region’s nine plants, the Metro Plant, learned how to test wastewater for the virus by extracting its genetic material from untreated wastewater samples."
+  #   str2 <- "The extracted material, RNA (ribonucleic acid), is a remnant from infected people who release the viral particles through their bodily waste. RNA is what allows viral participles to reproduce and spread."
+  #   str3 <- "Working in partnership with the University of Minnesota Genomics Center (UMGC) scientists can quantify the viral RNA in samples using advanced analytical instruments. The amount of viral RNA they observe is a measure of the prevalence of COVID-19 in the plant’s service area and indicator of community spread."
+  #   str4 <- "The Council reports this information to the Minnesota Department of Health, the University of Minnesota Medical School and the national Wastewater Surveillance System. The Council also posts this information on its website weekly so it’s available to the public, media, and other health officials."
+  #   HTML(paste(str1, str2, str3, str4, sep = '<br/><br/>'))
+  # })
+  
  }

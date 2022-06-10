@@ -112,6 +112,7 @@ variant_data_run <-
 
       # Assigning values for BA2 After Detecting BA.2.12.1
       date >= "2022-04-12" &
+        date <= "2022-05-30" &
         # only calculate when k417N is greater than than hv 69/70:
 
         k417n > hv_69_70 &
@@ -119,8 +120,9 @@ variant_data_run <-
         !is.na(hv_69_70) & !is.na(k417n)
       # omicron BA2 = k417N minus frequency of hv69/70 and l452q
       ~ k417n - hv_69_70 - l452q,
-
-
+      
+      date >= "2022-05-31"
+      ~ 0,
       # Assigning zeros for BA2:
       date >= "2022-01-01" &
         # only assign a zero when k417N is less than than hv 69/70:
@@ -164,8 +166,11 @@ variant_data_run <-
       ~ t95i
     ),
     "Omicron BA.2.12.1" = case_when(
-      date >= "2022-04-12"
-      ~ l452q
+      date >= "2022-04-12" & 
+        date <= "2022-05-30"
+      ~ l452q,
+      date >= "2022-05-31"
+      ~ k417n - hv_69_70
     ),
     "Omicron BA.4 and BA.5" = case_when(
       date >= "2022-05-10"
