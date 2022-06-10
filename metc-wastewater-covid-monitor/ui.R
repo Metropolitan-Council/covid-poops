@@ -66,19 +66,16 @@ fluidPage(
             "This Week's Summary",
             h6("June 10, 2022"),
             p(
-              "The most recent data update includes samples taken May 24-30, 2022. During this sampling period:"
+              "The most recent data update includes samples taken May 31- June 6, 2022. During this sampling period:"
             ),
             tags$ul(
-              tags$li("The viral RNA load in Metro Plant influent was essentially unchanged last week, increasing by only 2% compared to the previous week"),
-              tags$li("The Omicron subvariant BA.2 made up 76% of the SARS-CoV-2 RNA in Metro Plant influent, down from 88% the week earlier"),
-              tags$li(
-                "BA.2 sub-lineage BA.2.12.1 made up 64% of the SARS-CoV-2 RNA in Metro Plant influent, up from 57% the previous week"
+              tags$li("The viral RNA load in Metro Plant influent decreased by 16% compared to the previous week"
               ),
-              tags$li(
-                "Omicron sub-variants BA.4 and BA.5 together made up 23% of the SARS-CoV-2 RNA in Metro Plant influent, up from 11% a week earlier"
+              tags$li("Omicron subvariant BA.2 made up 68% of the SARS-CoV-2 RNA in Metro Plant influent, down from 76% the week earlier"
               ),
-              tags$li(
-                "BA.4 and BA.5 are expected to replace BA.2.12.1 as the dominant variants in Metro Plant wastewater in the coming weeks"
+              tags$li("Essentially all of the BA.2 in Metro Plant influent is now made up of sub-lineage BA.2.12.1"
+              ),
+              tags$li("Omicron subvariants BA.4 and BA.5 together made up 32% of the SARS-CoV-2 RNA in Metro Plant influent, up from 23% a week earlier"
               )
             )
           )
