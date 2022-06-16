@@ -109,14 +109,30 @@ fluidPage(
       # p("Data updated ... Data source ... "),
       # DTOutput("caseData")
     ),
-    # tabPanel(
-    #   "FAQ",
-    #   br(),
-    #   bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold;'>What can wastewater tell us about COVID-19 infections?</h3>"), 
-    #                   htmlOutput("faqAnswer1")),
-    #   bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold;'>Who monitors the presence of the virus in wastewater?</h3>"), 
-    #                   htmlOutput("faqAnswer2"))
-    #  ),
+    tabPanel(
+      "FAQ",
+      br(),
+      bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold;'>What can wastewater tell us about COVID-19 infections?</h3>"),
+                      htmlOutput("faqAnswer1")),
+      bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold;'>Who monitors the presence of the virus in wastewater?</h3>"),
+                      htmlOutput("faqAnswer2")),
+      bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold;'>Does wastewater sampling for SARS-CoV-2 cover the entire metro area?</h3>"),
+                      htmlOutput("faqAnswer3")),
+      bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold;'>Do wastewater treatment plants release the virus into the environment along with treated wastewater?</h3>"),
+                      htmlOutput("faqAnswer4")),
+      bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold;'>Can I get COVID-19 from wastewater/sewage?</h3>"),
+                      htmlOutput("faqAnswer5")),
+      bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold;'>What is meant by virus “variants” and “subvariants?”</h3>"),
+                      htmlOutput("faqAnswer6")),
+      bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold;'>How often does the Council update data on the prevalence of the virus?</h3>"),
+                      htmlOutput("faqAnswer7")),
+      bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold;'>Are more frequent data updates available?</h3>"),
+                      htmlOutput("faqAnswer8")),
+      bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold;'>Can wastewater sampling and testing track other infectious diseases?</h3>"),
+                      htmlOutput("faqAnswer9")),
+      bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold;'>Does the Council provide health-related guidance for COVID-19?</h3>"),
+                      htmlOutput("faqAnswer10"))
+     ),
     footer = tags$div(
       "This project is open-source. See our GitHub repository here",
       tags$a(

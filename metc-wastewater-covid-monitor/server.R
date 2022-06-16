@@ -474,21 +474,62 @@ server <- function(input, output) {
   })
   
   
-  # ## FAQ -----
-  # output$faqAnswer1 <- renderUI({ 
-  #   str1 <- "Wastewater surveillance measures the levels of viruses and bacteria in wastewater, otherwise known as sewage, and is used to evaluate community infection trends."
-  #   str2 <- "With respect to the SARS-CoV-2 virus that causes the COVID-19 disease, wastewater surveillance tells us about the presence and prevalence of the virus shed by people with and without symptoms. By measuring viral levels in untreated wastewater public health officials can determine whether infections are increasing and decreasing in a sewershed, which is the area served by a wastewater treatment plant."
-  #   str3 <- "Observing these trends helps public officials make informed policy decisions to reduce and prevent future spread. It also helps the public to make choices about how to ensure their own personal safety."
-  #   str4 <-  "Wastewater sampling does not confirm individual cases or provide detailed information about how and where outbreaks occur. But it is an unbiased measure of disease prevalence in a sewer service area."
-  #   HTML(paste(str1, str2, str3, str4, sep = '<br/><br/>'))
-  #  })
-  # 
-  # output$faqAnswer2 <- renderUI({ 
-  #   str1 <- "In the Twin Cities metro area, the Metropolitan Council’s Environmental Services Division collects and treats wastewater. With the outbreak of COVID-19 pandemic research staff at the largest of the region’s nine plants, the Metro Plant, learned how to test wastewater for the virus by extracting its genetic material from untreated wastewater samples."
-  #   str2 <- "The extracted material, RNA (ribonucleic acid), is a remnant from infected people who release the viral particles through their bodily waste. RNA is what allows viral participles to reproduce and spread."
-  #   str3 <- "Working in partnership with the University of Minnesota Genomics Center (UMGC) scientists can quantify the viral RNA in samples using advanced analytical instruments. The amount of viral RNA they observe is a measure of the prevalence of COVID-19 in the plant’s service area and indicator of community spread."
-  #   str4 <- "The Council reports this information to the Minnesota Department of Health, the University of Minnesota Medical School and the national Wastewater Surveillance System. The Council also posts this information on its website weekly so it’s available to the public, media, and other health officials."
-  #   HTML(paste(str1, str2, str3, str4, sep = '<br/><br/>'))
-  # })
+  ## FAQ -----
+  output$faqAnswer1 <- renderUI({
+    str1 <- "Wastewater surveillance measures the levels of viruses and bacteria in wastewater, otherwise known as sewage, and is used to evaluate community infection trends."
+    str2 <- "With respect to the SARS-CoV-2 virus that causes the COVID-19 disease, wastewater surveillance tells us about the presence and prevalence of the virus shed by people with and without symptoms. By measuring viral levels in untreated wastewater public health officials can determine whether infections are increasing and decreasing in a sewershed, which is the area served by a wastewater treatment plant."
+    str3 <- "Observing these trends helps public officials make informed policy decisions to reduce and prevent future spread. It also helps the public to make choices about how to ensure their own personal safety."
+    str4 <-  "Wastewater sampling does not confirm individual cases or provide detailed information about how and where outbreaks occur. But it is an unbiased measure of disease prevalence in a sewer service area."
+    HTML(paste(str1, str2, str3, str4, sep = '<br/><br/>'))
+   })
+
+  output$faqAnswer2 <- renderUI({
+    str1 <- "In the Twin Cities metro area, the Metropolitan Council’s Environmental Services Division collects and treats wastewater. With the outbreak of COVID-19 pandemic research staff at the largest of the region’s nine plants, the Metro Plant, learned how to test wastewater for the virus by extracting its genetic material from untreated wastewater samples."
+    str2 <- "The extracted material, RNA (ribonucleic acid), is a remnant from infected people who release the viral particles through their bodily waste. RNA is what allows viral participles to reproduce and spread."
+    str3 <- "Working in partnership with the University of Minnesota Genomics Center (UMGC) scientists can quantify the viral RNA in samples using advanced analytical instruments. The amount of viral RNA they observe is a measure of the prevalence of COVID-19 in the plant’s service area and indicator of community spread."
+    str4 <- "The Council reports this information to the Minnesota Department of Health, the University of Minnesota Medical School and the national Wastewater Surveillance System. The Council also posts this information on its website weekly so it’s available to the public, media, and other health officials."
+    HTML(paste(str1, str2, str3, str4, sep = '<br/><br/>'))
+  })
+  
+  output$faqAnswer3 <- renderUI({
+    str1 <- "The Council reports the total amount of viral RNA, or viral load, flowing into the Metro Plant in Saint Paul. This plant treats wastewater from 66 metro-area communities, serving nearly two million people. Because the Metro Plant is so large and serves so many people, it provides a good picture of COVID-19 infections and trends occurring throughout the region."
+    str2 <- "The Council also collects data on the virus at three of its other wastewater regional treatment plants. These data, too, are shared with public health authorities to inform their decision-making."
+    HTML(paste(paste(str1, str2, sep = '<br/><br/>'), '<br/>', '<img  src = "sampling-area.png", height = "400px", alt = "Covid Wastewater Sampling Area" />'))
+  })
+  
+  output$faqAnswer4 <- renderUI({
+    str1 <- "Viable (infectious) virus has not been detected in treated effluent from wastewater treatment plants. Modern wastewater treatment methods remove the virus before the treated water is discharged to receiving waters."
+    HTML(paste(str1, sep = '<br/><br/>'))
+  })
+  
+  output$faqAnswer5 <- renderUI({
+    str1 <- "While SARS-CoV-2 can be shed in the feces of individuals with COVID-19 and discharged into wastewater collection systems, there is no evidence to date of COVID-19 infections arising from direct exposure to treated or untreated wastewater."
+    HTML(paste(str1, sep = '<br/><br/>'))
+  })
+  
+  output$faqAnswer6 <- renderUI({
+    str1 <- "The virus that causes COVID-19, SARS-CoV-2, is constantly changing and mutating. A strain of the virus that incorporates new mutations in its RNA is called a variant. Variants you’ve likely heard about include Alpha, Beta, Gamma, Delta, and Omicron, for example. Omicron has had a series of subvariants, including BA.1, BA.2, BA2.12.1, BA.4, and BA.5. These variants and subvariants each have their own transmissibility and immune escape traits and disease severity. The Council tracks the prevalence of these variants and subvariants and makes this information publicly available."
+    HTML(paste(str1, sep = '<br/><br/>'))
+  })
+  
+  output$faqAnswer7 <- renderUI({
+    str1 <- "The Council updates the dashboard data every week on Friday mornings. The data provides information on the prevalence of the virus during the week that precedes the data release. In other words, if the data are released on a Friday the 20th of the month, the reported data are from the 10th through the 16th of the month."
+    HTML(paste(str1, sep = '<br/><br/>'))
+  })
+  
+  output$faqAnswer8 <- renderUI({
+    str1 <- "Wastewater treatment is our primary business, but we are committed to helping to monitor the viral trends we’re experiencing. Wastewater surveillance has proven to be a valuable tool in the battle against COVID-19, and we are committed to continuing our efforts in this area. Our observations are that, due to sometimes large variability in the day-to-day data, the weekly update gives a better picture of the developing trends than we would observe in a more frequent review of the data."
+    HTML(paste(str1, sep = '<br/><br/>'))
+  })
+  
+  output$faqAnswer9 <- renderUI({
+    str1 <- "The science is still evolving, but we do expect public health agencies to take the lead in monitoring wastewater for other diseases. Monitoring wastewater gives scientists another resource to help inform public health decision-making, and the surveillance of other pathogens and infectious diseases in wastewater will gradually be incorporated into public health maintenance efforts. The U.S. Center for Disease Control and Prevention is very interested in this work and is currently building a national program to pursue it."
+    HTML(paste(str1, sep = '<br/><br/>'))
+  })
+  
+  output$faqAnswer10 <- renderUI({
+    str1 <- "The Council and its Environmental Services division do not provide guidance on health-related policy or procedures with respect to COVID-19. That information is conveyed by the Minnesota Health Department and national Center for Disease Control and Prevention."
+    HTML(paste(str1, sep = '<br/><br/>'))
+  })
   
  }
