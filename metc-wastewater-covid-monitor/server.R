@@ -311,7 +311,7 @@ server <- function(input, output) {
           annotations = list(list(
             x = -0.05,
             y = 1.1,
-            text = "Variant frequency (%)<br>indicated by maker genes",
+            text = "Variant frequency (%)<br>indicated by marker genes",
             xref = "paper",
             yref = "paper",
             showarrow = F,
