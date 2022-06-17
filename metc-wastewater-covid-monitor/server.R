@@ -476,18 +476,17 @@ server <- function(input, output) {
   
   ## FAQ -----
   output$faqAnswer1 <- renderUI({
-    str1 <- "Wastewater surveillance measures the levels of viruses and bacteria in wastewater, otherwise known as sewage, and is used to evaluate community infection trends."
-    str2 <- "With respect to the SARS-CoV-2 virus that causes the COVID-19 disease, wastewater surveillance tells us about the presence and prevalence of the virus shed by people with and without symptoms. By measuring viral levels in untreated wastewater public health officials can determine whether infections are increasing and decreasing in a sewershed, which is the area served by a wastewater treatment plant."
-    str3 <- "Observing these trends helps public officials make informed policy decisions to reduce and prevent future spread. It also helps the public to make choices about how to ensure their own personal safety."
-    str4 <-  "Wastewater sampling does not confirm individual cases or provide detailed information about how and where outbreaks occur. But it is an unbiased measure of disease prevalence in a sewer service area."
-    HTML(paste(str1, str2, str3, str4, sep = '<br/><br/>'))
+    str1 <- "Measuring the levels of viruses and pathogens in wastewater (i.e., sewage) can allow communities to quantify and monitor disease trends. By measuring levels of the SARS-CoV-2 virus in untreated wastewater entering a wastewater treatment plant, public health officials can determine whether COVID-19 infections are increasing or decreasing in the area served by that plant. This type of wastewater surveillance is objective and comprehensive in that it detects virus shed by infected people whether they are symptomatic or not and whether they seek testing or health care, or not."
+    str2 <- "Monitoring disease trends using wastewater surveillance helps public officials make informed policy decisions to reduce and prevent future spread. It also helps the public to make choices about how to ensure their own personal safety."
+    str3 <- "Wastewater surveillance provides an unbiased and comprehensive measure of disease prevalence in a sewer service area, but it does not identify individual cases or provide detailed information about how and where outbreaks occur."
+    HTML(paste(str1, str2, str3, sep = '<br/><br/>'))
    })
 
   output$faqAnswer2 <- renderUI({
-    str1 <- "In the Twin Cities metro area, the Metropolitan Council’s Environmental Services Division collects and treats wastewater. With the outbreak of COVID-19 pandemic research staff at the largest of the region’s nine plants, the Metro Plant, learned how to test wastewater for the virus by extracting its genetic material from untreated wastewater samples."
-    str2 <- "The extracted material, RNA (ribonucleic acid), is a remnant from infected people who release the viral particles through their bodily waste. RNA is what allows viral participles to reproduce and spread."
-    str3 <- "Working in partnership with the University of Minnesota Genomics Center (UMGC) scientists can quantify the viral RNA in samples using advanced analytical instruments. The amount of viral RNA they observe is a measure of the prevalence of COVID-19 in the plant’s service area and indicator of community spread."
-    str4 <- "The Council reports this information to the Minnesota Department of Health, the University of Minnesota Medical School and the national Wastewater Surveillance System. The Council also posts this information on its website weekly so it’s available to the public, media, and other health officials."
+    str1 <- "In the Twin Cities metro area, the Metropolitan Council’s Environmental Services (MCES) Division collects and treats wastewater. At the start of the COVID-19 pandemic in 2020, research staff at the Council’s Metro Plant in Saint Paul developed a new laboratory method for extracting SARS-CoV-2 RNA (ribonucleic acid) from untreated wastewater samples."
+    str2 <- "The viral RNA is present in all virus particles and is used by the virus to replicate itself inside human cells. Fragments of this RNA are present in the feces of people infected with COVID-19 and flushed into the community’s wastewater collection system."
+    str3 <- "Samples containing the viral RNA extracted from wastewater are analyzed by scientists at the University of Minnesota Genomics Center (UMGC) to quantify the viral RNA. The amount of viral RNA they observe is a measure of the prevalence of COVID-19 in the plant’s service area and an indicator of community spread."
+    str4 <- "The Council reports this information weekly to the Minnesota Department of Health and the Governor’s Office. The Council also posts this information on its website weekly so it’s available to the public, media, and other health officials."
     HTML(paste(str1, str2, str3, str4, sep = '<br/><br/>'))
   })
   
