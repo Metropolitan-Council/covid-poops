@@ -313,7 +313,7 @@ hr {
     color: var(--council-blue);
     cursor: default;
     background-color: var(--council-white);
-    border: 1px solid var(--council-white);
+    border: 1px solid var(--council-blue);
 }
 
 .nav-pills > li > a:active{
