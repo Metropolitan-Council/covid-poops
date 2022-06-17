@@ -324,6 +324,11 @@ hr {
 }
 
 
+.nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
+	color: var(--council-white);
+	background-color: var(--council-blue);
+}
+
 
 .row {
     margin-right: 0px;
