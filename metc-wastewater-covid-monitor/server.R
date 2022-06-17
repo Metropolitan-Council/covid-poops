@@ -493,7 +493,7 @@ server <- function(input, output) {
   output$faqAnswer3 <- renderUI({
     str1 <- "The Council reports the total amount of viral RNA, or viral load, flowing into the Metro Plant in Saint Paul. This plant treats wastewater from 66 metro-area communities, serving nearly two million people. Because the Metro Plant is so large and serves so many people, it provides a good picture of COVID-19 infections and trends occurring throughout the region."
     str2 <- "The Council also collects data on the virus at three of its other wastewater regional treatment plants. These data, too, are shared with public health authorities to inform their decision-making."
-    HTML(paste(paste(str1, str2, sep = '<br/><br/>'), '<br/>', '<img  src = "sampling-area.png", height = "400px", alt = "Covid Wastewater Sampling Area" />'))
+    HTML(paste(paste(str1, str2, sep = '<br/><br/>'), '<br/>'))
   })
   
   output$faqAnswer4 <- renderUI({
