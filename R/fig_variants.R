@@ -16,23 +16,25 @@ font_add("Arial Narrow Italic",
 
 showtext_auto()
 
-variant_data_date <- read_csv("data/clean_variant_data.csv", show_col_types = F)
+variant_data_date <- read_csv("data/clean_variant_data.csv", show_col_types = F) 
+
 ## LARGE -----
 
 varplot <-
   variant_data_date %>%
-  filter(!variant == "Other") %>%
+  filter(!variant %in% c("Other", "Omicron BA.4 and BA.5")) %>%
   filter(date >= "2021-06-01") %>%
+  
   ggplot(aes(x = date, y = frequency, color = variant, fill = variant)) +
   geom_line(aes(x = date, y = frequency_7day, color = variant), size = 0.8) +
   geom_area(position = "identity", aes(x = date, y = frequency_7day, group = variant, fill = variant, color = variant), alpha = 0.25, na.rm = T, lty = "blank") +
   geom_point() +
   scale_color_manual(
-    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#000080"),
+    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#A9A3FE", "#3D9F93", "#000080"),
     name = "Variant "
   ) +
   scale_fill_manual(
-    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#000080"),
+    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#A9A3FE", "#3D9F93", "#000080"),
     name = "Variant "
   ) +
   scale_y_continuous(name = "Variant frequency (%)", labels = scales::percent, limits = c(0, 1.05)) +
@@ -85,7 +87,7 @@ ggsave("fig/variants_static_graph_large.png",
 
 variant_data_date %>%
   filter(
-    !variant == "Other",
+    !variant %in% c("Other", "Omicron BA.4 and BA.5"),
     date >= "2021-06-01"
   ) %>%
   ggplot(aes(x = date, y = frequency, color = variant, fill = variant)) +
@@ -105,11 +107,11 @@ variant_data_date %>%
   ) +
   geom_point(size = 1) +
   scale_color_manual(
-    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#000080"),
+    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#A9A3FE", "#3D9F93", "#000080"),
     name = "Variant "
   ) +
   scale_fill_manual(
-    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#000080"),
+    values = c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#A9A3FE", "#3D9F93", "#000080"),
     name = "Variant "
   ) +
   scale_y_continuous(
