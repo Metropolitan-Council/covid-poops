@@ -252,6 +252,12 @@ variant_data_date <-
       # Only use l452r for delta until 4/25/22
       variant == "Delta" &
         date > "2022-04-25", NA, frequency_7day
+    )) %>%
+  mutate(
+    frequency_7day = ifelse(
+      # Total BA.4 and BA.5 only until data that separates the two out is available.
+      variant == "Omicron BA.4 and BA.5" &
+        date > "2022-05-31", NA, frequency_7day
     )
   )
 
