@@ -22,8 +22,8 @@ copies_by_variant <- read.csv("data/copies_by_variant.csv") %>%
 ## LARGE -----
 load_varplot <-
   copies_by_variant %>%
-  filter(date >= "2021-01-01" & !variant == "Other") %>%
-  mutate(variant = factor(variant, levels = c("Other", "Alpha, Beta & Gamma", "Delta", "Omicron BA.1", "Omicron BA.2 (Excluding BA.2.12.1)", "Omicron BA.2.12.1", "Omicron BA.4 and BA.5"))) %>% # Turn this on when start detecting BA.2.12.1
+  filter(date >= "2021-01-01" & !variant %in% c("Other", "Omicron BA.4 and BA.5")) %>%
+  mutate(variant = factor(variant, levels = c("Other", "Alpha, Beta & Gamma", "Delta", "Omicron BA.1", "Omicron BA.2 (Excluding BA.2.12.1)", "Omicron BA.2.12.1", "Omicron BA.4", "Omicron BA.5"))) %>% 
   ggplot(aes(x = date, y = copies)) +
 
   # gray background area - total
@@ -32,12 +32,12 @@ load_varplot <-
   geom_area(position = "identity", aes(x = date, y = copies_7day, group = variant, fill = variant, color = variant), alpha = 0.5, na.rm = T, lty = "blank") +
   geom_point(aes(color = variant, fill = variant)) +
   scale_color_manual(
-    values = c("gray50", "#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#000080"),
+    values = c("gray50", "#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#A9A3FE", "#3D9F93", "#000080"),
     # name = "Variant ",
     drop = F
   ) +
   scale_fill_manual(
-    values = c("gray50", "#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#000080"),
+    values = c("gray50", "#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#A9A3FE", "#3D9F93", "#000080"),
     # name = "Variant ",
     drop = F
   ) +
@@ -93,10 +93,10 @@ ggsave("fig/copies_by_variant_large.png",
 
 load_varplot_ig <-
   copies_by_variant %>%
-  filter(date >= "2021-01-01" & !variant == "Other") %>%
+  filter(date >= "2021-01-01" & !variant %in% c("Other", "Omicron BA.4 and BA.5")) %>%
   mutate(variant = factor(variant, levels = c(
     "Other", "Alpha, Beta & Gamma",
-    "Delta", "Omicron BA.1", "Omicron BA.2 (Excluding BA.2.12.1)", "Omicron BA.2.12.1", "Omicron BA.4 and BA.5"
+    "Delta", "Omicron BA.1", "Omicron BA.2 (Excluding BA.2.12.1)", "Omicron BA.2.12.1", "Omicron BA.4", "Omicron BA.5"
   ))) %>%
   ggplot(aes(x = date, y = copies)) +
 
@@ -119,12 +119,12 @@ load_varplot_ig <-
   ) +
   geom_point(aes(color = variant, fill = variant), alpha = 0.5, lwd = 0.5) +
   scale_color_manual(
-    values = c("gray50", "#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#000080"),
+    values = c("gray50", "#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#A9A3FE", "#3D9F93", "#000080"),
     # name = "Variant ",
     drop = F
   ) +
   scale_fill_manual(
-    values = c("gray50", "#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#000080"),
+    values = c("gray50", "#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#A9A3FE", "#3D9F93", "#000080"),
     # name = "Variant ",
     drop = F
   ) +

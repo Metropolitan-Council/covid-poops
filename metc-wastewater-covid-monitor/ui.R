@@ -40,7 +40,7 @@ fluidPage(
             "COVID-19 Prevalence",
             HTML("<h6><section style='font-size:14pt'>This graph shows the amount of SARS-CoV-2 viral RNA detected in Metro Plant wastewater influent (blue line) and the number of COVID-19 cases in the seven-county area (gray line).</h3>"
             ),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: June 13, 2022.</h3>"
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: June 20, 2022.</h3>"
             ),
             plotlyOutput("loadPlot", height = "auto")
           ),
@@ -49,7 +49,7 @@ fluidPage(
             "Variant Prevalence",
             HTML("<h6><section style='font-size:14pt'>This graph shows the estimated amount of SARS-CoV-2 viral RNA by COVID-19 variant, sub-variant and lineage. The total amount of SARS-CoV-2 viral RNA in Metro Plant wastewater influent is shown in the background in gray.</h3>"
             ),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: June 13, 2022.</h3>"
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: June 20, 2022.</h3>"
             ),
             plotlyOutput("variantLoadPlot", height = "auto")
           ),
@@ -58,24 +58,26 @@ fluidPage(
             "Variant Frequencies (%)",
             HTML("<h6><section style='font-size:14pt'>This graph shows the estimated percent of SARS-CoV-2 viral RNA contributed by COVID-19 variant, sub-variant and lineage.</h3>"
             ),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: June 13, 2022.</h3>"
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: June 20, 2022.</h3>"
             ),
             plotlyOutput("variantFreqPlot", height = "auto")
           ),
           tabPanel(
             "This Week's Summary",
-            h6("June 17, 2022"),
+            h6("June 24, 2022"),
             p(
-              "The most recent data update includes samples taken June 7 - June 13, 2022. During this sampling period:"
+              "The most recent data update includes samples taken June 14 - June 20, 2022. During this sampling period:"
             ),
             tags$ul(
-              tags$li("The viral RNA load in Metro Plant influent decreased by 12% last week compared to the previous week"
+              tags$li("The viral RNA load in Metro Plant influent increased by 13% last week compared to the previous week"
               ),
-              tags$li("Omicron subvariant BA.2 made up 58% of the SARS-CoV-2 RNA in Metro Plant influent, down from 68% the week earlier.  Essentially all of the BA.2 in Metro Plant influent is now made up of sub-lineage BA.2.12.1"
+              tags$li("Omicron subvariant BA.2.12.1 made up 43% of the SARS-CoV-2 RNA in Metro Plant influent, down from 58% the week earlier"
               ),
-              tags$li("Omicron subvariants BA.4 (17%) and BA.5 (25%) together made up 42% of the SARS-CoV-2 RNA in Metro Plant influent, up from 32% a week earlier"
+              tags$li("Omicron subvariant BA.5 constituted 36% of the viral RNA entering Metro, up from 25% a week ago"
               ),
-              tags$li("BA.5 will likely replace BA.2.12.1 as the dominant variant in Metro Plant wastewater in the coming weeks"
+              tags$li("Omicron subvariants BA.4 (18%) and BA.5 (36%) together made up 55% of the SARS-CoV-2 RNA in Metro Plant influent, up from 42% a week earlier"
+              ),
+              tags$li("BA.5 will likely replace BA.2.12.1 as the dominant variant in Metro Plant wastewater in the coming week"
               )
             )
           )
@@ -146,7 +148,7 @@ fluidPage(
       ),
       tags$br(),
       "App last updated ",
-      "2022-06-17",
+      "2022-06-24",
       # using gh::gh() causes SAML error in production
       # gh::gh("GET /repos/Metropolitan-Council/covid-poops")[49][[1]] %>% as.Date(),
       style = "font-size: 1.5rem;
