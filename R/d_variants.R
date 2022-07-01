@@ -59,7 +59,9 @@ variant_split <-
     raw_variant_data %>%
       select(date, contains("l452r")) %>%
       mutate(mutation = "l452r") %>%
-      rename_all(~ gsub("l452r_", "", .)),
+      rename_all(~ gsub("l452r_", "", .)) %>%
+      # mysteriously, this column is reading in as character 
+      mutate(frequency_of_mutant_allele = as.numeric(frequency_of_mutant_allele)),
     raw_variant_data %>%
       select(date, contains("k417n")) %>%
       mutate(mutation = "k417n") %>%

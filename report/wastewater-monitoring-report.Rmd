@@ -1,7 +1,7 @@
 ---
 title: "Metro Wastewater COVID-19 Monitoring"
 author: "Metropolitan Council"
-date: "June 24, 2022"
+date: "July 1, 2022"
 output:
   html_document:
     css: ["www/rmd-report-style.css", "www/colors.css", "www/font.css"]
@@ -249,7 +249,7 @@ The blue line and points show the total amount of SARS-CoV-2 viral RNA in wastew
 ```
 \newpage
 ## COVID-19 Variants
-The dominance of various SARS-CoV-2 variants in wastewater entering the Metro Plant in Saint Paul has ebbed and flowed over time. Omicron BA.1 replaced Delta as the dominant variant in late December 2021. In February 2022, we observed the appearance and increase of Omicron BA.2. In April, sub-lineage BA.2.12.1 increased in prevalence, becoming the dominant variant by mid-May. Since then, subvariants BA.4 and BA.5 have increased rapidly, and BA.5 will soon overtake BA.2.12.1 as the dominant SARS-CoV-2 variant in Metro Plant influent wastewater.
+The dominance of various SARS-CoV-2 variants in wastewater entering the Metro Plant in Saint Paul has ebbed and flowed over time. Omicron BA.1 replaced Delta as the dominant variant in late December 2021. In February 2022, we observed the appearance and increase of Omicron BA.2. In April, sub-lineage BA.2.12.1 increased in prevalence, becoming the dominant variant by mid-May. Since then, subvariant BA.5 has increased rapidly and overtaken BA.2.12.1 as the dominant SARS-CoV-2 variant in Metro Plant influent wastewater.
 
 ###### How to read this graph:
 This graph shows the frequency of SARS-CoV-2 variants in Metro Plant wastewater. This frequency is the percentage of the total viral RNA that was identified as being from each particular variant.  Points are daily data; lines and shaded areas are averages of the previous 7 days.
@@ -352,7 +352,7 @@ div(variant_plot, align = "center")
 \newpage
 ## COVID-19 Load by Variant
 #### Another way of looking at the variant data
-This plot shows the total amount (“load”) of each variant entering the Metro Plant, over time.  BA.5 is increasing rapidly and will soon overtake BA.2.12.1 as the dominant variant.
+This plot shows the total amount (“load”) of each variant entering the Metro Plant, over time.  Recently, BA.5 has increased rapidly and overtaken BA.2.12.1 as the dominant variant.
 
 ###### How to read this graph:
 This graph shows the measured number of copies per person per day of each variant in wastewater. Points are daily data; lines and shaded areas are averages of the previous 7 days. The gray area in the background is the 7-day average total viral load. Variant proportions do not always add to 100%, so slight discrepancies between the total viral load and that of the individual variants are expected.
