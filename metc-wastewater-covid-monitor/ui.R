@@ -2,6 +2,13 @@
 
 
 fluidPage(
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "style.css"),
+    tags$link(rel = "stylesheet", type = "text/css", href = "font.css"),
+    tags$link(rel = "stylesheet", type = "text/css", href = "colors.css"),
+    includeHTML("www/google-analytics.html"),
+    tags$html(lang = "en")),
+  
   navbarPage(
     
     fluid = TRUE,
@@ -21,12 +28,6 @@ fluidPage(
       ".sidebar {max-width: 100px;}"
     ),
     
-    tags$head(
-      tags$link(rel = "stylesheet", type = "text/css", href = "style.css"),
-      tags$link(rel = "stylesheet", type = "text/css", href = "font.css"),
-      tags$link(rel = "stylesheet", type = "text/css", href = "colors.css"),
-      includeHTML("www/google-analytics.html"),
-      tags$html(lang = "en")),
     
     tabPanel(
       "COVID-19 Trends",
