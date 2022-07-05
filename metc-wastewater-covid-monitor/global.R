@@ -9,7 +9,7 @@ library(plotly)
 library(councilR)
 library(DT)
 library(gh)
-#library(shinyBS)
+library(shinyBS)
 
 
 # if you get error message
@@ -34,20 +34,22 @@ load_data <- read.csv("data/clean_load_data.csv") %>%
 
 variant_data <- read.csv("data/clean_variant_data.csv") %>%
   mutate(date = as.Date(date)) %>%
-  mutate(across(where(is.numeric), round, digits = 2))
+  mutate(across(where(is.numeric), round, digits = 2)) %>%
+  filter( !variant %in% c("Omicron BA.4 and BA.5"))
 
 copies_by_variant <- read.csv("data/copies_by_variant.csv") %>%
   mutate(date = as.Date(date)) %>%
-  mutate(across(where(is.numeric), round, digits = 2))
+  mutate(across(where(is.numeric), round, digits = 2)) %>%
+  filter( !variant %in% c("Omicron BA.4 and BA.5"))
 
 font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
 
 whiteSmoke <- "#F5F5F5"
 
-pal <- c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#092D4E", "#666666")
+pal <- c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#A9A3FE", "#3D9F93", "#666666")
 pal <- setNames(pal, c(
   "Alpha, Beta & Gamma", "Delta",
-  "Omicron BA.1", "Omicron BA.2 (Excluding BA.2.12.1)", "Omicron BA.2.12.1", "Omicron BA.4 and BA.5", "Total load"
+  "Omicron BA.1", "Omicron BA.2 (Excluding BA.2.12.1)", "Omicron BA.2.12.1", "Omicron BA.4", "Omicron BA.5", "Total load"
 ))
 
 ann_list <- list(

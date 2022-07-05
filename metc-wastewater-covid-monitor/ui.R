@@ -2,6 +2,13 @@
 
 
 fluidPage(
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "style.css"),
+    tags$link(rel = "stylesheet", type = "text/css", href = "font.css"),
+    tags$link(rel = "stylesheet", type = "text/css", href = "colors.css"),
+    includeHTML("www/google-analytics.html"),
+    tags$html(lang = "en")),
+  
   navbarPage(
     
     fluid = TRUE,
@@ -21,12 +28,6 @@ fluidPage(
       ".sidebar {max-width: 100px;}"
     ),
     
-    tags$head(
-      tags$link(rel = "stylesheet", type = "text/css", href = "style.css"),
-      tags$link(rel = "stylesheet", type = "text/css", href = "font.css"),
-      tags$link(rel = "stylesheet", type = "text/css", href = "colors.css"),
-      includeHTML("www/google-analytics.html"),
-      tags$html(lang = "en")),
     
     tabPanel(
       "COVID-19 Trends",
@@ -40,7 +41,7 @@ fluidPage(
             "COVID-19 Prevalence",
             HTML("<h6><section style='font-size:14pt'>This graph shows the amount of SARS-CoV-2 viral RNA detected in Metro Plant wastewater influent (blue line) and the number of COVID-19 cases in the seven-county area (gray line).</h3>"
             ),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: June 6, 2022.</h3>"
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: June 27, 2022.</h3>"
             ),
             plotlyOutput("loadPlot", height = "auto")
           ),
@@ -49,7 +50,7 @@ fluidPage(
             "Variant Prevalence",
             HTML("<h6><section style='font-size:14pt'>This graph shows the estimated amount of SARS-CoV-2 viral RNA by COVID-19 variant, sub-variant and lineage. The total amount of SARS-CoV-2 viral RNA in Metro Plant wastewater influent is shown in the background in gray.</h3>"
             ),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: June 6, 2022.</h3>"
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: June 27, 2022.</h3>"
             ),
             plotlyOutput("variantLoadPlot", height = "auto")
           ),
@@ -58,24 +59,26 @@ fluidPage(
             "Variant Frequencies (%)",
             HTML("<h6><section style='font-size:14pt'>This graph shows the estimated percent of SARS-CoV-2 viral RNA contributed by COVID-19 variant, sub-variant and lineage.</h3>"
             ),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: June 6, 2022.</h3>"
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: June 27, 2022.</h3>"
             ),
             plotlyOutput("variantFreqPlot", height = "auto")
           ),
           tabPanel(
             "This Week's Summary",
-            h6("June 10, 2022"),
+            h6("July 1, 2022"),
             p(
-              "The most recent data update includes samples taken May 31- June 6, 2022. During this sampling period:"
+              "The most recent data update includes samples taken June 21 - June 27, 2022. During this sampling period:"
             ),
             tags$ul(
-              tags$li("The viral RNA load in Metro Plant influent decreased by 16% compared to the previous week"
+              tags$li("The viral RNA load in Metro Plant influent increased by 3% last week compared to the previous week"
               ),
-              tags$li("Omicron subvariant BA.2 made up 68% of the SARS-CoV-2 RNA in Metro Plant influent, down from 76% the week earlier"
+              tags$li("Omicron subvariant BA.5 is now the dominant variant in Metro Plant wastewater"
               ),
-              tags$li("Essentially all of the BA.2 in Metro Plant influent is now made up of sub-lineage BA.2.12.1"
+              tags$li("BA.5 constituted 43% of the viral RNA entering Metro, up from 36% a week ago"
               ),
-              tags$li("Omicron subvariants BA.4 and BA.5 together made up 32% of the SARS-CoV-2 RNA in Metro Plant influent, up from 23% a week earlier"
+              tags$li("Omicron subvariants BA.4 (19%) and BA.5 (43%) together made up 62% of the SARS-CoV-2 RNA in Metro Plant influent, up from 55% a week earlier"
+              ),
+              tags$li("Omicron subvariant BA.2.12.1 made up 34% of the SARS-CoV-2 RNA in Metro Plant influent, down from 43% the week earlier"
               )
             )
           )
@@ -109,14 +112,34 @@ fluidPage(
       # p("Data updated ... Data source ... "),
       # DTOutput("caseData")
     ),
-    # tabPanel(
-    #   "FAQ",
-    #   br(),
-    #   bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold;'>What can wastewater tell us about COVID-19 infections?</h3>"), 
-    #                   htmlOutput("faqAnswer1")),
-    #   bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold;'>Who monitors the presence of the virus in wastewater?</h3>"), 
-    #                   htmlOutput("faqAnswer2"))
-    #  ),
+    tabPanel(
+      "FAQ",
+      br(),
+      bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold; letter-spacing: 0rem;;'>What can wastewater tell us about COVID-19 infections?</h3>"),
+                      htmlOutput("faqAnswer1")),
+      bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold; letter-spacing: 0rem;;'>Who monitors the presence of the virus in wastewater?</h3>"),
+                      htmlOutput("faqAnswer2")),
+      bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold; letter-spacing: 0rem;;'>Does wastewater sampling for SARS-CoV-2 cover the entire metro area?</h3>"),
+                      htmlOutput("faqAnswer3"),
+                      br(),
+                      img(src = "sampling-area.PNG",
+                          height = "400px", alt = "Covid Wastewater Sampling Area")
+      ),
+      bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold; letter-spacing: 0rem;;'>Do wastewater treatment plants release the virus into the environment along with treated wastewater?</h3>"),
+                      htmlOutput("faqAnswer4")),
+      bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold; letter-spacing: 0rem;;'>Can I get COVID-19 from wastewater/sewage?</h3>"),
+                      htmlOutput("faqAnswer5")),
+      bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold; letter-spacing: 0rem;'>What is meant by virus “variants” and “subvariants?”</h3>"),
+                      htmlOutput("faqAnswer6")),
+      bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold; letter-spacing: 0rem;;'>How often does the Council update data on the prevalence of the virus?</h3>"),
+                      htmlOutput("faqAnswer7")),
+      bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold; letter-spacing: 0rem;;'>Are more frequent data updates available?</h3>"),
+                      htmlOutput("faqAnswer8")),
+      bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold; letter-spacing: 0rem;;'>Can wastewater sampling and testing track other infectious diseases?</h3>"),
+                      htmlOutput("faqAnswer9")),
+      bsCollapsePanel(HTML("<h3><section style='font-size:14pt; font-weight: bold; letter-spacing: 0rem;;'>Does the Council provide health-related guidance for COVID-19?</h3>"),
+                      htmlOutput("faqAnswer10"))
+    ),
     footer = tags$div(
       "This project is open-source. See our GitHub repository here",
       tags$a(
@@ -126,7 +149,7 @@ fluidPage(
       ),
       tags$br(),
       "App last updated ",
-      "2022-06-10",
+      "2022-07-01",
       # using gh::gh() causes SAML error in production
       # gh::gh("GET /repos/Metropolitan-Council/covid-poops")[49][[1]] %>% as.Date(),
       style = "font-size: 1.5rem;
