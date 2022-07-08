@@ -70,15 +70,13 @@ fluidPage(
               "The most recent data update includes samples taken June 28 - July 4, 2022. During this sampling period:"
             ),
             tags$ul(
-              tags$li("Omicron subvariant BA.5 is the dominant variant in Metro Plant wastewater, and the BA.5 load entering the plant increased by 32% last week, compared to the previous week"
+              tags$li("The total viral RNA load entering the Metro Plant decreased by 11% last week compared to a week earlier"
               ),
-              tags$li("The BA.5 load is currently doubling every 16 days"
+              tags$li("Omicron subvariant BA.5 is now the dominant variant in Metro Plant wastewater; it is in the process of replacing BA.2.12.1"
               ),
-              tags$li("The total viral RNA load in Metro Plant influent decreased by 11% last week"
+              tags$li("The BA.5 load entering the plant increased by 32% last week compared to the previous week"
               ),
               tags$li("BA.5 constituted 62% of the viral RNA entering Metro, up from 43% a week ago"
-              ),
-              tags$li("Omicron subvariants BA.4 (18%) and BA.5 (62%) together made up 80% of the SARS-CoV-2 RNA in Metro Plant influent, up from 62% a week earlier"
               ),
               tags$li("Omicron subvariant BA.2.12.1 made up 19% of the SARS-CoV-2 RNA in Metro Plant influent, down from 34% the week earlier"
               )
