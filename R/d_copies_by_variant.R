@@ -28,7 +28,7 @@ copies_by_variant <-
       7,
       align = "right",
       mean,
-      na.rm = T,
+      na.rm = F,
       partial = T,
       fill = "extend"
     )
