@@ -39,7 +39,7 @@ fluidPage(
           type = "pills",
           tabPanel(
             "COVID-19 Prevalence",
-            HTML("<h6><section style='font-size:14pt'>This graph shows the amount of SARS-CoV-2 viral RNA detected in Metro Plant wastewater influent (blue line) and the number of COVID-19 cases in the seven-county area (gray line).</h3>"
+            HTML("<h6><section style='font-size:14pt'>This graph shows the amount of SARS-CoV-2 viral RNA detected in Metro Plant wastewater influent (blue line) and the number of COVID-19 cases in Metro Plant Zip Code Service Area (gray line).  The shaded grey bar at the end indicates a lag period where case data may be incomplete.  All case data are preliminary and may change as more information is received.</h3>"
             ),
             HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: July 4, 2022.</h3>"
             ),
