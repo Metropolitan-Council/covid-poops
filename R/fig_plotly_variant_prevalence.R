@@ -116,9 +116,9 @@ date_anno2 <- list(
   xshift = 0, yshift = -25
 )
 
-# browser()
-loadxvariantplot <-
-  plot_ly(height = 500, width = 900) %>%
+
+variant_load_plot <- function(w, h) {
+  plot_ly(height = h, width = w) %>%
   # total load:
   add_trace(
     data = load_data,
@@ -168,10 +168,10 @@ loadxvariantplot <-
     hoverdistance = "10",
     hoverlabel = hov_lab_list,
     margin = list(
-      l = 50,
-      r = 100,
-      b = 115,
-      t = 50,
+      l = 20,
+      r = 20,
+      b = 20,
+      t = 20,
       pad = 10
     ),
     xaxis = list(
@@ -184,8 +184,8 @@ loadxvariantplot <-
           color = councilR::colors$suppBlack
         )
       ),
-      zerolinewidth = 2,
-      zeroline = TRUE,
+      zerolinewidth = 0,
+      zeroline = FALSE,
       showline = FALSE,
       showgrid = FALSE,
       tickfont = list(
@@ -211,8 +211,8 @@ loadxvariantplot <-
       ),
       rangemode = "nonnegative",
       gridcolor = "gray90",
-      zerolinecolor = "gray50",
-      zerolinewidth = 2
+      zerolinecolor = "gray90",
+      zerolinewidth = 0
     ),
     legend = list(
       orientation = "h",
@@ -226,3 +226,8 @@ loadxvariantplot <-
     )
   ) %>%
   config(displayModeBar = FALSE)
+}
+
+
+variant_load_plot(670, 410)
+variant_load_plot(710, 438)

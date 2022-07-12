@@ -145,10 +145,10 @@ date_anno <- list(
   xshift = 0, yshift = -25
 )
 
-load_plot <-
+load_plot_710 <-
   load_data %>%
   # left_join(case_data, by = "date") %>%
-  plot_ly(type = "scatter", mode = "lines", height = 500, width = 900) %>%
+  plot_ly(type = "scatter", mode = "lines", height = 438, width = 710) %>%
   add_trace(
     mode = "markers",
     x = ~date,
@@ -249,4 +249,118 @@ load_plot <-
     )
   ) %>%
   config(displayModeBar = F) 
+load_plot_710
 
+
+load_data_plot <- function(w, h) {
+    load_data %>%
+    # left_join(case_data, by = "date") %>%
+    plot_ly(type = "scatter", mode = "lines", height = h, width = w) %>%
+    add_trace(
+      mode = "markers",
+      x = ~date,
+      y = ~copies_day_person_M_mn,
+      name = "Viral load, Metro Plant service area",
+      size = 1,
+      yaxis = "y2",
+      marker = list(
+        color = "rgba(0, 84, 164, .5)",
+        size = 8,
+        line = list(
+          color = colors$councilBlue,
+          width = 0.5
+        )
+      ),
+      # fillcolor = ,
+      # line = list(width = 2, color = colors$esBlue),
+      hoverinfo = "text",
+      text = ~hover_text_load
+    ) %>%
+    add_trace(
+      mode = "lines",
+      x = ~date,
+      y = ~copies_day_person_7day,
+      name = "7-day avg. viral load",
+      size = 1,
+      yaxis = "y2",
+      # fill = "tozeroy",
+      # fillcolor = "rgba(0, 154, 199, .5)",
+      line = list(width = 2, color = colors$councilBlue),
+      hoverinfo = "text",
+      text = ~hover_text_load_7day
+    ) %>%
+    add_trace(
+      x = ~date,
+      y = ~covid_cases_7day,
+      name = "7-day avg. cases per capita, 7-county metro area",
+      fill = "tozeroy",
+      fillcolor = "rgba(160, 160, 160, .3)",
+      line = list(width = 0.5, color = colors$suppGray),
+      hoverinfo = "text",
+      text = ~hover_text_case
+    ) %>%
+    layout(
+      annotations = list(left_axis_title, right_axis_title, date_anno),
+      autosize = T,
+      showlegend = TRUE,
+      margin = list(l = 50, 
+                    r = 10, 
+                    b = 10,
+                    t = 20,
+                    pad = 10),
+      hovermode = "closest",
+      hoverdistance = "10",
+      hoverlabel = hov_lab_list,
+      yaxis2 = left_axis_text,
+      xaxis = list(
+        range = ~ c(min(date)-1, max(date)),
+        title = list(
+          standoff = 25,
+          font = list(
+            size = 14,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          )
+        ),
+        zerolinewidth = 2,
+        gridcolor = colors$suppWhite,
+        zerolinecolor = colors$suppWhite,
+        tickfont = list(
+          size = 12,
+          family = font_family_list,
+          color = councilR::colors$suppBlack
+        )
+      ),
+      yaxis = list(
+        side = "right",
+        title = list(
+          standoff = 25,
+          font = list(
+            size = 16,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          )
+        ),
+        zerolinewidth = 1,
+        tickfont = list(
+          size = 14,
+          family = font_family_list,
+          color = councilR::colors$suppBlack
+        ),
+        gridcolor = colors$suppWhite,
+        zerolinecolor = colors$suppWhite
+      ),
+      legend = list(
+        orientation = "h",
+        font = list(
+          size = 12,
+          family = font_family_list,
+          color = councilR::colors$suppBlack
+        )
+      )
+    ) %>%
+    config(displayModeBar = F) 
+}
+
+load_data_plot(670, 410)
+load_data_plot(710, 438)
