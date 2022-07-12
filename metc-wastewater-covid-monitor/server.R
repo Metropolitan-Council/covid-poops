@@ -83,14 +83,24 @@ server <- function(input, output) {
           text = ~hover_text_load_7day
         ) %>%
         add_trace(
-          x = ~date,
-          y = ~covid_cases_7day,
-          name = "7-day avg. cases per capita, 7-county metro area",
+          x = ~slice(load_data, 1:(n()-7))$date,
+          y = ~slice(load_data, 1:(n()-7))$covid_cases_7day,
+          name = "7-day avg. cases per capita, Metro Service Area",
           fill = "tozeroy",
           fillcolor = "rgba(160, 160, 160, .3)",
           line = list(width = 0.5, color = colors$suppGray),
           hoverinfo = "text",
-          text = ~hover_text_case
+          text = ~slice(load_data, 1:(n()-7))$hover_text_case
+        ) %>%
+        add_trace(
+          x = ~slice(load_data, (n() - 6):n())$date,
+          y = ~slice(load_data, (n() - 6):n())$covid_cases_7day,
+          name = "7-day avg. cases per capita, Metro Service Area, Incomplete",
+          fill = "tozeroy",
+          fillcolor = "rgba(160, 160, 160, .8)",
+          line = list(width = 0.5, color = colors$suppGray),
+          hoverinfo = "text",
+          text = ~slice(load_data, (n() - 6):n())$hover_text_case
         ) %>%
         layout(
           annotations = list(left_axis_title, right_axis_title),
@@ -390,7 +400,7 @@ server <- function(input, output) {
       left_join(case_data,
         by = c(
           "date",
-          "covid_cases_total",
+         # "covid_cases_total",
           "covid_cases_new",
           "covid_cases_per100K",
           "covid_cases_7day",
@@ -415,16 +425,16 @@ server <- function(input, output) {
           "Viral load in wastewater, M copies/person/day",
           "Standard error of viral load",
           "7-day rolling average viral load",
-          "Total COVID cases",
+         # "Total COVID cases",
           "New COVID cases",
           "COVID cases per capita",
           "7-day rolling average COVID cases per capita"
         )
       ) %>%
-      DT::formatSignif(columns = 2:8, digits = 2) %>%
+      DT::formatSignif(columns = 2:7, digits = 2) %>%
       DT::formatRound(2:4, 2) %>%
       # round case rates to nearest digit:
-      DT::formatRound(5:8, 0)
+      DT::formatRound(5:7, 0)
   })
 
 
