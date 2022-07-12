@@ -32,8 +32,9 @@ case_data <- raw_case_data %>%
                  format(date, "%b %d, %Y"), "<br>",
                  "<b>", round(covid_cases_7day, 2), "</b> cases per 100,000 people"
                )) %>%
-               select ( date, covid_cases_new, covid_cases_per100K, covid_cases_7day, hover_text_case) %>%
-               slice ( 1:(n() - 7))
+               select ( date, covid_cases_new, covid_cases_per100K, covid_cases_7day, hover_text_case) 
+              # %>%
+              # slice ( 1:(n() - 7))
 
 
 
