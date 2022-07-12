@@ -24,15 +24,22 @@ copies_by_variant <-
   mutate(`Other` = copies_day_person_M_mn -
     sum(
       c(
-        `Alpha, Beta & Gamma`, Delta, `Omicron BA.1`,
-        `Omicron BA.2 (Excluding BA.2.12.1)`, `Omicron BA.2.12.1`, `Omicron BA.4 and BA.5`, `Omicron BA.4`, `Omicron BA.5`
+        `Alpha, Beta & Gamma`, 
+        Delta, 
+        `Omicron BA.1`,
+        `Omicron BA.2 (Excluding BA.2.12.1)`, 
+        `Omicron BA.2.12.1`, 
+        `Omicron BA.4 and BA.5`, 
+        `Omicron BA.4`, 
+        `Omicron BA.5`
       ),
       na.rm = T
     )) %>%
   # pivot back to long format:
   pivot_longer(
     cols = c(
-      `Alpha, Beta & Gamma`, Delta, `Omicron BA.1`,
+      `Alpha, Beta & Gamma`, 
+      Delta, `Omicron BA.1`,
       `Omicron BA.2 (Excluding BA.2.12.1)`, `Omicron BA.2.12.1`, `Omicron BA.4 and BA.5`, `Omicron BA.4`, `Omicron BA.5`,
       Other
     ),
