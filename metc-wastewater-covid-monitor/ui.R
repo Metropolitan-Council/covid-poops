@@ -39,7 +39,7 @@ fluidPage(
           type = "pills",
           tabPanel(
             "COVID-19 Prevalence",
-            HTML("<h6><section style='font-size:14pt'>This graph shows the amount of SARS-CoV-2 viral RNA detected in Metro Plant wastewater influent (blue line) and the number of COVID-19 cases in Metro Plant Zip Code Service Area (gray line).  The shaded grey bar at the end indicates a lag period where case data may be incomplete.  All case data are preliminary and may change as more information is received.</h3>"
+            HTML("<h6><section style='font-size:14pt'>This graph shows the amount of SARS-CoV-2 viral RNA detected in Metro Plant wastewater influent (blue line) and the number of COVID-19 cases in the Metro Plant's service area estimated from sample collection date zip-code case data provided by the Minnesota Department of Health (gray line).  The shaded grey bar at the end indicates a lag period where case data may be incomplete.  All case data are preliminary and may change as more information is received.</h3>"
             ),
             HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: July 4, 2022.</h3>"
             ),
@@ -79,6 +79,8 @@ fluidPage(
               tags$li("BA.5 constituted 62% of the viral RNA entering Metro, up from 43% a week ago"
               ),
               tags$li("Omicron subvariant BA.2.12.1 made up 19% of the SARS-CoV-2 RNA in Metro Plant influent, down from 34% the week earlier"
+              ),
+              tags$li("The source of case data switched this week from the seven-county Metro area case data by reported date from USAFacts to the Metro Plant's service area case data estimated from sample collection date zip-code case data provided by the Minnesota Department of Health.  This switch was made due to changes in case data reporting by MDH."
               )
             )
           )
