@@ -42,11 +42,10 @@ copies_by_variant <-
     "<b>",
     variant,
     "</b> ",
-    round(copies, digits = 2),
+    round(copies_variant, digits = 2),
     "M copies"
   )) %>%
   mutate(across(where(is.numeric), round, digits = 6)) %>%
-  filter(!is.na(copies)) %>%
   mutate(hover_text_variant_7day = paste0(
     format(date, "%b %d, %Y"),
     "<br>",
