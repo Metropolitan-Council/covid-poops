@@ -45,11 +45,10 @@ my_title <-  "COVID-19 Viral Load by Variant"
 my_subtitle <- "in Metro Plant wastewater influent, seven-day averages"
 
 my_caption <-  paste0(
-  "Viral load of each variant is estimated by multiplying the total viral load by the frequency of each variant. ",
-  "Because frequencies do not always add to 100%, a total of all variants may be slightly greater or less than total COVID-19 prevalance. ",
-  "Omicron BA.4 and BA.5 were not distinguished from one another using separate assays until 05-30-22. ",
-  "These variants are shown together before this point, and separately afterwards. ",
-  "Last sample date ",
+  "The viral load for each variant is estimated by multiplying the total viral load by the frequency of that variant. ",
+  "Because measured frequencies do not always add to 100%, the sum of all variant loads may be slightly greater or less than the total viral load. ",
+  "The loads of Omicron BA.4 and BA.5 are shown as the sum (BA.4+BA.5) before May 31, 2022, and separately afterwards. ",
+  "Last wastewater sample date ",
   max(copies_by_variant$date, na.rm = T),
   "."
 )
@@ -224,7 +223,7 @@ copies_variant_stacked_insta_90days <-
 
 
 ggsave(
-  "fig/copies_variant_stacked_insta_90days.png",
+  "fig/copies_by_variant_stacked_insta_90days.png",
   copies_variant_stacked_insta_90days,
   height = 1080,
   width = 1080,

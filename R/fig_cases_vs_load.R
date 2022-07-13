@@ -17,12 +17,15 @@ source('R/covid-plot-theme.R')
 # loads theme_council_covidplot_large, theme_council_covidplot_insta
 
 # Load data -----
+case_data <- read_csv("data/case_data.csv", show_col_types = F) %>%
+  mutate(incomplete_flag = ifelse(date > max(date)-7, "incomplete", "complete"))
+
 cases_load <- read_csv("data/clean_load_data.csv", show_col_types = F) %>%
-  left_join(read_csv("data/case_data.csv", show_col_types = F), by = "date") 
+  left_join(case_data, by = "date") 
 
 cases_load_90 <- 
   cases_load %>%
-  filter(date > max(date, na.rm = T)-90)
+  filter(date > max(date, na.rm = T)-90) 
 
 
 # Figure snippets ----
@@ -65,10 +68,12 @@ my_subtitle_insta <- paste0(
 
 ## Caption, all plots ----
 my_caption <- paste0(
-  "Seven-day averagzes (gray area, thicker blue line) are for the preceding 7 days of data. ",
-  "Narrower blue line represents daily wastewater load values. ",
-  "Source: MDH and USA Facts (case data); Metropolitan Council and U of M Genomics Center (wastewater data). ",
-  "Last sample date ",
+  "This graph shows the amount of SARS-CoV-2 viral RNA entering the Metro Plant each day (light blue line) ",
+  "and averaged over the preceding 7 days (bold blue line). ",
+  "The gray area shows the number of new daily COVID-19 cases in the Metro Plant's service area, by sample collection date averaged over the preceding 7 days. ",
+  "COVID-19 case data are from the Minnesota Department of Health. ",
+  "The most recent case data (darker gray) are incomplete and subject to change. ",
+  "Last wastewater sample date ",
   max(cases_load$date, na.rm = T),
   "."
 )
@@ -100,44 +105,38 @@ load_plot_base <-
     data %>%
       filter(date >= "2021-10-01") %>%
       ggplot(aes(x = date, y = copies_day_person_M_mn)) +
-      geom_ribbon(
+      geom_bar(
         aes(
-          ymin = 0,
-          ymax = covid_cases_7day / b,
-          linetype = "COVID-19 cases, 7-day average",
-          color = "COVID-19 cases, 7-day average"
+          y = covid_cases_7day / b,
+          color = incomplete_flag,
+          fill = incomplete_flag
         ),
-        fill = "#607894",
-        alpha = 0.3,
+        stat = "identity",
+        width = 1,
         na.rm = T
       ) +
       geom_line(
         aes(
-          y = copies_day_person_7day,
-          linetype = "Viral load, 7-day average",
-          color = "Viral load, 7-day average"
+          y = copies_day_person_M_mn
         ),
-        lwd = 0.4,
-        na.rm = T
+        alpha = 0.6,
+        lwd = 0.25,
+        na.rm = T,
+        color = colors$councilBlue
       ) +
       geom_line(
         aes(
-          y = copies_day_person_M_mn,
-          linetype = "Viral load, daily data",
-          color = "Viral load, daily data"
+          y = copies_day_person_7day
         ),
         alpha = 0.8,
-        lwd = 0.2,
-        na.rm = T
+        lwd = 0.5,
+        na.rm = T,
+        color = colors$councilBlue
       ) +
-      scale_linetype_manual(values = c("blank",
-                                       "solid",
-                                       "solid")) +
-      scale_color_manual(values = c("#607894",
-                                    colors$councilBlue,
-                                    colors$councilBlue)) +
+      scale_fill_manual(values = c("#C1CCD9", "#8A91AB")) +
+      scale_color_manual(values = c("#C1CCD9", "#8A91AB")) +
       guides(color = "none",
-             linetype = "none") +
+             fill = "none") +
       scale_y_continuous(
         name = my_yaxis_left,
         labels = scales::unit_format(unit = "M"),

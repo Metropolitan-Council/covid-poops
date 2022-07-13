@@ -65,7 +65,7 @@ variant_pal <- c("Alpha, Beta & Gamma" = "#84BB25",
                  "Omicron BA.4" = "#3D9F93", 
                  "Omicron BA.5" = "#000080")
 
-# Base plot
+# Base plot -----
 base_plot <- function(data, caption_width = 180, subtitle_width = 100){
   ggplot(
     data = data,
@@ -80,12 +80,12 @@ base_plot <- function(data, caption_width = 180, subtitle_width = 100){
       y = frequency_7day,
       color = variant
     ),
-    lwd = 0.4
+    lwd = 0.6
     ) +
     geom_line(
       data = data[!is.na("frequency"), ],
       aes(x = date, y = frequency, color = variant),
-      lwd = 0.15,
+      lwd = 0.3,
       na.rm = T,
       alpha = 0.5
     ) +
@@ -156,7 +156,7 @@ ggsave(
   units = "px"
 )
 
-# insta, last 90 days
+# insta, last 90 days -----
 cutoff90 <- max(variant_data_date$date) -90
 variant_data_date_90 = variant_data_date %>% 
   filter(!is.na(frequency_7day) & date >= cutoff90) %>%
