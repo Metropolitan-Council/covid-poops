@@ -40,13 +40,13 @@ copies_by_variant <-
   filter(date > "2021-04-01")
 
 # Plot Snippets -----
-my_title <-  "COVID-19 Viral Load by Variant"
+my_title <-  "Viral Load by Variant"
 
 my_subtitle <- "in Metro Plant wastewater influent, seven-day averages"
 
 my_caption <-  paste0(
-  "Viral load of each variant is estimated by multiplying the total viral load by the frequency of each variant. ",
-  "Because frequencies do not always add to 100%, a total of all variants may be slightly greater or less than total COVID-19 prevalance. ",
+  "Viral load of each variant is estimated by multiplying the total viral load by the prevalence of each variant. ",
+  "Because frequencies do not always add to 100%, a total of all variants may be slightly greater or less than the total viral load. ",
   "Omicron BA.4 and BA.5 were not distinguished from one another using separate assays until 05-30-22. ",
   "These variants are shown together before this point, and separately afterwards. ",
   "Last sample date ",

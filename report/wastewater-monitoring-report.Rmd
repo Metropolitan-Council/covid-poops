@@ -92,7 +92,7 @@ hov_lab_list <- list(
 )
 ```
 
-## COVID-19 Load
+## Total Viral Load
 #### Tracking COVID-19 Prevalence with Metro Plant Wastewater
 
 The daily amount of SARS-CoV-2 viral RNA flowing into the Metro Plant correlates closely with the number of new daily cases reported by the Minnesota Department of Health. The plant serves nearly 2 million people in Minneapolis, Saint Paul, and 64 other metro area communities.

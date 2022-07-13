@@ -40,7 +40,7 @@ copies_by_variant <-
   filter(date > "2021-04-01")
 
 # Plot Snippets -----
-my_title <-  "COVID-19 Viral Load by Variant"
+my_title <-  "Viral Load by Variant"
 
 my_subtitle <- "in Metro Plant wastewater influent, seven-day averages"
 

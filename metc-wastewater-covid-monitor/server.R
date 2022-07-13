@@ -394,7 +394,7 @@ server <- function(input, output) {
   
   
   # tables -----
-  ## prevalence table -----
+  ## load table -----
   output$loadData <- renderDT(server = FALSE, {
     load_data %>%
       left_join(case_data,

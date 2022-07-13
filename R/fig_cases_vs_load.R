@@ -34,7 +34,7 @@ cases_load_90 <-
 # 64pt font for large plots
 my_title_large <-  paste0(
   "<span style='color:#0054A4; font-size:64pt'>",
-  "COVID-19 Viral load",
+  "Total Viral load",
   "</span>",
   " in Metro Plant Wastewater influent"
 )
@@ -52,7 +52,7 @@ my_subtitle_large <- paste0(
 # 48pt font for instagram-sized plots
 my_title_insta <-  paste0(
   "<span style='color:#0054A4; font-size:48pt'>",
-  "COVID-19 Viral load",
+  "Total Viral load",
   "</span>",
   "<br>",
   # extra break, add this all on one line
