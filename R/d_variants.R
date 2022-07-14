@@ -5,24 +5,24 @@ library(tidyverse)
 source("R/sharepointfilepath.R")
 
 # read in raw -----
-header1 <- read_excel(file.path(paste0(sharepath, "/1 - Update data/A- Metro data - load and variants.xlsx")),
+header1 <- suppressMessages(read_excel(file.path(paste0(sharepath, "/1 - Update data/A- Metro data - load and variants.xlsx")),
   sheet = "variants"
-) %>%
+)) %>%
   janitor::clean_names() %>%
   names()
-header2 <- read_excel(file.path(paste0(sharepath, "/1 - Update data/A- Metro data - load and variants.xlsx")),
+header2 <- suppressMessages(read_excel(file.path(paste0(sharepath, "/1 - Update data/A- Metro data - load and variants.xlsx")),
   sheet = "variants", skip = 1
-) %>%
+)) %>%
   janitor::clean_names() %>%
   names()
 header <- paste0(header1, header2)
 
 raw_variant_data <-
-  read_excel(
+  suppressMessages(read_excel(
     file.path(paste0(sharepath, "/1 - Update data/A- Metro data - load and variants.xlsx")),
     sheet = "variants",
     skip = 1
-  ) %>%
+  )) %>%
   set_names(header) %>%
   select(1:28) %>%
   # get rid of trailing numbers in header:
@@ -31,7 +31,8 @@ raw_variant_data <-
   rename_all(~ gsub("allele_[[:digit:]]|allele_[[:digit:]][[:digit:]]", "allele", .)) %>%
   rename_all(~ gsub("[[:digit:]]frequency|[[:digit:]][[:digit:]]frequency", "frequency", .)) %>%
   rename(date = n501y_sample_start_date) %>%
-  select(-contains("sample_start_date"))
+  select(-contains("sample_start_date")) %>%
+  mutate(date = as.Date(date))
 
 # tidy up - split format of spreadsheet to long-form
 # notice, sample IDs do not always line up exactly across different columns -- will need to
@@ -99,6 +100,7 @@ variant_data_run <-
   # multiple runs per sample - need a unique ID
   group_by(date, sample, mutation) %>%
   mutate(run_num = row_number()) %>%
+  ungroup() %>%
   mutate(date = as.Date(date)) %>%
   rename(sample_id = sample, frequency = frequency_of_mutant_allele) %>%
   pivot_wider(names_from = "mutation", values_from = "frequency") %>%
@@ -216,6 +218,7 @@ variant_data_sample <-
   # average for each sample, across runs:
   group_by(sample_id, date, variant) %>%
   summarize(frequency = mean(frequency, na.rm = T)) %>%
+  ungroup() %>%
   filter(!is.na(sample_id) & !is.na(date)) %>%
   mutate_all(~ ifelse(is.nan(.), NA, .)) %>%
   arrange(date)

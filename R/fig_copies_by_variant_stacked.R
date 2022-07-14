@@ -24,7 +24,6 @@ copies_by_variant <-
   mutate(variant = factor(
     variant,
     levels = c(
-      "Other",
       "Alpha, Beta & Gamma",
       "Delta",
       "Omicron BA.1",
@@ -36,8 +35,9 @@ copies_by_variant <-
     )
   )) %>%
   filter(!(variant == "Omicron BA.4 and BA.5" &
-             date > "2022-05-30")) %>%
-  filter(date > "2021-04-01")
+             date > "2022-05-31")) %>%
+  filter(date > "2021-04-01") %>%
+  mutate(variant = factor(variant, levels = rev(levels(variant))))
 
 # Plot Snippets -----
 my_title <-  "Viral Load by Variant"
@@ -225,6 +225,62 @@ copies_variant_stacked_insta_90days <-
 ggsave(
   "fig/copies_by_variant_stacked_insta_90days.png",
   copies_variant_stacked_insta_90days,
+  height = 1080,
+  width = 1080,
+  units = "px",
+  dpi = 300
+)
+
+
+
+
+# Instagram, Since Omicron -----
+copies_by_variant_Omi <- 
+  copies_by_variant %>% 
+  filter(!is.na(copies_7day) & date >= "2021-12-01") %>%
+  droplevels()
+
+
+copies_variant_stacked_insta_OmicronEra <-
+  base_plot(data = copies_by_variant_Omi, caption_width = 110) + 
+  scale_x_date(name = "Date",
+               breaks = "3 weeks",
+               date_labels = "%b\n%d") +
+  scale_color_manual(values = c(
+    # "Alpha, Beta & Gamma" = "#84BB25",
+    "Delta" = "#1D94B7",
+    "Omicron BA.1" = "#6D3571",
+    "Omicron BA.2 (Excluding BA.2.12.1)" = "#D64776",
+    "Omicron BA.2.12.1" = "#FBC740",
+    "Omicron BA.4 and BA.5" = "#A9A3FE",
+    "Omicron BA.4" = "#3D9F93",
+    "Omicron BA.5" = "#000080",
+    "Total COVID-19 Load" = "black"
+  )) + 
+  scale_fill_manual(values = c(
+    c(
+      # "Alpha, Beta & Gamma" = "#84BB25",
+      "Delta" = "#1D94B7",
+      "Omicron BA.1" = "#6D3571",
+      "Omicron BA.2 (Excluding BA.2.12.1)" = "#D64776",
+      "Omicron BA.2.12.1" = "#FBC740",
+      "Omicron BA.4 and BA.5" = "#A9A3FE",
+      "Omicron BA.4" = "#3D9F93",
+      "Omicron BA.5" = "#000080",
+      "Total COVID-19 Load" = "white"
+    )
+  )) + 
+  theme_council_covidplot_insta(use_showtext = T,
+                                use_manual_font_sizes = T) +
+  guides(fill = guide_legend(nrow = 3),
+         color = guide_legend(nrow = 3)) +
+  theme(legend.justification = c(0.85, 0),
+        legend.text = element_text(size = 21))
+
+
+ggsave(
+  "fig/copies_by_variant_stacked_insta_OmicronEra.png",
+  copies_variant_stacked_insta_OmicronEra,
   height = 1080,
   width = 1080,
   units = "px",
