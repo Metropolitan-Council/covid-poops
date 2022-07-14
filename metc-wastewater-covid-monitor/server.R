@@ -204,7 +204,7 @@ server <- function(input, output) {
           type = "scatter",
           mode = "markers",
           x = ~date,
-          y = ~copies,
+          y = ~copies_variant,
           split = ~variant,
           color = ~variant,
           alpha = 0.8,
