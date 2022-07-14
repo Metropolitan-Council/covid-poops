@@ -267,3 +267,52 @@ ggsave("fig/cases_vs_load_insta_90days.png",
        height = 1080, width = 1080, 
        units = "px", dpi = 300
 )
+
+# Instagram, Omicron Era ----
+cases_load_Omi <- 
+  cases_load %>%
+  filter(date >= "2021-12-01") 
+
+cases_vs_load_insta_OmicronEra <- 
+  load_plot_base(data = cases_load_Omi,
+                 title = my_title_insta,
+                 subtitle = my_subtitle_insta,
+                 sec_axis_b = b90,
+                 caption_width = 110,
+                 date_breaks = "3 weeks",
+                 date_labels = "%b\n%d") + 
+  theme_council_covidplot_insta(use_showtext = T,
+                                use_manual_font_sizes = TRUE) +
+  
+  ## custom y axis - will need to adjust manually over time ----
+scale_y_continuous(
+  name = my_yaxis_left,
+  labels = scales::unit_format(unit = "M"),
+  sec.axis = sec_axis(
+    ~ . * b90,
+    name = my_yaxis_right,
+    breaks = seq(
+      from = 0,
+      to = 100, 
+      by = 25
+    )
+  )
+) +
+  theme(
+    plot.title = element_markdown(
+      lineheight = 0.5,
+      size = 30,
+      hjust = 0
+    ),
+    plot.subtitle = element_markdown(
+      lineheight = 0.5,
+      size = 30,
+      hjust = 1
+    )
+  )
+
+ggsave("fig/cases_vs_load_insta_OmicronEra.png",
+       cases_vs_load_insta_OmicronEra,
+       height = 1080, width = 1080, 
+       units = "px", dpi = 300
+)
