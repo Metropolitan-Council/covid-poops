@@ -34,7 +34,6 @@ library(rmarkdown)
 source("R/sharepointfilepath.R")
 
 rmarkdown::render("report/wastewater-monitoring-report.Rmd")
-rmarkdown::render("report/wastewater-monitoring-report-developing.Rmd")
 rmarkdown::render("report/wastewater-monitoring-report.Rmd",
   output_file = file.path(paste0(sharepath, "/1 - Update data/wastewater-monitoring-report.html"))
 )
