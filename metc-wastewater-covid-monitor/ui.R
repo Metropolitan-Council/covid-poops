@@ -38,7 +38,7 @@ fluidPage(
         tabsetPanel(
           type = "pills",
           tabPanel(
-            "COVID-19 Prevalence",
+            "Total Viral Load",
             HTML("<h6><section style='font-size:14pt'>This graph shows the amount of SARS-CoV-2 viral RNA detected in Metro Plant wastewater influent (blue line) and the number of COVID-19 cases in the Metro Plant's service area estimated from sample collection date zip-code case data provided by the Minnesota Department of Health (gray line).  The shaded grey bar at the end indicates a lag period where case data may be incomplete.  All case data are preliminary and may change as more information is received.</h3>"
             ),
             HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: July 4, 2022.</h3>"
@@ -47,7 +47,7 @@ fluidPage(
           ),
           
           tabPanel(
-            "Variant Prevalence",
+            "Viral Load by Variant",
             HTML("<h6><section style='font-size:14pt'>This graph shows the estimated amount of SARS-CoV-2 viral RNA by COVID-19 variant, sub-variant and lineage. The total amount of SARS-CoV-2 viral RNA in Metro Plant wastewater influent is shown in the background in gray.</h3>"
             ),
             HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: July 4, 2022.</h3>"
@@ -92,11 +92,11 @@ fluidPage(
       br(),
       # load -----
       p(
-        "Data are divided in two sections: prevalence (load) and cases, and variant frequencies"
+        "Data are divided in two sections: load (the total amount of virus in wastewater) and cases, and variant frequency (the amount of virus that can be identified as specific variants)."
       ),
-      h3("Prevalence"),
+      h3("Total Viral Load"),
       p(
-        "SARS-CoV-2 prevalence in wastewater influent is determined from multiple samples of wastewater each day. Units are in millions of copies of N1 and N2 genes, per person in the sewage treatment area, per day. Viral load data are from Metropolitan Council and the University of Minnesota Genomics Center. Cases are a per-capita (per 100,000 people) 7-day rolling average case rates for the 7-county Metropolitan Council area, provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org)."
+        "SARS-CoV-2 viral load in wastewater influent is determined from multiple samples of wastewater each day. Units are in millions of copies of N1 and N2 genes, per person in the sewage treatment area, per day. Viral load data are from Metropolitan Council and the University of Minnesota Genomics Center. Cases are a per-capita (per 100,000 people) 7-day rolling average case rates for the 7-county Metropolitan Council area, provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org)."
       ),
       br(),
       DTOutput("loadData"),
@@ -104,7 +104,7 @@ fluidPage(
       # variants -----
       h3("Variants"),
       p(
-        "Variant presence and frequency are inferred from the N501Y mutation (Alpha, Beta and Gamma); the L452R mutation (Delta); and the K417N mutation (Omicron). K417N mutations present before November 18, 2020 are assumed to be Beta variants, and are marked as Other in the variant column. The two sub-lineages of Omicron (BA.1 and BA.2) are distinguished by the HV 69/70 deletion: Omicron BA.1 contains both the K417N mutation and the HV 69/70 deletion. Omicron BA.2 has the K417N mutation but not the HV 69/70 deletion. Omicron BA.2.12.1 is distinguished by the L452Q mutation."
+        "Variant presence and prevalence are inferred from the N501Y mutation (Alpha, Beta and Gamma); the L452R mutation (Delta); and the K417N mutation (Omicron). K417N mutations present before November 18, 2020 are assumed to be Beta variants, and are marked as Other in the variant column. The two sub-lineages of Omicron (BA.1 and BA.2) are distinguished by the HV 69/70 deletion: Omicron BA.1 contains both the K417N mutation and the HV 69/70 deletion. Omicron BA.2 has the K417N mutation but not the HV 69/70 deletion. Omicron BA.2.12.1 is distinguished by the L452Q mutation."
       ),
       br(),
       DTOutput("variantData"),

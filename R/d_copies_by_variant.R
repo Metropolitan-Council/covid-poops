@@ -13,39 +13,14 @@ copies_by_variant <-
   filter(!is.na(frequency) & !is.na(copies_day_person_M_mn)) %>%
   # approx. number of copies of the variant is equal to the frequency of that variant, times the total # of copies:
   mutate(copies_variant = frequency * copies_day_person_M_mn) %>%
-  # put this in wide format, with variant in columns:
-  pivot_wider(
-    names_from = "variant",
-    values_from = copies_variant,
-    id_cols = c(date, copies_day_person_M_mn)
-  ) %>%
-  # now, a row-wise calculation to figure out how much is "other" variants
-  rowwise() %>%
-  mutate(`Other` = copies_day_person_M_mn -
-    sum(
-      c(
-        `Alpha, Beta & Gamma`, Delta, `Omicron BA.1`,
-        `Omicron BA.2 (Excluding BA.2.12.1)`, `Omicron BA.2.12.1`, `Omicron BA.4 and BA.5`, `Omicron BA.4`, `Omicron BA.5`
-      ),
-      na.rm = T
-    )) %>%
-  # pivot back to long format:
-  pivot_longer(
-    cols = c(
-      `Alpha, Beta & Gamma`, Delta, `Omicron BA.1`,
-      `Omicron BA.2 (Excluding BA.2.12.1)`, `Omicron BA.2.12.1`, `Omicron BA.4 and BA.5`, `Omicron BA.4`, `Omicron BA.5`,
-      Other
-    ),
-    names_to = "variant",
-    values_to = "copies"
-  ) %>%
+  select(-frequency, -copies_day_person_M_mn) %>%
   # for each variant, get a seven-day running average:
   group_by(variant) %>%
   complete(
     date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by = "days")
   ) %>%
   # interpolate missing values up to 3 days:
-  mutate(copies_gapfill = zoo::na.approx(copies, maxgap = 2, na.rm = F)) %>%
+  mutate(copies_gapfill = zoo::na.approx(copies_variant, maxgap = 2, na.rm = F)) %>%
   # now getting a rolling average with a 7-day window:
   mutate(
     copies_7day = zoo::rollapply(
@@ -53,7 +28,7 @@ copies_by_variant <-
       7,
       align = "right",
       mean,
-      na.rm = T,
+      na.rm = F,
       partial = T,
       fill = "extend"
     )
@@ -67,11 +42,10 @@ copies_by_variant <-
     "<b>",
     variant,
     "</b> ",
-    round(copies, digits = 2),
+    round(copies_variant, digits = 2),
     "M copies"
   )) %>%
   mutate(across(where(is.numeric), round, digits = 6)) %>%
-  filter(!is.na(copies)) %>%
   mutate(hover_text_variant_7day = paste0(
     format(date, "%b %d, %Y"),
     "<br>",
@@ -81,9 +55,7 @@ copies_by_variant <-
     round(copies_7day, digits = 2),
     "M copies, 7-day average"
   )) %>%
-  mutate(across(where(is.numeric), round, digits = 6)) %>%
-  filter(!is.na(copies)) %>%
-  filter(!variant == "Other")
+  mutate(across(where(is.numeric), round, digits = 6))
 
 write.csv(copies_by_variant, "data/copies_by_variant.csv", row.names = F)
 write.csv(copies_by_variant, "metc-wastewater-covid-monitor/data/copies_by_variant.csv", row.names = F)
