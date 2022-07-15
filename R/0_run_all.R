@@ -20,8 +20,15 @@ tictoc::toc()
 tictoc::tic("Render figures")
 
 source("R/fig_cases_vs_load.R", verbose = F)
-source("R/fig_variants.R", verbose = F)
+source("R/fig_variant_frequency.R", verbose = F)
 source("R/fig_copies_by_variant.R", verbose = F)
+source("R/fig_copies_by_variant_stacked.R", verbose = F)
+
+# Interactives: 
+source("R/map_sewershed_leaflet.R", verbose = F)
+source("R/fig_plotly_cases_vs_load.R", verbose = F)
+source("R/fig_plotly_variant_frequency.R", verbose = F)
+source("R/fig_plotly_variant_load.R", verbose = F)
 
 tictoc::toc()
 
@@ -36,6 +43,9 @@ source("R/sharepointfilepath.R")
 rmarkdown::render("report/wastewater-monitoring-report.Rmd")
 rmarkdown::render("report/wastewater-monitoring-report.Rmd",
   output_file = file.path(paste0(sharepath, "/1 - Update data/wastewater-monitoring-report.html"))
+)
+rmarkdown::render("report/wastewater-monitoring-report-developing.Rmd",
+                  output_file = file.path(paste0(sharepath, "/1 - Update data/wastewater-monitoring-report-developing-version.html"))
 )
 chrome_print("report/wastewater-monitoring-report.html", output = "report/wastewater-monitoring-report.pdf")
 chrome_print("report/wastewater-monitoring-report.html", file.path(paste0(sharepath, "/1 - Update data/wastewater-monitoring-report.pdf")))

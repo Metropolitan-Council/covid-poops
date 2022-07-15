@@ -25,7 +25,7 @@ options(
 
 case_data <- read.csv("data/case_data.csv") %>%
   mutate(date = as.Date(date)) %>%
-  mutate(across(where(is.numeric), round, digits = 4))
+  mutate(across(where(is.numeric), round, digits = 4)) 
 
 load_data <- read.csv("data/clean_load_data.csv") %>%
   mutate(date = as.Date(date)) %>%

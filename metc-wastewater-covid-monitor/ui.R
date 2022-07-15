@@ -38,19 +38,19 @@ fluidPage(
         tabsetPanel(
           type = "pills",
           tabPanel(
-            "COVID-19 Prevalence",
-            HTML("<h6><section style='font-size:14pt'>This graph shows the amount of SARS-CoV-2 viral RNA detected in Metro Plant wastewater influent (blue line) and the number of COVID-19 cases in the seven-county area (gray line).</h3>"
+            "Total Viral Load",
+            HTML("<h6><section style='font-size:14pt'>This graph shows the amount of SARS-CoV-2 viral RNA entering the Metro Plant each day (blue line) and the number of new daily COVID-19 cases in the Metro Plant's service area, by sample collection date (gray line; data from the Minnesota Department of Health). The most recent case data (darker gray) are incomplete and subject to change.</h3>"
             ),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: July 4, 2022.</h3>"
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: July 11, 2022.</h3>"
             ),
             plotlyOutput("loadPlot", height = "auto")
           ),
           
           tabPanel(
-            "Variant Prevalence",
+            "Viral Load by Variant",
             HTML("<h6><section style='font-size:14pt'>This graph shows the estimated amount of SARS-CoV-2 viral RNA by COVID-19 variant, sub-variant and lineage. The total amount of SARS-CoV-2 viral RNA in Metro Plant wastewater influent is shown in the background in gray.</h3>"
             ),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: July 4, 2022.</h3>"
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: July 11, 2022.</h3>"
             ),
             plotlyOutput("variantLoadPlot", height = "auto")
           ),
@@ -59,26 +59,28 @@ fluidPage(
             "Variant Frequencies (%)",
             HTML("<h6><section style='font-size:14pt'>This graph shows the estimated percent of SARS-CoV-2 viral RNA contributed by COVID-19 variant, sub-variant and lineage.</h3>"
             ),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: July 4, 2022.</h3>"
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: July 11, 2022.</h3>"
             ),
             plotlyOutput("variantFreqPlot", height = "auto")
           ),
           tabPanel(
             "This Week's Summary",
-            h6("July 8, 2022"),
+            h6("July 15, 2022"),
             p(
-              "The most recent data update includes samples taken June 28 - July 4, 2022. During this sampling period:"
+              "The most recent data update includes samples taken June 5 - July 11, 2022. During this sampling period:"
             ),
             tags$ul(
-              tags$li("The total viral RNA load entering the Metro Plant decreased by 11% last week compared to a week earlier"
+              tags$li("The total viral RNA load in Metro Plant influent decreased by 1% last week compared to the previous week"
               ),
-              tags$li("Omicron subvariant BA.5 is now the dominant variant in Metro Plant wastewater; it is in the process of replacing BA.2.12.1"
+              tags$li("Omicron subvariant BA.5 is the dominant variant in Metro Plant wastewater; it is in the process of replacing BA.2.12.1"
               ),
-              tags$li("The BA.5 load entering the plant increased by 32% last week compared to the previous week"
+              tags$li("BA.5 constituted 64% of the viral RNA entering Metro, up slightly from 62% a week ago"
               ),
-              tags$li("BA.5 constituted 62% of the viral RNA entering Metro, up from 43% a week ago"
+              tags$li("The BA.5 load entering the plant was unchanged last week compared to the previous week"
               ),
-              tags$li("Omicron subvariant BA.2.12.1 made up 19% of the SARS-CoV-2 RNA in Metro Plant influent, down from 34% the week earlier"
+              tags$li("Omicron subvariant BA.2.12.1 made up 18% of the SARS-CoV-2 RNA in Metro Plant influent, down from 19% the week earlier"
+              ),
+              tags$li("On July 15, 2022, we changed the case data we present on this site. Previously, we showed case data by report date for the seven-county metro area, downloaded from USAFacts.org. Now, we show case data by sample collection date specifically for the Metro Plant service area, obtained directly from the Minnesota Department of Health"
               )
             )
           )
@@ -90,19 +92,19 @@ fluidPage(
       br(),
       # load -----
       p(
-        "Data are divided in two sections: prevalence (load) and cases, and variant frequencies"
+        "Data are divided in two sections: load (the total amount of virus in wastewater) and cases, and variant frequency (the amount of virus that can be identified as specific variants)."
       ),
-      h3("Prevalence"),
+      h3("Total Viral Load"),
       p(
-        "SARS-CoV-2 prevalence in wastewater influent is determined from multiple samples of wastewater each day. Units are in millions of copies of N1 and N2 genes, per person in the sewage treatment area, per day. Viral load data are from Metropolitan Council and the University of Minnesota Genomics Center. Cases are a per-capita (per 100,000 people) 7-day rolling average case rates for the 7-county Metropolitan Council area, provided by the Minnesota Department of Health and downloaded from USA Facts (https://usafacts.org)."
-      ),
+        "SARS-CoV-2 viral load in wastewater influent is determined from multiple samples of wastewater each day. Units are in millions of copies of N1 and N2 genes, per person in the sewage treatment area, per day. Viral load data are from Metropolitan Council and the University of Minnesota Genomics Center. Cases are a per-capita (per 100,000 people) 7-day rolling average case rates for the Metro Plant's service area, by sample collection date (Data from the Minnesota Department of Health). The most recent seven days of case data are incomplete and subject to change."
+         ),
       br(),
       DTOutput("loadData"),
       
       # variants -----
-      h3("Variants"),
+      h3("Variant Frequency"),
       p(
-        "Variant presence and frequency are inferred from the N501Y mutation (Alpha, Beta and Gamma); the L452R mutation (Delta); and the K417N mutation (Omicron). K417N mutations present before November 18, 2020 are assumed to be Beta variants, and are marked as Other in the variant column. The two sub-lineages of Omicron (BA.1 and BA.2) are distinguished by the HV 69/70 deletion: Omicron BA.1 contains both the K417N mutation and the HV 69/70 deletion. Omicron BA.2 has the K417N mutation but not the HV 69/70 deletion. Omicron BA.2.12.1 is distinguished by the L452Q mutation."
+        "Variant presence and prevalence are inferred from the N501Y mutation (Alpha, Beta and Gamma); the L452R mutation (Delta); and the K417N mutation (Omicron). K417N mutations present before November 18, 2020 are assumed to be Beta variants, and are marked as Other in the variant column. The two sub-lineages of Omicron (BA.1 and BA.2) are distinguished by the HV 69/70 deletion: Omicron BA.1 contains both the K417N mutation and the HV 69/70 deletion. Omicron BA.2 has the K417N mutation but not the HV 69/70 deletion. Omicron BA.2.12.1 is distinguished by the L452Q mutation."
       ),
       br(),
       DTOutput("variantData"),
@@ -149,7 +151,7 @@ fluidPage(
       ),
       tags$br(),
       "App last updated ",
-      "2022-07-08",
+      "2022-07-15",
       # using gh::gh() causes SAML error in production
       # gh::gh("GET /repos/Metropolitan-Council/covid-poops")[49][[1]] %>% as.Date(),
       style = "font-size: 1.5rem;
