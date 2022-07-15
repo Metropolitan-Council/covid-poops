@@ -18,49 +18,9 @@ load_data <- read.csv("data/clean_load_data.csv") %>%
   left_join(case_data) %>%
   mutate(across(where(is.numeric), round, digits = 4))
 
-variant_data <- read.csv("data/clean_variant_data.csv") %>%
-  mutate(date = as.Date(date)) %>%
-  mutate(across(where(is.numeric), round, digits = 2))
-
-copies_by_variant <- read.csv("data/copies_by_variant.csv") %>%
-  mutate(date = as.Date(date)) %>%
-  mutate(across(where(is.numeric), round, digits = 2))
-
-omi_ratio_data <- read.csv("data/omi_ratio_data.csv") %>%
-  mutate(date = as.Date(date)) %>%
-  mutate(across(where(is.numeric), round, digits = 3))
-
 font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
 
 whiteSmoke <- "#F5F5F5"
-
-pal <- c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#092D4E", "#666666")
-pal <- setNames(pal, c("Alpha, Beta & Gamma", "Delta", "Omicron BA.1", "Omicron BA.2 (Excluding BA.2.12.1)", "Omicron BA.2.12.1", "Omicron BA.4 and BA.5", "Total load"))
-
-ann_list <- list(
-  text = paste(
-    "<br><br>",
-    "<i>", "Last sample date",
-    max(c(
-      load_data$date,
-      variant_data$date
-      # case_data$date,
-      # combined_data$date
-    ), na.rm = T),
-    "</i>"
-  ),
-  font = list(
-    size = 11,
-    family = font_family_list,
-    color = councilR::colors$suppBlack
-  ),
-  x = 1,
-  y = -0.2,
-  showarrow = F,
-  xref = "paper", yref = "paper",
-  xanchor = "right", yanchor = "auto",
-  xshift = 0, yshift = -25
-)
 
 hov_lab_list <- list(
   font = list(
@@ -125,8 +85,8 @@ date_anno <- list(
     "<br><br>",
     "<i>", "Latest sample date",
     max(c(
-      load_data$date,
-      variant_data$date
+      load_data$date
+      # variant_data$date
       # case_data$date,
       # combined_data$date
     ), na.rm = T),
@@ -145,10 +105,10 @@ date_anno <- list(
   xshift = 0, yshift = -25
 )
 
-load_plot_710 <-
+load_plot <-
   load_data %>%
   # left_join(case_data, by = "date") %>%
-  plot_ly(type = "scatter", mode = "lines", height = 438, width = 710) %>%
+  plot_ly(type = "scatter", mode = "lines", height = 500, width = 900) %>%
   add_trace(
     mode = "markers",
     x = ~date,
@@ -183,18 +143,52 @@ load_plot_710 <-
     text = ~hover_text_load_7day
   ) %>%
   add_trace(
-    x = ~date,
-    y = ~covid_cases_7day,
-    name = "7-day avg. cases per capita, 7-county metro area",
+    x = ~slice(load_data, 1:(n()-7))$date,
+    y = ~slice(load_data, 1:(n()-7))$covid_cases_7day,
+    name = "7-day avg. cases per capita",
     fill = "tozeroy",
     fillcolor = "rgba(160, 160, 160, .3)",
     line = list(width = 0.5, color = colors$suppGray),
     hoverinfo = "text",
-    text = ~hover_text_case
+    text = ~slice(load_data, 1:(n()-7))$hover_text_case
+  ) %>%
+  add_trace(
+    x = ~slice(load_data, (n() - 6):n())$date,
+    y = ~slice(load_data, (n() - 6):n())$covid_cases_7day,
+    name = "7-day avg. cases per capita, Incomplete",
+    fill = "tozeroy",
+    fillcolor = "rgba(160, 160, 160, .8)",
+    line = list(width = 0.5, color = colors$suppGray),
+    hoverinfo = "text",
+    text = ~slice(load_data, (n() - 6):n())$hover_text_case
   ) %>%
   layout(
     annotations = list(left_axis_title, right_axis_title, date_anno),
     autosize = T,
+    annotations = ann_list <- list(
+      text = paste(
+        "<br><br>",
+        "<i>", "Latest sample date",
+        max(c(
+          load_data$date
+          # variant_data$date
+          # case_data$date,
+          # combined_data$date
+        ), na.rm = T),
+        "</i>"
+      ),
+      font = list(
+        size = 11,
+        family = font_family_list,
+        color = councilR::colors$suppBlack
+      ),
+      x = 1,
+      y = -0.12,
+      showarrow = F,
+      xref = "paper", yref = "paper",
+      xanchor = "right", yanchor = "auto",
+      xshift = 0, yshift = -60
+    ),
     showlegend = TRUE,
     margin = list(l = 75, r = 75, b = 75, pad = 10),
     hovermode = "closest",
@@ -203,7 +197,9 @@ load_plot_710 <-
     yaxis2 = left_axis_text,
     xaxis = list(
       title = list(
-        standoff = 25,
+        range = ~c(min(date)-4, max(date) + 4),
+        text = "",
+        standoff = 0,
         font = list(
           size = 14,
           family = font_family_list,
@@ -217,8 +213,7 @@ load_plot_710 <-
         size = 12,
         family = font_family_list,
         color = councilR::colors$suppBlack
-      ),
-      range = list("2020-10-01", "2022-07-01")
+      )
     ),
     yaxis = list(
       side = "right",
@@ -249,118 +244,5 @@ load_plot_710 <-
     )
   ) %>%
   config(displayModeBar = F) 
-load_plot_710
 
-
-load_data_plot <- function(w, h) {
-    load_data %>%
-    # left_join(case_data, by = "date") %>%
-    plot_ly(type = "scatter", mode = "lines", height = h, width = w) %>%
-    add_trace(
-      mode = "markers",
-      x = ~date,
-      y = ~copies_day_person_M_mn,
-      name = "Viral load, Metro Plant service area",
-      size = 1,
-      yaxis = "y2",
-      marker = list(
-        color = "rgba(0, 84, 164, .5)",
-        size = 8,
-        line = list(
-          color = colors$councilBlue,
-          width = 0.5
-        )
-      ),
-      # fillcolor = ,
-      # line = list(width = 2, color = colors$esBlue),
-      hoverinfo = "text",
-      text = ~hover_text_load
-    ) %>%
-    add_trace(
-      mode = "lines",
-      x = ~date,
-      y = ~copies_day_person_7day,
-      name = "7-day avg. viral load",
-      size = 1,
-      yaxis = "y2",
-      # fill = "tozeroy",
-      # fillcolor = "rgba(0, 154, 199, .5)",
-      line = list(width = 2, color = colors$councilBlue),
-      hoverinfo = "text",
-      text = ~hover_text_load_7day
-    ) %>%
-    add_trace(
-      x = ~date,
-      y = ~covid_cases_7day,
-      name = "7-day avg. cases per capita, 7-county metro area",
-      fill = "tozeroy",
-      fillcolor = "rgba(160, 160, 160, .3)",
-      line = list(width = 0.5, color = colors$suppGray),
-      hoverinfo = "text",
-      text = ~hover_text_case
-    ) %>%
-    layout(
-      annotations = list(left_axis_title, right_axis_title, date_anno),
-      autosize = T,
-      showlegend = TRUE,
-      margin = list(l = 50, 
-                    r = 10, 
-                    b = 10,
-                    t = 20,
-                    pad = 10),
-      hovermode = "closest",
-      hoverdistance = "10",
-      hoverlabel = hov_lab_list,
-      yaxis2 = left_axis_text,
-      xaxis = list(
-        range = ~ c(min(date)-1, max(date)),
-        title = list(
-          standoff = 25,
-          font = list(
-            size = 14,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          )
-        ),
-        zerolinewidth = 2,
-        gridcolor = colors$suppWhite,
-        zerolinecolor = colors$suppWhite,
-        tickfont = list(
-          size = 12,
-          family = font_family_list,
-          color = councilR::colors$suppBlack
-        )
-      ),
-      yaxis = list(
-        side = "right",
-        title = list(
-          standoff = 25,
-          font = list(
-            size = 16,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          )
-        ),
-        zerolinewidth = 1,
-        tickfont = list(
-          size = 14,
-          family = font_family_list,
-          color = councilR::colors$suppBlack
-        ),
-        gridcolor = colors$suppWhite,
-        zerolinecolor = colors$suppWhite
-      ),
-      legend = list(
-        orientation = "h",
-        font = list(
-          size = 12,
-          family = font_family_list,
-          color = councilR::colors$suppBlack
-        )
-      )
-    ) %>%
-    config(displayModeBar = F) 
-}
-
-load_data_plot(670, 410)
-load_data_plot(710, 438)
+htmlwidgets::saveWidget(load_plot, "fig/cases_vs_load.html")
