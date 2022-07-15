@@ -47,19 +47,23 @@ copies_by_variant <-
   )) %>%
   mutate(across(where(is.numeric), round, digits = 6)) %>%
   mutate(hover_text_variant_7day = paste0(
+    format(date, "%b %d, %Y"),
+    "<br>",
     "<b>",
-    variant,
+    (variant),
     "</b> ",
     "<br>",
-    " on ",
-    format(date, "%b %d, %Y"),
-    ":", 
-    "<br>",
+    "<b>",
     round(copies_7day, digits = 2),
-    "M copies, 7-day average",
+    "M",
+    "</b>", 
+    " copies/person/day",
     "<br>",
+    "<b>",
     round(100 * frequency_7day), 
-    "% of total viral load"
+    "%",
+    "</b>",
+    " of total viral load"
   )) %>%
   mutate(across(where(is.numeric), round, digits = 6))
 
