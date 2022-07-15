@@ -50,5 +50,8 @@ sewershed <- readRDS("~/MetC_Locals/MTS/covid-poops/metc-wastewater-covid-monito
       opacity = 0.7
     ) %>%
     leaflet.extras::addFullscreenControl(pseudoFullscreen = TRUE)
-  map
+
+  
+  
+  htmlwidgets::saveWidget(map, "fig/sewershed_map.html")
 

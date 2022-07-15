@@ -1,4 +1,3 @@
-
 library(shiny)
 library(tidyverse)
 library(lubridate)
@@ -33,8 +32,16 @@ font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
 
 whiteSmoke <- "#F5F5F5"
 
-pal <- c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#092D4E", "#666666")
-pal <- setNames(pal, c("Alpha, Beta & Gamma", "Delta", "Omicron BA.1", "Omicron BA.2 (Excluding BA.2.12.1)", "Omicron BA.2.12.1", "Omicron BA.4 and BA.5", "Total load"))
+pal <- c("Total Viral Load" = "white",
+         "Omicron BA.5" = "#000080",
+         "Omicron BA.4" = "#3D9F93",
+         "Omicron BA.4 and BA.5" = "#A9A3FE",
+         "Omicron BA.2.12.1" = "#FBC740",
+         "Omicron BA.2 (Excluding BA.2.12.1)" = "#D64776",
+         "Omicron BA.1" = "#6D3571",
+         "Delta" = "#1D94B7",
+         "Alpha, Beta & Gamma" = "#84BB25"
+)
 
 ann_list <- list(
   text = paste(
@@ -185,98 +192,4 @@ variant_plot_710 <-
   ) %>%
   config(displayModeBar = FALSE)
 
-
-variant_plot_670 <- 
-  variant_data %>%
-  plot_ly(# set height and width
-    width = 670, height = 414) %>%
-  add_trace(
-    type = "scatter",
-    mode = "markers",
-    x = ~date,
-    y = ~frequency,
-    split = ~variant,
-    color = ~variant,
-    alpha = 0.8,
-    colors = pal,
-    hoverinfo = "text",
-    text = ~hover_text_variant
-  ) %>%
-  add_trace(
-    type = "scatter",
-    mode = "lines",
-    x = ~date,
-    fill = "tozeroy",
-    y = ~frequency_7day,
-    split = ~variant,
-    color = ~variant,
-    alpha = 0.25,
-    colors = pal,
-    hoverinfo = "none",
-    showlegend = F
-  ) %>%
-  layout(
-    annotations = list(ann_list, variant_freq_title),
-    hovermode = "closest",
-    hoverdistance = "10",
-    hoverlabel = hov_lab_list,
-    margin = list(
-      l = 20,
-      r = 20,
-      b = 20,
-      t = 20,
-      pad = 10
-    ),
-    xaxis = list(
-      title = list(
-        text = "", standoff = 25,
-        font = list(
-          size = 14,
-          family = font_family_list,
-          color = councilR::colors$suppBlack
-        )
-      ),
-      zerolinewidth = 2,
-      zeroline = TRUE,
-      showline = FALSE,
-      showgrid = FALSE,
-      tickfont = list(
-        size = 12,
-        family = font_family_list,
-        color = councilR::colors$suppBlack
-      )
-    ),
-    yaxis = list(
-      title = list(
-        # text = "<b>Frequency of marker genes (%)</b>",
-        standoff = 25,
-        font = list(
-          size = 14,
-          family = font_family_list,
-          color = councilR::colors$suppBlack
-        )
-      ),
-      tickformat = "1%",
-      tickfont = list(
-        size = 12,
-        family = font_family_list,
-        color = councilR::colors$suppBlack
-      ),
-      gridcolor = "gray90",
-      zerolinecolor = "gray50",
-      zerolinewidth = 2,
-      range = c(0, 1.1)
-    ),
-    legend = list(
-      orientation = "h",
-      font = list(
-        size = 11,
-        family = font_family_list,
-        color = councilR::colors$suppBlack
-      )
-    )
-  ) %>%
-  config(displayModeBar = FALSE)
-
-variant_plot_710
-variant_plot_670
+htmlwidgets::saveWidget(variant_plot_710, "fig/variant_frequency.html")
