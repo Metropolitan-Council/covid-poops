@@ -40,7 +40,7 @@ copies_by_variant <-
   mutate(variant = factor(variant, levels = rev(levels(variant))))
 
 # Plot Snippets -----
-my_title <-  "Viral Load by Variant"
+my_title <-  "Viral load by variant"
 
 my_subtitle <- "in Metro Plant wastewater influent, seven-day averages"
 
