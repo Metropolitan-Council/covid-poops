@@ -28,7 +28,7 @@ omi_ratio_data <- read.csv("data/omi_ratio_data.csv") %>%
   mutate(date = as.Date(date)) %>%
   mutate(across(where(is.numeric), round, digits = 3))
 
-font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
+# "Arial Narrow" <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
 
 whiteSmoke <- "#F5F5F5"
 
@@ -43,35 +43,35 @@ pal <- c("Total Viral Load" = "white",
          "Alpha, Beta & Gamma" = "#84BB25"
 )
 
-ann_list <- list(
-  text = paste(
-    "<br><br>",
-    "<i>", "Last sample date",
-    max(c(
-      load_data$date,
-      variant_data$date
-      # case_data$date,
-      # combined_data$date
-    ), na.rm = T),
-    "</i>"
-  ),
-  font = list(
-    size = 11,
-    family = font_family_list,
-    color = councilR::colors$suppBlack
-  ),
-  x = 1,
-  y = -0.2,
-  showarrow = F,
-  xref = "paper", yref = "paper",
-  xanchor = "right", yanchor = "auto",
-  xshift = 0, yshift = -25
-)
+# ann_list <- list(
+#   text = paste(
+#     "<br><br>",
+#     "<i>", "Last sample date",
+#     max(c(
+#       load_data$date,
+#       variant_data$date
+#       # case_data$date,
+#       # combined_data$date
+#     ), na.rm = T),
+#     "</i>"
+#   ),
+#   font = list(
+#     size = 16,
+#     family = "Arial Narrow",
+#     color = councilR::colors$suppBlack
+#   ),
+#   x = 1,
+#   y = -0.2,
+#   showarrow = F,
+#   xref = "paper", yref = "paper",
+#   xanchor = "right", yanchor = "auto",
+#   xshift = 0, yshift = -25
+# )
 
 hov_lab_list <- list(
   font = list(
     size = 20,
-    family = font_family_list,
+    family = "Arial Narrow",
     color = councilR::colors$suppWhite
   ),
   # bgcolor = "white",
@@ -85,25 +85,11 @@ hov_lab_list <- list(
 )
 
 
-variant_freq_title <- list(
-  x = -0.05,
-  y = 1.05,
-  text = "Variant frequency (%)<br>indicated by maker genes",
-  xref = "paper",
-  yref = "paper",
-  showarrow = F,
-  align = "left",
-  font = list(
-    size = 14,
-    family = font_family_list,
-    color = councilR::colors$suppBlack
-  )
-)
 
-variant_plot_710 <- 
+variant_plot <- 
   variant_data %>%
   plot_ly(# set height and width
-    width = 710, height = 438) %>%
+    width = 670, height = 425) %>%
   add_trace(
     type = "scatter",
     mode = "markers",
@@ -130,50 +116,46 @@ variant_plot_710 <-
     showlegend = F
   ) %>%
   layout(
-    annotations = list(ann_list, variant_freq_title),
-    hovermode = "closest",
-    hoverdistance = "10",
-    hoverlabel = hov_lab_list,
-    margin = list(
-      l = 20,
-      r = 20,
-      b = 20,
-      t = 20,
-      pad = 10
-    ),
-    xaxis = list(
-      title = list(
-        text = "", standoff = 25,
-        font = list(
-          size = 14,
-          family = font_family_list,
-          color = councilR::colors$suppBlack
-        )
+    hoverlabel = list(
+      font = list(
+        size = 20,
+        family = "Arial Narrow",
+        color = councilR::colors$suppWhite
       ),
-      zerolinewidth = 2,
-      zeroline = TRUE,
-      showline = FALSE,
-      showgrid = FALSE,
-      tickfont = list(
-        size = 12,
-        family = font_family_list,
-        color = councilR::colors$suppBlack
-      )
+      # bgcolor = "white",
+      stroke = list(
+        councilR::colors$suppGray,
+        councilR::colors$suppGray,
+        councilR::colors$suppGray,
+        councilR::colors$suppGray
+      ),
+      padding = list(l = 5, r = 5, b = 5, t = 5)
     ),
+    margin = list(t = 50),
+    legend = list(
+      orientation = "h",
+      yanchor = "top",
+      xanchor = "left",
+      title = list(text = ""),
+      font = list(
+        size = 16,
+        family = "Arial Narrow",
+        color = councilR::colors$suppBlack
+      )),
     yaxis = list(
       title = list(
         # text = "<b>Frequency of marker genes (%)</b>",
         standoff = 25,
         font = list(
-          size = 14,
-          family = font_family_list,
+          size = 16,
+          family = "Arial Narrow",
           color = councilR::colors$suppBlack
         )
       ),
       tickformat = "1%",
       tickfont = list(
-        size = 12,
-        family = font_family_list,
+        size = 16,
+        family = "Arial Narrow",
         color = councilR::colors$suppBlack
       ),
       gridcolor = "gray90",
@@ -181,15 +163,31 @@ variant_plot_710 <-
       zerolinewidth = 2,
       range = c(0, 1.1)
     ),
-    legend = list(
-      orientation = "h",
+    xaxis = list(
+      title = list(text = ""),
+      zeroline = FALSE,
+      showline = FALSE,
+      showgrid = FALSE,
+      tickfont = list(
+        size = 16,
+        family = "Arial Narrow",
+        color = councilR::colors$suppBlack
+      )),
+    annotations = list(list(
+      x = -0.05,
+      y = 1.15,
+      text = "Variant frequency (%)<br>indicated by maker genes",
+      xref = "paper",
+      yref = "paper",
+      showarrow = F,
+      align = "left",
       font = list(
-        size = 11,
-        family = font_family_list,
+        size = 16,
+        family = "Arial Narrow",
         color = councilR::colors$suppBlack
       )
-    )
+    ))
   ) %>%
   config(displayModeBar = FALSE)
 
-htmlwidgets::saveWidget(variant_plot_710, "fig/variant_frequency.html")
+htmlwidgets::saveWidget(variant_plot, "fig/variant_frequency.html")

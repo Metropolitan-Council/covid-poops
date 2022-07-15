@@ -39,7 +39,7 @@ variant_data_date <- read_csv("data/clean_variant_data.csv", show_col_types = F)
   ))
 
 # Figure snippets ----
-my_title <- "COVID-19 Variant Frequencies (%)"
+my_title <- "COVID-19 variant frequencies (%)"
 
 my_subtitle <- "in Metro Plant wastewater influent. Daily data are shown as thin lines; seven-day averages are shown as bold lines."
 
