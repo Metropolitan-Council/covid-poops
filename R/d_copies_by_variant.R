@@ -6,7 +6,7 @@ library(zoo)
 copies_by_variant <-
   # take the variant data, by date:
   variant_data_date %>%
-  select(date, variant, frequency) %>%
+  select(date, variant, frequency, frequency_7day) %>%
   # match to the load data, by date:
   left_join(load_data %>% select(date, copies_day_person_M_mn)) %>%
   # get complete data:
@@ -47,13 +47,19 @@ copies_by_variant <-
   )) %>%
   mutate(across(where(is.numeric), round, digits = 6)) %>%
   mutate(hover_text_variant_7day = paste0(
-    format(date, "%b %d, %Y"),
-    "<br>",
     "<b>",
     variant,
     "</b> ",
+    "<br>",
+    " on ",
+    format(date, "%b %d, %Y"),
+    ":", 
+    "<br>",
     round(copies_7day, digits = 2),
-    "M copies, 7-day average"
+    "M copies, 7-day average",
+    "<br>",
+    round(100 * frequency_7day), 
+    "% of total viral load"
   )) %>%
   mutate(across(where(is.numeric), round, digits = 6))
 

@@ -220,7 +220,7 @@ variant_data_sample <-
   summarize(frequency = mean(frequency, na.rm = T)) %>%
   ungroup() %>%
   filter(!is.na(sample_id) & !is.na(date)) %>%
-  mutate_all(~ ifelse(is.nan(.), NA, .)) %>%
+  mutate(across(where(is.numeric), ~ ifelse(is.nan(.), NA, .))) %>%
   arrange(date)
 
 
