@@ -18,14 +18,14 @@ load_data <- read.csv("data/clean_load_data.csv") %>%
   left_join(case_data) %>%
   mutate(across(where(is.numeric), round, digits = 4))
 
-font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
+# "Arial Narrow" <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
 
 whiteSmoke <- "#F5F5F5"
 
 hov_lab_list <- list(
   font = list(
     size = 20,
-    family = font_family_list,
+    family = "Arial Narrow",
     color = councilR::colors$suppWhite
   ),
   # bgcolor = "white",
@@ -40,8 +40,8 @@ hov_lab_list <- list(
 
 left_axis_text <- list(
   tickfont = list(color = colors$councilBlue,
-                  size = 14,
-                  family = font_family_list),
+                  size = 16,
+                  family = "Arial Narrow"),
   overlaying = "y",
   side = "left",
   zerolinewidth = 0,
@@ -59,8 +59,8 @@ left_axis_title <- list(
   showarrow = F,
   align = "left",
   font = list(
-    size = 14,
-    family = font_family_list,
+    size = 16,
+    family = "Arial Narrow",
     color = councilR::colors$councilBlue
   )
 )
@@ -74,8 +74,8 @@ right_axis_title <- list(
   showarrow = F,
   align = "right",
   font = list(
-    size = 14,
-    family = font_family_list,
+    size = 16,
+    family = "Arial Narrow",
     color = councilR::colors$suppBlack
   )
 )
@@ -94,7 +94,7 @@ date_anno <- list(
   ),
   font = list(
     size = 11,
-    family = font_family_list,
+    family = "Arial Narrow",
     color = councilR::colors$suppBlack
   ),
   x = 1,
@@ -108,7 +108,7 @@ date_anno <- list(
 load_plot <-
   load_data %>%
   # left_join(case_data, by = "date") %>%
-  plot_ly(type = "scatter", mode = "lines", height = 500, width = 900) %>%
+  plot_ly(type = "scatter", mode = "lines", width = 710, height = 438) %>%
   add_trace(
     mode = "markers",
     x = ~date,
@@ -163,32 +163,32 @@ load_plot <-
     text = ~slice(load_data, (n() - 6):n())$hover_text_case
   ) %>%
   layout(
-    annotations = list(left_axis_title, right_axis_title, date_anno),
+    annotations = list(left_axis_title, right_axis_title),
     autosize = T,
-    annotations = ann_list <- list(
-      text = paste(
-        "<br><br>",
-        "<i>", "Latest sample date",
-        max(c(
-          load_data$date
-          # variant_data$date
-          # case_data$date,
-          # combined_data$date
-        ), na.rm = T),
-        "</i>"
-      ),
-      font = list(
-        size = 11,
-        family = font_family_list,
-        color = councilR::colors$suppBlack
-      ),
-      x = 1,
-      y = -0.12,
-      showarrow = F,
-      xref = "paper", yref = "paper",
-      xanchor = "right", yanchor = "auto",
-      xshift = 0, yshift = -60
-    ),
+    # annotations = ann_list <- list(
+    #   text = paste(
+    #     "<br><br>",
+    #     "<i>", "Latest sample date",
+    #     max(c(
+    #       load_data$date
+    #       # variant_data$date
+    #       # case_data$date,
+    #       # combined_data$date
+    #     ), na.rm = T),
+    #     "</i>"
+    #   ),
+    #   font = list(
+    #     size = 11,
+    #     family = "Arial Narrow",
+    #     color = councilR::colors$suppBlack
+    #   ),
+    #   x = 1,
+    #   y = -0.12,
+    #   showarrow = F,
+    #   xref = "paper", yref = "paper",
+    #   xanchor = "right", yanchor = "auto",
+    #   xshift = 0, yshift = -60
+    # ),
     showlegend = TRUE,
     margin = list(l = 75, r = 75, b = 75, pad = 10),
     hovermode = "closest",
@@ -201,8 +201,8 @@ load_plot <-
         text = "",
         standoff = 0,
         font = list(
-          size = 14,
-          family = font_family_list,
+          size = 16,
+          family = "Arial Narrow",
           color = councilR::colors$suppBlack
         )
       ),
@@ -210,8 +210,8 @@ load_plot <-
       gridcolor = colors$suppWhite,
       zerolinecolor = colors$suppWhite,
       tickfont = list(
-        size = 12,
-        family = font_family_list,
+        size = 16,
+        family = "Arial Narrow",
         color = councilR::colors$suppBlack
       )
     ),
@@ -221,14 +221,14 @@ load_plot <-
         standoff = 25,
         font = list(
           size = 16,
-          family = font_family_list,
+          family = "Arial Narrow",
           color = councilR::colors$suppBlack
         )
       ),
       zerolinewidth = 1,
       tickfont = list(
-        size = 14,
-        family = font_family_list,
+        size = 16,
+        family = "Arial Narrow",
         color = councilR::colors$suppBlack
       ),
       gridcolor = colors$suppWhite,
@@ -237,8 +237,8 @@ load_plot <-
     legend = list(
       orientation = "h",
       font = list(
-        size = 12,
-        family = font_family_list,
+        size = 16,
+        family = "Arial Narrow",
         color = councilR::colors$suppBlack
       )
     )

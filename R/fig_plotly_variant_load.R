@@ -145,18 +145,20 @@ base_ggplot <-
     na.rm = T,
     lwd = 0.25
   )  +
-  # # solid black line - total covid load
-  # geom_line(
-  #   data = load_data[load_data$date > min(copies_by_variant$date),] %>%
-  #     mutate(variant = "Total COVID-19 Load"),
-  #   aes(
-  #     x = date,
-  #     y = copies_day_person_7day,
-  #     color = variant,
-  #     fill = variant
-  #   ),
-  #   lwd = 0.6
-  # ) +
+  # solid black line - total covid load
+  geom_line(
+    data = load_data[load_data$date > min(copies_by_variant$date),] %>%
+      mutate(variant = "Total COVID-19 Load") %>%
+      rename(`7-day-average` = hover_text_load_7day),
+    aes(
+      x = date,
+      y = copies_day_person_7day,
+      color = variant,
+      fill = variant,
+      label = `7-day-average`
+    ),
+    lwd = 0.6
+  ) +
   scale_fill_manual(values = pal,
                     drop = T) + 
   scale_color_manual(values = pal,
@@ -172,9 +174,10 @@ base_ggplot <-
         axis.line = element_blank(),
         axis.text.x = element_text(),
         axis.text.y = element_text())
-  
+
+variant_load_plot <- 
 ggplotly(base_ggplot, tooltip = c("label"),
-         height = 600, width = 710) %>%
+         width = 670, height = 425) %>%
   layout(
     hoverlabel = list(
       font = list(
@@ -193,7 +196,7 @@ ggplotly(base_ggplot, tooltip = c("label"),
     ),
     margin = list(l = 130, pad = 0),
     legend = list(
-      orientation = "v",
+      orientation = "h",
       yanchor = "top",
       xanchor = "left",
       title = list(text = ""),
@@ -240,3 +243,5 @@ ggplotly(base_ggplot, tooltip = c("label"),
         ))
     )
   )
+
+htmlwidgets::saveWidget(variant_load_plot, "fig/variant_load_plot.html")

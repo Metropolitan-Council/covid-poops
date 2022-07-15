@@ -52,11 +52,11 @@ my_subtitle_large <- paste0(
 # 48pt font for instagram-sized plots
 my_title_insta <-  paste0(
   "<span style='color:#0054A4; font-size:48pt'>",
-  "Total Viral load",
+  "Total viral load",
   "</span>",
   "<br>",
   # extra break, add this all on one line
-  " in Metro Plant Wastewater influent compared to metro-area"
+  " in Metro Plant wastewater influent compared to metro-area"
 )
 
 ## Subtitle, Instagram ----
