@@ -20,7 +20,7 @@ tictoc::toc()
 tictoc::tic("Render figures")
 
 source("R/fig_cases_vs_load.R", verbose = F)
-source("R/fig_variants.R", verbose = F)
+source("R/fig_variant_frequency.R", verbose = F)
 source("R/fig_copies_by_variant.R", verbose = F)
 source("R/fig_copies_by_variant_stacked.R", verbose = F)
 
