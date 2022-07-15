@@ -1,7 +1,7 @@
 ---
 title: "Metro Wastewater COVID-19 Monitoring"
 author: "Metropolitan Council"
-date: "July 8, 2022"
+date: "July 15, 2022"
 output:
   html_document:
     css: ["www/rmd-report-style.css", "www/colors.css", "www/font.css"]
@@ -21,8 +21,7 @@ library(gh)
 
 case_data <- read.csv("data/case_data.csv") %>%
   mutate(date = as.Date(date)) %>%
-  mutate(across(where(is.numeric), round, digits = 4)) %>%
-  slice ( 1:(n() - 7))
+  mutate(across(where(is.numeric), round, digits = 4)) 
 
 load_data <- read.csv("data/clean_load_data.csv") %>%
   mutate(date = as.Date(date)) %>%
@@ -98,7 +97,7 @@ hov_lab_list <- list(
 The daily amount of SARS-CoV-2 viral RNA flowing into the Metro Plant correlates closely with the number of new daily cases reported by the Minnesota Department of Health. The plant serves nearly 2 million people in Minneapolis, Saint Paul, and 64 other metro area communities.
 
 ###### How to read this graph:
-The blue line and points show the total amount of SARS-CoV-2 viral RNA in wastewater flowing into the Metro Plant, in millions copies of the SARS-CoV-2 genome per person served by the wastewater plant, per day. Blue points are daily values; the blue line is a running average of the previous 7 days. The gray line shows the average of the previous 7 days of new reported COVID-19 infections in the seven-county Metro area per 100,000 residents. Case data are provided by the Minnesota Department of Health and downloaded from [USA Facts] (www.usafacts.org). 
+The blue line and points show the total amount of SARS-CoV-2 viral RNA in wastewater flowing into the Metro Plant, in millions copies of the SARS-CoV-2 genome per person served by the wastewater plant, per day. Blue points are daily values; the blue line is a running average of the previous 7 days. The gray line shows the number of new daily COVID-19 cases in the Metro Plant's service area per 100,000 residents, by sample collection date (data from the Minnesota Department of Health). The most recent case data (darker gray) are incomplete and subject to change.
 
 ```{r load plot, out.width = '80%', message = FALSE, warning = FALSE}
       
@@ -207,18 +206,52 @@ The blue line and points show the total amount of SARS-CoV-2 viral RNA in wastew
         text = ~hover_text_load_7day
       ) %>%
       add_trace(
-        x = ~date,
-        y = ~covid_cases_7day,
-        name = "7-day avg. cases per capita, 7-county metro area",
+        x = ~slice(load_data, 1:(n()-7))$date,
+        y = ~slice(load_data, 1:(n()-7))$covid_cases_7day,
+        name = "7-day avg. cases per capita",
         fill = "tozeroy",
         fillcolor = "rgba(160, 160, 160, .3)",
         line = list(width = 0.5, color = colors$suppGray),
         hoverinfo = "text",
-        text = ~hover_text_case
+        text = ~slice(load_data, 1:(n()-7))$hover_text_case
+      ) %>%
+      add_trace(
+        x = ~slice(load_data, (n() - 6):n())$date,
+        y = ~slice(load_data, (n() - 6):n())$covid_cases_7day,
+        name = "7-day avg. cases per capita, Incomplete",
+        fill = "tozeroy",
+        fillcolor = "rgba(160, 160, 160, .8)",
+        line = list(width = 0.5, color = colors$suppGray),
+        hoverinfo = "text",
+        text = ~slice(load_data, (n() - 6):n())$hover_text_case
       ) %>%
       layout(
         annotations = list(left_axis_title, right_axis_title, date_anno),
         autosize = T,
+        annotations = ann_list <- list(
+          text = paste(
+            "<br><br>",
+            "<i>", "Latest sample date",
+            max(c(
+              load_data$date,
+              variant_data$date
+              # case_data$date,
+              # combined_data$date
+            ), na.rm = T),
+            "</i>"
+          ),
+          font = list(
+            size = 11,
+            family = font_family_list,
+            color = councilR::colors$suppBlack
+          ),
+          x = 1,
+          y = -0.12,
+          showarrow = F,
+          xref = "paper", yref = "paper",
+          xanchor = "right", yanchor = "auto",
+          xshift = 0, yshift = -60
+        ),
         showlegend = TRUE,
         margin = list(l = 75, r = 75, b = 75, pad = 10),
         hovermode = "closest",
@@ -227,7 +260,9 @@ The blue line and points show the total amount of SARS-CoV-2 viral RNA in wastew
         yaxis2 = left_axis_text,
         xaxis = list(
           title = list(
-            standoff = 25,
+            range = ~c(min(date)-4, max(date) + 4),
+            text = "",
+            standoff = 0,
             font = list(
               size = 14,
               family = font_family_list,
@@ -241,8 +276,7 @@ The blue line and points show the total amount of SARS-CoV-2 viral RNA in wastew
             size = 12,
             family = font_family_list,
             color = councilR::colors$suppBlack
-          ),
-          range = list("2020-10-01", "2022-07-01")
+          )
         ),
         yaxis = list(
           side = "right",
@@ -480,7 +514,7 @@ variant_prev_title <- list(
       type = "scatter",
       mode = "markers",
       x = ~date,
-      y = ~copies,
+      y = ~copies_variant,
       split = ~variant,
       color = ~variant,
       alpha = 0.8,
