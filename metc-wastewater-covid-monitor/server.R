@@ -49,6 +49,8 @@ server <- function(input, output) {
     )
   ) 
   
+  
+  
   output$loadPlot <-
     renderPlotly({
       load_data %>%
@@ -167,113 +169,123 @@ server <- function(input, output) {
   
 
   ## variant load -----
+  base_ggplot <-
+    copies_by_variant %>%
+    rename(`7-day-average` = hover_text_variant_7day) %>%
+    mutate(variant = factor(variant, levels = rev(levels(variant)))) %>%
+    ggplot(aes(x = date, y = copies_7day)) +
+    geom_area(
+      position = "stack",
+      aes(
+        x = date,
+        y = copies_7day,
+        color = variant,
+        fill = variant,
+        label = `7-day-average`
+      ),
+      alpha = 0.75,
+      na.rm = T,
+      lwd = 0.25
+    )  +
+    # solid black line - total covid load
+    geom_line(
+      data = load_data[load_data$date > min(copies_by_variant$date),] %>%
+        mutate(variant = "Total COVID-19 Load") %>%
+        rename(`7-day-average` = hover_text_load_7day),
+      aes(
+        x = date,
+        y = copies_day_person_7day,
+        color = variant,
+        fill = variant,
+        label = `7-day-average`
+      ),
+      lwd = 0.6
+    ) +
+    scale_fill_manual(values = pal,
+                      drop = T) + 
+    scale_color_manual(values = pal,
+                       drop = T) +
+    scale_y_continuous(name = "",
+                       labels = scales::unit_format(unit = "M")) +
+    scale_x_date(name = "Date",
+                 breaks = "2 months",
+                 date_labels = "%b '%y") +
+    geom_hline(yintercept = 0, color = "gray30", size = 0.5) + 
+    theme_void()+
+    theme(panel.grid.major.x= element_blank(),
+          axis.line = element_blank(),
+          axis.text.x = element_text(),
+          axis.text.y = element_text())
+  
   output$variantLoadPlot <-
     renderPlotly({
-      plot_ly() %>%
-        # total load:
-        add_trace(
-          data = load_data,
-          type = "scatter",
-          mode = "lines",
-          x = ~date,
-          fill = "tozeroy",
-          y = ~copies_day_person_7day,
-          alpha = 0.25,
-          line = list(width = 0.5, color = colors$suppGray),
-          color = ~"Total load",
-          colors = pal,
-          name = "Total load",
-          hoverinfo = "text",
-          text = ~hover_text_load_7day
-        ) %>%
-        add_trace(
-          data = copies_by_variant,
-          type = "scatter",
-          mode = "lines",
-          x = ~date,
-          fill = "tozeroy",
-          y = ~copies_7day,
-          split = ~variant,
-          color = ~variant,
-          alpha = 0.25,
-          colors = pal,
-          hoverinfo = "none"
-        ) %>%
-        add_trace(
-          data = copies_by_variant,
-          type = "scatter",
-          mode = "markers",
-          x = ~date,
-          y = ~copies_variant,
-          split = ~variant,
-          color = ~variant,
-          alpha = 0.8,
-          colors = pal,
-          hoverinfo = "text",
-          text = ~hover_text_variant,
-          showlegend = F
-        ) %>%
+      ggplotly(base_ggplot, tooltip = c("label")) %>%
         layout(
-          annotations = list(list(
-            x = -0.05,
-            y = 1.1,
-            text = "Viral load in wastewater<br>M copies/person/day",
-            xref = "paper",
-            yref = "paper",
-            showarrow = F,
-            align = "left",
+          hoverlabel = list(
+            font = list(
+              size = 20,
+              family = "Arial Narrow",
+              color = councilR::colors$suppWhite
+            ),
+            # bgcolor = "white",
+            stroke = list(
+              councilR::colors$suppGray,
+              councilR::colors$suppGray,
+              councilR::colors$suppGray,
+              councilR::colors$suppGray
+            ),
+            padding = list(l = 5, r = 5, b = 5, t = 5)
+          ),
+          margin = list(l = 225, pad = 0),
+          legend = list(
+            orientation = "h",
+            yanchor = "top",
+            xanchor = "left",
+            title = list(text = ""),
             font = list(
               size = 16,
-              family = font_family_list,
+              family = "Arial Narrow",
               color = councilR::colors$suppBlack
-            )
-          )),
-          hovermode = "closest",
-          hoverdistance = "10",
-          hoverlabel = hov_lab_list,
-          margin = list(t = 50, l = 50, r = 50, b = 10, pad = 0),
-          xaxis = list(
-            title = list(
-              text = "",
-              standoff = 0
+            )),
+          yaxis = list(
+            title = list(text = "",
+                         standoff = 0),
+            tickfont = list(
+              size = 16,
+              family = "Arial Narrow",
+              color = councilR::colors$suppBlack
             ),
-            zerolinewidth = 2,
-            zerolinecolor = colors$suppWhite,
-            zeroline = TRUE,
+            rangemode = "nonnegative",
+            gridcolor = "gray90",
+            zerolinecolor = "gray90",
+            zerolinewidth = 0
+          ),
+          xaxis = list(
+            title = list(text = ""),
+            zeroline = FALSE,
             showline = FALSE,
             showgrid = FALSE,
             tickfont = list(
               size = 16,
-              family = font_family_list,
+              family = "Arial Narrow",
               color = councilR::colors$suppBlack
-            )
-          ),
-          yaxis = list(
-            title = list(
-              text = "",
-              standoff = 0
-            ),
-            tickfont = list(
-              size = 16,
-              family = font_family_list,
-              color = councilR::colors$suppBlack
-            ),
-            range = ~c(min(copies_7day)-0.05*max(copies_7day), 1.1*max(copies_7day)),
-            gridcolor = colors$suppWhite,
-            zerolinecolor = colors$suppWhite,
-            zerolinewidth = 2
-          ),
-          legend = list(
-            orientation = "h",
-            # y = -0.3,
-            xanchor = "left",
-            font = list(
-              size = 16,
-              family = font_family_list,
-              color = councilR::colors$suppBlack
-            )
+            )),
+          annotations =  list(
+            list(
+              x = -0.22,
+              y = 0.6,
+              text = "Viral load<br>(Million copies<br>per person,<br>per day)",
+              xref = "paper",
+              yref = "paper",
+              showarrow = F,
+              align = "center",
+              font = list(
+                size = 16,
+                family = "Arial Narrow",
+                color = councilR::colors$suppBlack
+              ))
           )
-        ) %>%
+        )  %>%
         config(
           displayModeBar = "hover",
           displaylogo = FALSE,
