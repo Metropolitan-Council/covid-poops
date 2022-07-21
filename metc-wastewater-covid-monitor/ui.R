@@ -39,7 +39,11 @@ fluidPage(
           type = "pills",
           tabPanel(
             "Total Viral Load",
-            HTML("<h6><section style='font-size:14pt'>This graph shows the amount of SARS-CoV-2 viral RNA entering the Metro Plant each day (blue line) and the number of new daily COVID-19 cases in the Metro Plant's service area, by sample collection date (gray line; data from the Minnesota Department of Health). The most recent case data (darker gray) are incomplete and subject to change.</h3>"
+            HTML("<h6><section style='font-size:14pt'>This graph shows the amount of SARS-CoV-2 viral RNA 
+                 entering the Metro Plant each day (blue line) and the number of new daily COVID-19 
+                 cases in the Metro Plant's service area, by sample collection date 
+                 (gray line; data from the Minnesota Department of Health). The most recent case data (darker gray)
+                 are incomplete and subject to change.</h3>"
             ),
             HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: July 11, 2022.</h3>"
             ),
@@ -48,7 +52,10 @@ fluidPage(
           
           tabPanel(
             "Viral Load by Variant",
-            HTML("<h6><section style='font-size:14pt'>This graph shows the estimated amount of SARS-CoV-2 viral RNA by COVID-19 variant, sub-variant and lineage. The total amount of SARS-CoV-2 viral RNA in Metro Plant wastewater influent is shown in the background in gray.</h3>"
+            HTML("<h6><section style='font-size:14pt'>
+                 This graph shows the estimated amount of SARS-CoV-2 viral RNA by COVID-19 variant, 
+                 sub-variant and lineage. The total amount of SARS-CoV-2 viral RNA in Metro Plant 
+                 wastewater influent is shown in the background in gray.</h3>"
             ),
             HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: July 11, 2022.</h3>"
             ),
@@ -57,7 +64,9 @@ fluidPage(
           
           tabPanel(
             "Variant Frequencies (%)",
-            HTML("<h6><section style='font-size:14pt'>This graph shows the estimated percent of SARS-CoV-2 viral RNA contributed by COVID-19 variant, sub-variant and lineage.</h3>"
+            HTML("<h6><section style='font-size:14pt'>This graph shows the estimated
+                 percent of SARS-CoV-2 viral RNA contributed by COVID-19 variant, 
+                 sub-variant and lineage.</h3>"
             ),
             HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: July 11, 2022.</h3>"
             ),
@@ -67,20 +76,28 @@ fluidPage(
             "This Week's Summary",
             h6("July 15, 2022"),
             p(
-              "The most recent data update includes samples taken June 5 - July 11, 2022. During this sampling period:"
+              "The most recent data update includes samples taken June 5 - July 11, 2022. 
+              During this sampling period:"
             ),
             tags$ul(
-              tags$li("The total viral RNA load in Metro Plant influent decreased by 1% last week compared to the previous week"
+              tags$li("The total viral RNA load in Metro Plant influent decreased by 1% last week compared 
+                      to the previous week"
               ),
-              tags$li("Omicron subvariant BA.5 is the dominant variant in Metro Plant wastewater; it is in the process of replacing BA.2.12.1"
+              tags$li("Omicron subvariant BA.5 is the dominant variant in Metro Plant wastewater; 
+                      it is in the process of replacing BA.2.12.1"
               ),
               tags$li("BA.5 constituted 64% of the viral RNA entering Metro, up slightly from 62% a week ago"
               ),
               tags$li("The BA.5 load entering the plant was unchanged last week compared to the previous week"
               ),
-              tags$li("Omicron subvariant BA.2.12.1 made up 18% of the SARS-CoV-2 RNA in Metro Plant influent, down from 19% the week earlier"
+              tags$li("Omicron subvariant BA.2.12.1 made up 18% of the SARS-CoV-2 RNA in Metro Plant influent, 
+                      down from 19% the week earlier"
               ),
-              tags$li("On July 15, 2022, we changed the case data we present on this site. Previously, we showed case data by report date for the seven-county metro area, downloaded from USAFacts.org. Now, we show case data by sample collection date specifically for the Metro Plant service area, obtained directly from the Minnesota Department of Health"
+              tags$li("On July 15, 2022, we changed the case data we present on this site. 
+                      Previously, we showed case data by report date for the seven-county metro area, 
+                      downloaded from USAFacts.org. Now, we show case data by sample collection date 
+                      specifically for the Metro Plant service area, obtained directly from the 
+                      Minnesota Department of Health"
               )
             )
           )
