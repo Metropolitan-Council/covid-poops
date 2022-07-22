@@ -554,7 +554,7 @@ base_ggplot <-
 
 variant_load_plot <- 
 ggplotly(base_ggplot, tooltip = c("label"),
-         width = 750, height = 500) %>%
+         width = 900, height = 500) %>%
   layout(
     hoverlabel = list(
       font = list(
@@ -571,7 +571,7 @@ ggplotly(base_ggplot, tooltip = c("label"),
       ),
       padding = list(l = 5, r = 5, b = 5, t = 5)
     ),
-    margin = list(l = 130, pad = 0),
+    margin = list(l = 125, pad = 0),
     legend = list(
       orientation = "h",
       yanchor = "top",
@@ -606,12 +606,14 @@ ggplotly(base_ggplot, tooltip = c("label"),
       )),
     annotations = list(
       list(
-        x = -0.22,
+        x = -0.16,
         y = 0.6,
         text = "Viral load<br>(Million copies<br>per person,<br>per day)",
         xref = "paper",
         yref = "paper",
         showarrow = F,
+        borderpad = 0,
+        borderwidth = 0,
         align = "center",
         font = list(
           size = 16,
