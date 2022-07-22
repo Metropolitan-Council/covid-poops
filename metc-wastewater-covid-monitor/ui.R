@@ -34,7 +34,7 @@ fluidPage(
       br(),
       fluidRow(
         h2("COVID-19 Surveillance at the Metro Plant"),
-        HTML("<h6><section style='font-size:14pt'><i>MCES will not be posting new data today on the prevalence of SARS-CoV-2 in Metro Plant influent. We have identified and are addressing a minor issue with recent sample analyses and will report updated results as soon as possible, hopefully next week.
+        HTML("<h6><section style='font-size:14pt'><i>MCES will not be posting new data July 22nd on the prevalence of SARS-CoV-2 in Metro Plant influent. We have identified and are addressing a minor issue with recent sample analyses and will report updated results as soon as possible, hopefully next week.
               <br><br>We are committed to providing the highest quality data we can, and in this case, we need more time to ensure the accuracy of the data. Based on the preliminary data we can confidently report that there has been no significant change in the amount of viral material entering the plant over the past week.
               <br><br>Wastewater surveillance for the virus that causes COVID-19 is still in its infancy and adjustments are not unusual. As a result, we’re going to take a brief pause in the report out of information so it is as reliable and accurate as we can possibly make it.<br><br></i></h3>"
         ),
