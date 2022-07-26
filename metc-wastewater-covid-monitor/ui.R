@@ -70,15 +70,17 @@ fluidPage(
               "The most recent data update includes samples taken June 12 - July 18, 2022. During this sampling period:"
             ),
             tags$ul(
-              tags$li("The total viral RNA load in Metro Plant influent decreased by 11% last week compared to the previous week"
+              tags$li("The total viral RNA load entering the Metro Plant decreased by 8% last week compared to a week earlier"
               ),
-              tags$li(" Omicron subvariant BA.5 is the dominant variant in Metro Plant wastewater, making up 70% of the viral RNA entering the plant last week"
+              tags$li("The total load has varied over a very narrow range since May 31, with weekly average values staying within +/- 10% of the mean value for the period"
               ),
-              tags$li("The BA.5 load entering the plant decreased by 2% last week compared to the previous week"
+              tags$li("The load of BA.5 RNA increased by 2% last week compared to the previous week"
               ),
-              tags$li("Omicron subvariant BA.4 made up 18% and BA.2.12.1 made up less than 10% of the SARS-CoV-2 RNA in Metro Plant influent last week"
+              tags$li("BA.5 constituted 70% of the viral RNA entering Metro, up from 64% a week ago. BA.5 prevalence was >76% on July 15-17"
               ),
-              tags$li("On July 15, 2022, we changed the case data we present on this site. Previously, we showed case data by report date for the seven-county metro area, downloaded from USAFacts.org. Now, we show case data by sample collection date specifically for the Metro Plant service area, obtained directly from the Minnesota Department of Health"
+              tags$li("We began testing for BA.2.75 last week but did not see it in Metro influent"
+              ),
+              tags$li("The Council did not post new data on July 22 in order to do additional data analysis made necessary by recent changes in the variant makeup of our samples. As the virus mutates, it occasionally interacts differently with our assays and we have to adjust our methods to ensure the data we share are the most accurate and reliable we can provide"
               )
             )
           )
