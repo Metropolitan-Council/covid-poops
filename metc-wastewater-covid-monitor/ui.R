@@ -65,7 +65,7 @@ fluidPage(
           ),
           tabPanel(
             "This Week's Summary",
-            h6("July 22, 2022"),
+            h6("July 26, 2022"),
             p(
               "The most recent data update includes samples taken June 12 - July 18, 2022. During this sampling period:"
             ),
@@ -151,7 +151,7 @@ fluidPage(
       ),
       tags$br(),
       "App last updated ",
-      "2022-07-22",
+      "2022-07-26",
       # using gh::gh() causes SAML error in production
       # gh::gh("GET /repos/Metropolitan-Council/covid-poops")[49][[1]] %>% as.Date(),
       style = "font-size: 1.5rem;
