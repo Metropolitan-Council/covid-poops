@@ -41,7 +41,7 @@ fluidPage(
             "Total Viral Load",
             HTML("<h6><section style='font-size:14pt'>This graph shows the amount of SARS-CoV-2 viral RNA entering the Metro Plant each day (blue line) and the number of new daily COVID-19 cases in the Metro Plant's service area, by sample collection date (gray line; data from the Minnesota Department of Health). The most recent case data (darker gray) are incomplete and subject to change.</h3>"
             ),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: July 18, 2022.</h3>"
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: July 18, 2022. <br>*All data are preliminary and subject to revision</h3>"
             ),
             plotlyOutput("loadPlot", height = "auto")
           ),
@@ -50,7 +50,7 @@ fluidPage(
             "Viral Load by Variant",
             HTML("<h6><section style='font-size:14pt'>This graph shows the estimated amount of SARS-CoV-2 viral RNA by COVID-19 variant, sub-variant and lineage. The total amount of SARS-CoV-2 viral RNA in Metro Plant wastewater influent is shown in the background in gray.</h3>"
             ),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: July 18, 2022.</h3>"
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: July 18, 2022.  <br>*All data are preliminary and subject to revision</h3>"
             ),
             plotlyOutput("variantLoadPlot", height = "auto")
           ),
@@ -59,7 +59,7 @@ fluidPage(
             "Variant Frequencies (%)",
             HTML("<h6><section style='font-size:14pt'>This graph shows the estimated percent of SARS-CoV-2 viral RNA contributed by COVID-19 variant, sub-variant and lineage.</h3>"
             ),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: July 18, 2022.</h3>"
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: July 18, 2022. <br>*All data are preliminary and subject to revision</h3>"
             ),
             plotlyOutput("variantFreqPlot", height = "auto")
           ),
@@ -93,6 +93,9 @@ fluidPage(
       # load -----
       p(
         "Data are divided in two sections: load (the total amount of virus in wastewater) and cases, and variant frequency (the amount of virus that can be identified as specific variants)."
+      ),
+      p(
+         em("*All data are preliminary and subject to revision.")
       ),
       h3("Total Viral Load"),
       p(
