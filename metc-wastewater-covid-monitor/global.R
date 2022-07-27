@@ -10,6 +10,7 @@ library(councilR)
 library(DT)
 library(gh)
 library(shinyBS)
+library(ggplot2)
 
 
 # if you get error message
@@ -40,17 +41,43 @@ variant_data <- read.csv("data/clean_variant_data.csv") %>%
 copies_by_variant <- read.csv("data/copies_by_variant.csv") %>%
   mutate(date = as.Date(date)) %>%
   mutate(across(where(is.numeric), round, digits = 2)) %>%
-  filter( !variant %in% c("Omicron BA.4 and BA.5"))
+  mutate(variant = factor(
+    variant,
+    levels = c(
+      "Alpha, Beta & Gamma",
+      "Delta",
+      "Omicron BA.1",
+      "Omicron BA.2 (Excluding BA.2.12.1)",
+      "Omicron BA.2.12.1",
+      "Omicron BA.4 and BA.5",
+      "Omicron BA.4",
+      "Omicron BA.5"
+    )
+  )) %>%
+  filter(!(variant == "Omicron BA.4 and BA.5" &
+             date > "2022-05-30")) %>%
+  filter(date > "2021-04-01")
 
 font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
 
 whiteSmoke <- "#F5F5F5"
 
-pal <- c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#A9A3FE", "#3D9F93", "#666666")
-pal <- setNames(pal, c(
-  "Alpha, Beta & Gamma", "Delta",
-  "Omicron BA.1", "Omicron BA.2 (Excluding BA.2.12.1)", "Omicron BA.2.12.1", "Omicron BA.4", "Omicron BA.5", "Total load"
-))
+#pal <- c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#A9A3FE", "#3D9F93", "#666666")
+#pal <- setNames(pal, c(
+#  "Alpha, Beta & Gamma", "Delta",
+#  "Omicron BA.1", "Omicron BA.2 (Excluding BA.2.12.1)", "Omicron BA.2.12.1", "Omicron BA.4", "Omicron BA.5", "Total load"
+#))
+
+pal <- c("Total Viral Load" = "white",
+         "Omicron BA.5" = "#000080",
+         "Omicron BA.4" = "#3D9F93",
+         "Omicron BA.4 and BA.5" = "#A9A3FE",
+         "Omicron BA.2.12.1" = "#FBC740",
+         "Omicron BA.2 (Excluding BA.2.12.1)" = "#D64776",
+         "Omicron BA.1" = "#6D3571",
+         "Delta" = "#1D94B7",
+         "Alpha, Beta & Gamma" = "#84BB25"
+)
 
 ann_list <- list(
   text = paste(

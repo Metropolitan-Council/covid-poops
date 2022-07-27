@@ -1,7 +1,7 @@
 ---
 title: "Metro Wastewater COVID-19 Monitoring"
 author: "Metropolitan Council"
-date: "July 15, 2022"
+date: "July 27, 2022"
 output:
   html_document:
     css: ["www/rmd-report-style.css", "www/colors.css", "www/font.css"]
@@ -10,6 +10,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 setwd(here::here())
+library(ggplot2)
 library(shiny)
 library(tidyverse)
 library(lubridate)
@@ -34,9 +35,25 @@ variant_data <- read.csv("data/clean_variant_data.csv") %>%
   filter( !variant %in% c("Omicron BA.4 and BA.5"))
   
 copies_by_variant <- read.csv("data/copies_by_variant.csv") %>%
+    mutate(variant = factor(
+    variant,
+    levels = c(
+      "Alpha, Beta & Gamma",
+      "Delta",
+      "Omicron BA.1",
+      "Omicron BA.2 (Excluding BA.2.12.1)",
+      "Omicron BA.2.12.1",
+      "Omicron BA.4 and BA.5",
+      "Omicron BA.4",
+      "Omicron BA.5"
+    )
+  )) %>%
   mutate(date = as.Date(date)) %>%
   mutate(across(where(is.numeric), round, digits = 2))  %>%
-  filter( !variant %in% c("Omicron BA.4 and BA.5"))
+  filter(!(variant == "Omicron BA.4 and BA.5" &
+             date > "2022-05-30")) %>%
+  filter(date > "2021-04-01")
+
 
 omi_ratio_data <- read.csv("data/omi_ratio_data.csv") %>%
   mutate(date = as.Date(date)) %>%
@@ -46,8 +63,16 @@ font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
 
 whiteSmoke <- "#F5F5F5"
 
-pal <- c("#84BB25", "#1D94B7", "#6D3571", "#D64776", "#FBC740", "#A9A3FE", "#3D9F93", "#666666")
-pal <- setNames(pal, c("Alpha, Beta & Gamma", "Delta", "Omicron BA.1", "Omicron BA.2 (Excluding BA.2.12.1)", "Omicron BA.2.12.1", "Omicron BA.4", "Omicron BA.5", "Total load"))
+pal <- c("Total Viral Load" = "white",
+         "Omicron BA.5" = "#000080",
+         "Omicron BA.4" = "#3D9F93",
+         "Omicron BA.4 and BA.5" = "#A9A3FE",
+         "Omicron BA.2.12.1" = "#FBC740",
+         "Omicron BA.2 (Excluding BA.2.12.1)" = "#D64776",
+         "Omicron BA.1" = "#6D3571",
+         "Delta" = "#1D94B7",
+         "Alpha, Beta & Gamma" = "#84BB25"
+         )
 
 ann_list <- list(
   text = paste(
@@ -434,161 +459,172 @@ div(variant_plot, align = "center")
 This plot shows the total amount (“load”) of each variant entering the Metro Plant, over time.  Recently, BA.5 has increased rapidly and overtaken BA.2.12.1 as the dominant variant.
 
 ###### How to read this graph:
-This graph shows the measured number of copies per person per day of each variant in wastewater. Points are daily data; lines and shaded areas are averages of the previous 7 days. The gray area in the background is the 7-day average total viral load. Variant proportions do not always add to 100%, so slight discrepancies between the total viral load and that of the individual variants are expected.
+This graph shows the measured number of copies per person per day of each variant in wastewater. Shaded areas are averages of the previous 7 days for each variant load. The gray line is the 7-day average total viral load. Variant proportions do not always add to 100%, so slight discrepancies between the total viral load and that of the individual variants are expected.  
 
 ```{r load x variant plot, message = FALSE, warning = FALSE}
 
 variant_prev_title <- list(
-            x = -0.05,
-            y = 1.15,
-            text = "Viral load in wastewater<br>M copies/person/day",
-            xref = "paper",
-            yref = "paper",
-            showarrow = F,
-            align = "left",
-            font = list(
-              size = 14,
-              family = font_family_list,
-              color = councilR::colors$suppBlack
-            )
-          )
- date_anno2 <- list(
-          text = paste(
-            "<br><br>",
-            "<i>", "Latest sample date",
-            max(c(
-              load_data$date,
-              variant_data$date
-              # case_data$date,
-              # combined_data$date
-            ), na.rm = T),
-            "</i>"
-          ),
-        font = list(
-          size = 11,
-          family = font_family_list,
-          color = councilR::colors$suppBlack
-        ),
-          x = 1,
-          y = -0.35,
-          showarrow = F,
-          xref = "paper", yref = "paper",
-          xanchor = "right", yanchor = "auto",
-          xshift = 0, yshift = -25
-        )
+  x = -0.05,
+  y = 1.15,
+  text = "Viral load in wastewater<br>M copies_variant/person/day",
+  xref = "paper",
+  yref = "paper",
+  showarrow = F,
+  align = "left",
+  font = list(
+    size = 14,
+    family = "Arial Narrow",
+    color = councilR::colors$suppBlack
+  )
+)
 
-# browser()
-    loadxvariantplot <-
-    plot_ly(height = 500, width = 900) %>%
-    # total load:
-    add_trace(
-      data = load_data,
-      type = "scatter",
-      mode = "lines",
-      x = ~date,
-      fill = "tozeroy",
-      y = ~copies_day_person_7day,
-      alpha = 0.25,
-      line = list(width = 0.5, color = colors$suppGray),
-      color = ~"Total load",
-      colors = pal,
-      name = "Total load",
-      hoverinfo = "text",
-      text = ~hover_text_load_7day
-    ) %>%
-    add_trace(
-      data = copies_by_variant,
-      type = "scatter",
-      mode = "lines",
-      x = ~date,
-      fill = "tozeroy",
-      y = ~copies_7day,
-      split = ~variant,
-      color = ~variant,
-      alpha = 0.25,
-      colors = pal,
-      hoverinfo = "none"
-    ) %>%
-    add_trace(
-      data = copies_by_variant,
-      type = "scatter",
-      mode = "markers",
-      x = ~date,
-      y = ~copies_variant,
-      split = ~variant,
-      color = ~variant,
-      alpha = 0.8,
-      colors = pal,
-      hoverinfo = "text",
-      text = ~hover_text_variant,
-      showlegend = F
-    ) %>%
-    layout(
-      annotations = list(date_anno2, variant_prev_title),
-      hovermode = "closest",
-      hoverdistance = "10",
-      hoverlabel = hov_lab_list,
-      margin = list(
-        l = 50,
-        r = 100,
-        b = 115,
-        t = 50,
-        pad = 10
-      ),
-      xaxis = list(
-        title = list(
-          text = "",
-          standoff = 25,
-          font = list(
-            size = 14,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          )
-        ),
-        zerolinewidth = 2,
-        zeroline = TRUE,
-        showline = FALSE,
-        showgrid = FALSE,
-        tickfont = list(
-          size = 12,
-          family = font_family_list,
-          color = councilR::colors$suppBlack
-        )
-      ),
-      yaxis = list(
-        title = list(
-         # text = "<b>Viral load in wastewater,</b> M copies/person/day",
-          standoff = 25,
-          font = list(
-            size = 14,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          )
-        ),
-        tickfont = list(
-          size = 12,
-          family = font_family_list,
-          color = councilR::colors$suppBlack
-        ),
-        rangemode = "nonnegative",
-        gridcolor = "gray90",
-        zerolinecolor = "gray50",
-        zerolinewidth = 2
-      ),
-      legend = list(
-        orientation = "h",
-        y = -0.2,
-        xanchor = "left",
-        font = list(
-          size = 12,
-          family = font_family_list,
-          color = councilR::colors$suppBlack
-        )
-      )
-    ) %>%
-    config(displayModeBar = FALSE)
+date_anno2 <- list(
+  text = paste(
+    "<br><br>",
+    "<i>", "Latest sample date",
+    max(c(
+      load_data$date,
+      copies_by_variant$date
+      # case_data$date,
+      # combined_data$date
+    ), na.rm = T),
+    "</i>"
+  ),
+  font = list(
+    size = 11,
+    family = font_family_list,
+    color = councilR::colors$suppBlack
+  ),
+  x = 1,
+  y = -0.35,
+  showarrow = F,
+  xref = "paper", yref = "paper",
+  xanchor = "right", yanchor = "auto",
+  xshift = 0, yshift = -25
+)
 
-div(loadxvariantplot, align = "center")
+
+base_ggplot <-
+  copies_by_variant %>%
+  rename(`7-day-average` = hover_text_variant_7day) %>%
+  mutate(variant = factor(variant, levels = rev(levels(variant)))) %>%
+  ggplot(aes(x = date, y = copies_7day)) +
+  geom_area(
+    position = "stack",
+    aes(
+      x = date,
+      y = copies_7day,
+      color = variant,
+      fill = variant,
+      label = `7-day-average`
+    ),
+    alpha = 0.75,
+    na.rm = T,
+    lwd = 0.25
+  )  +
+  # solid black line - total covid load
+  geom_line(
+    data = load_data[load_data$date > min(copies_by_variant$date),] %>%
+      mutate(variant = "Total COVID-19 Load") %>%
+      rename(`7-day-average` = hover_text_load_7day),
+    aes(
+      x = date,
+      y = copies_day_person_7day,
+      color = variant,
+      fill = variant,
+      label = `7-day-average`
+    ),
+    lwd = 0.6
+  ) +
+  scale_fill_manual(values = pal,
+                    drop = T) + 
+  scale_color_manual(values = pal,
+                     drop = T) +
+  scale_y_continuous(name = "",
+                     labels = scales::unit_format(unit = "M")) +
+  scale_x_date(name = "Date",
+               breaks = "2 months",
+               date_labels = "%b '%y") +
+  geom_hline(yintercept = 0, color = "gray30", size = 0.5) + 
+  theme_void()+
+  theme(panel.grid.major.x= element_blank(),
+        axis.line = element_blank(),
+        axis.text.x = element_text(),
+        axis.text.y = element_text())
+
+variant_load_plot <- 
+ggplotly(base_ggplot, tooltip = c("label"),
+         width = 900, height = 500) %>%
+  layout(
+    hoverlabel = list(
+      font = list(
+        size = 20,
+        family = "Arial Narrow",
+        color = councilR::colors$suppWhite
+      ),
+      # bgcolor = "white",
+      stroke = list(
+        councilR::colors$suppGray,
+        councilR::colors$suppGray,
+        councilR::colors$suppGray,
+        councilR::colors$suppGray
+      ),
+      padding = list(l = 5, r = 5, b = 5, t = 5)
+    ),
+    margin = list(l = 125, pad = 0),
+    legend = list(
+      orientation = "h",
+      yanchor = "top",
+      xanchor = "left",
+      title = list(text = ""),
+      font = list(
+        size = 16,
+        family = "Arial Narrow",
+        color = councilR::colors$suppBlack
+      )),
+    yaxis = list(
+      title = list(text = ""),
+      tickfont = list(
+        size = 16,
+        family = "Arial Narrow",
+        color = councilR::colors$suppBlack
+      ),
+      rangemode = "nonnegative",
+      gridcolor = "gray90",
+      zerolinecolor = "gray90",
+      zerolinewidth = 0
+    ),
+    xaxis = list(
+      title = list(text = ""),
+      zeroline = FALSE,
+      showline = FALSE,
+      showgrid = FALSE,
+      tickfont = list(
+        size = 16,
+        family = "Arial Narrow",
+        color = councilR::colors$suppBlack
+      )),
+    annotations = list(
+      list(
+        x = -0.16,
+        y = 0.6,
+        text = "Viral load<br>(Million copies<br>per person,<br>per day)",
+        xref = "paper",
+        yref = "paper",
+        showarrow = F,
+        borderpad = 0,
+        borderwidth = 0,
+        align = "center",
+        font = list(
+          size = 16,
+          family = "Arial Narrow",
+          color = councilR::colors$suppBlack
+        ))
+    )
+  )
+
+
+div(variant_load_plot, align = "center")
 ```
 \newpage
 ###### More information about variant detection

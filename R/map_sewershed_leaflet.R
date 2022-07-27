@@ -1,4 +1,5 @@
-sewershed <- readRDS("~/MetC_Locals/MTS/covid-poops/metc-wastewater-covid-monitor/data/simple_wwtp_sewershed.rds") %>%
+#sewershed <- readRDS("~/MetC_Locals/MTS/covid-poops/metc-wastewater-covid-monitor/data/simple_wwtp_sewershed.rds") %>%
+sewershed <- readRDS("data/simple_wwtp_sewershed.rds") %>%
   filter(WWTP %in% c("Blue Lake", "Empire", 
                      "Metro", "Seneca"))
   pal <- leaflet::colorFactor(c("#1D94B7", # Blue Lake

@@ -14,6 +14,7 @@ Imports:
     leaflet,
     leaflet.extras,
     sf,
-    shinyBS
+    shinyBS,
+    ggplot2
 Remotes:
   Metropolitan-Council/councilR
