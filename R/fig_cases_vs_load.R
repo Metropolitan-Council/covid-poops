@@ -142,13 +142,13 @@ load_plot_base <-
         labels = scales::unit_format(unit = "M"),
         sec.axis = sec_axis(
           ~ . * sec_axis_b,
-          name = my_yaxis_right,
-          breaks = seq(
-            from = 0,
-            # round to nearest hundred
-            to = round(max(data[,"covid_cases_7day"], na.rm = T), -2), 
-            by = 50
-          )
+          name = my_yaxis_right
+          # breaks = seq(
+          #   from = 0,
+          #   # round to nearest hundred
+          #   to = round(max(data[,"covid_cases_7day"], na.rm = T), -2), 
+          #   by = by_cases
+          # )
         )
       ) +
       labs(
