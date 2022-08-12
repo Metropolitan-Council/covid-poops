@@ -79,7 +79,7 @@ my_caption <- paste0(
 )
 
 ## Axis labels, all plots -----
-my_yaxis_left <- stringr::str_wrap("Viral load (M copies per person, per day)", width = 10)
+my_yaxis_left <- stringr::str_wrap("Viral load (copies per person, per day)", width = 10)
 my_yaxis_right <- stringr::str_wrap("COVID-19 cases per 100,000 residents (7-day avg.)", width = 10)
 
 
