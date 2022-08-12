@@ -78,7 +78,8 @@ variant_split <-
       select(date, contains("t95i")) %>%
       mutate(mutation = "t95i") %>%
       rename_all(~ gsub("t95i_", "", .)) %>%
-      mutate(sample = as.character(sample)),
+      mutate(sample = as.character(sample)) %>% 
+      mutate(frequency_of_mutant_allele = as.numeric(frequency_of_mutant_allele)),
      raw_variant_data %>%
        select(date, contains("d3n")) %>%
        mutate(mutation = "d3n") %>%
