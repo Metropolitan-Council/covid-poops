@@ -107,7 +107,7 @@ load_plot_base <-
       ggplot(aes(x = date, y = copies_day_person_M_mn)) +
       geom_bar(
         aes(
-          y = covid_cases_7day / b,
+          y = covid_cases_7day / sec_axis_b,
           color = incomplete_flag,
           fill = incomplete_flag
         ),
