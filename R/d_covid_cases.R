@@ -32,8 +32,8 @@ case_data <- raw_case_data %>%
                  format(date, "%b %d, %Y"), "<br>",
                  "<b>", round(covid_cases_7day, 2), "</b> cases per 100,000 people"
                )) %>%
-               select ( date, covid_cases_new, covid_cases_per100K, covid_cases_7day, hover_text_case) 
-
+               select ( date, covid_cases_new, covid_cases_per100K, covid_cases_7day, hover_text_case)  %>%
+  filter(!is.na(date))
 
 write.csv(case_data, "metc-wastewater-covid-monitor/data/case_data.csv", row.names = F)
 write.csv(case_data, "data/case_data.csv", row.names = F)
