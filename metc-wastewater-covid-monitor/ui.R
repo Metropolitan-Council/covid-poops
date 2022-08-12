@@ -41,7 +41,7 @@ fluidPage(
            
             HTML("<h6><section style='font-size:14pt'>This graph shows the amount of SARS-CoV-2 viral RNA entering the Metro Plant each day (blue line) and the number of new daily COVID-19 cases in the Metro Plant's service area, by sample collection date (gray line; data from the Minnesota Department of Health). The most recent case data (darker gray) are incomplete and subject to change.</h3>"
             ),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: August 1, 2022. <br>*All data are preliminary and subject to revision</h3>"
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: August 8, 2022. <br>*All data are preliminary and subject to revision</h3>"
             ),
             plotlyOutput("loadPlot", height = "auto")
           ),
