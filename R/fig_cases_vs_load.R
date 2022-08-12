@@ -224,31 +224,16 @@ ggsave("fig/cases_vs_load_insta.png",
 )
 
 # Instagram, Last 90 Days ----
-cases_vs_load_insta_90days <- 
-  load_plot_base(data = cases_load_90,
-                 title = my_title_insta,
-                 subtitle = my_subtitle_insta,
-                 sec_axis_b = b90,
-                 caption_width = 110,
-                 date_breaks = "2 weeks",
-                 date_labels = "%b %d") + 
+cases_vs_load_insta_90days <-
+load_plot_base(data = cases_load_90,
+               title = my_title_insta,
+               subtitle = my_subtitle_insta,
+               sec_axis_b = b90,
+               caption_width = 110,
+               date_breaks = "2 weeks",
+               date_labels = "%b\n'%y") + 
   theme_council_covidplot_insta(use_showtext = T,
                                 use_manual_font_sizes = TRUE) +
-  
-  ## custom y axis - will need to adjust manually over time ----
-  scale_y_continuous(
-    name = my_yaxis_left,
-    labels = scales::unit_format(unit = "M"),
-    sec.axis = sec_axis(
-      ~ . * b90,
-      name = my_yaxis_right,
-      breaks = seq(
-        from = 0,
-        to = 100, 
-        by = 25
-      )
-    )
-  ) +
   theme(
     plot.title = element_markdown(
       lineheight = 0.5,
@@ -260,7 +245,7 @@ cases_vs_load_insta_90days <-
       size = 30,
       hjust = 1
     )
-  )
+  ) 
 
 ggsave("fig/cases_vs_load_insta_90days.png",
        cases_vs_load_insta_90days,
