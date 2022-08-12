@@ -65,22 +65,22 @@ fluidPage(
           ),
           tabPanel(
             "This Week's Summary",
-            h6("August 5, 2022"),
+            h6("August 12, 2022"),
             p(
               "The most recent data update includes samples taken July 26 - August 1, 2022. During this sampling period:"
             ),
             tags$ul(
-              tags$li("The total viral RNA load entering the Metro Plant decreased by 7% last week compared to a week earlier"
+              tags$li("The total viral RNA load entering the Metro Plant decreased by 1% last week compared to a week earlier."
               ),
-              tags$li("The total load has varied over a very narrow range since May 31, with weekly average values staying within +/- 10% of the mean value for the period"
+              tags$li("The total load has varied over a very narrow range since May 31, with weekly average values staying within +/- 10% of the mean value for the period."
               ),
-              tags$li("The load of BA.5 RNA decreased by 5% last week compared to the previous week"
+              tags$li("The load of BA.5 RNA increased by 3% last week compared to the previous week."
               ),
-              tags$li("BA.5 constituted 81% of the viral RNA entering Metro, up from 79% a week ago"
+              tags$li("BA.5 constituted 85% of the viral RNA entering Metro, up from 81% a week ago."
               ),
-              tags$li("BA.4 and BA.2 represented 10% and 4%, respectively, of the total viral RNA load"
+              tags$li("BA.4 and BA.2 represented 11% and 2%, respectively, of the total viral RNA load."
               ),
-              tags$li("We are testing for BA.2.75 but have not seen it in Metro influent"
+              tags$li("We are testing for BA.2.75 but have not seen it in Metro influent."
               )
             )
           )

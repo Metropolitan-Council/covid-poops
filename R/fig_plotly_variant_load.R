@@ -89,7 +89,7 @@ hov_lab_list <- list(
 variant_prev_title <- list(
   x = -0.05,
   y = 1.15,
-  text = "Viral load in wastewater<br>M copies_variant/person/day",
+  text = "Viral load in wastewater<br>copies_variant/person/day",
   xref = "paper",
   yref = "paper",
   showarrow = F,
@@ -231,7 +231,7 @@ ggplotly(base_ggplot, tooltip = c("label"),
       list(
         x = -0.22,
         y = 0.6,
-        text = "Viral load<br>(Million copies<br>per person,<br>per day)",
+        text = "Viral load<br>(copies<br>per person,<br>per day)",
         xref = "paper",
         yref = "paper",
         showarrow = F,
