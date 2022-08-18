@@ -21,7 +21,7 @@ case_area_pop = 1951318
 
 case_data <- raw_case_data %>%
                right_join( zip_code_multipliers, by = "zip") %>%
-               mutate ( covid_cases_new = cases * percent_coverage) %>%
+               mutate ( covid_cases_new = case_count * percent_coverage) %>%
                group_by(date) %>%
                summarize(covid_cases_new = sum(covid_cases_new, na.rm = TRUE)) %>%
                ungroup() %>%
@@ -32,8 +32,8 @@ case_data <- raw_case_data %>%
                  format(date, "%b %d, %Y"), "<br>",
                  "<b>", round(covid_cases_7day, 2), "</b> cases per 100,000 people"
                )) %>%
-               select ( date, covid_cases_new, covid_cases_per100K, covid_cases_7day, hover_text_case) 
-
+               select ( date, covid_cases_new, covid_cases_per100K, covid_cases_7day, hover_text_case)  %>%
+  filter(!is.na(date))
 
 write.csv(case_data, "metc-wastewater-covid-monitor/data/case_data.csv", row.names = F)
 write.csv(case_data, "data/case_data.csv", row.names = F)
