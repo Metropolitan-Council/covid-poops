@@ -70,13 +70,13 @@ fluidPage(
               "The most recent data update includes samples taken September 6 - September 12 2022. During this sampling period:"
             ),
             tags$ul(
-              tags$li("The total viral RNA load entering the Metro Plant decreased by 11% last week compared to a week earlier."
+              tags$li("The total viral RNA load entering the Metro Plant increased by 36% last week compared to a week earlier."
               ),
-              tags$li("The load of BA.5 RNA decreased by 12% last week compared to the previous week."
+              tags$li("The load of BA.5 RNA also increased by 36% last week compared to the previous week."
               ),
-              tags$li("BA.5 constituted 90% of the viral RNA entering Metro, and BA.4 and BA.2 represented 6% and 1%, respectively, of the total viral RNA load."
+              tags$li("BA.5 constituted 90% of the viral RNA entering Metro, and BA.4 and BA.2 represented 5% and 1%, respectively, of the total viral RNA load."
               ),
-              tags$li("We are testing for BA.2.75 but have not seen it in Metro influent."
+              tags$li("We are beginning to see BA.2.75 at levels around 1-2% in Metro influent."
               )
             )
           )
