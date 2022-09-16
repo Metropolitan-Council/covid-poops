@@ -51,7 +51,7 @@ load_data <-
   # average across multiple samples:
   summarize(
     copies_day_person_M_mn = mean(copies_day_person_M, na.rm = T),
-    copies_day_person_M_se = sd(copies_day_person_M, na.rm = T) / (n_samples)
+    copies_day_person_M_se = sd(copies_day_person_M, na.rm = T) / sqrt(n_samples)
   ) %>%
   ungroup() %>%
   unique() %>%
