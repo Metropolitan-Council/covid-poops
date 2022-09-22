@@ -36,8 +36,8 @@ load_data_bysample <-
   ) %>%
   # calculate n per day, per person, per person in millions
   mutate(copies_day = n_l * flow_l_day) %>%
-  mutate(copies_day_person = copies_day / 195000) %>%
-  mutate(copies_day_person_M = copies_day_person / 1e7) %>%
+  mutate(copies_day_person = copies_day / 1950000) %>%
+  mutate(copies_day_person_M = copies_day_person / 1e6) %>%
   # average across runs for a sample average
   group_by(sample_name, sample_start_date, flow_l_day) %>%
   summarize(across(c(copies_day_person_M), ~ mean(., na.rm = T))) %>%
