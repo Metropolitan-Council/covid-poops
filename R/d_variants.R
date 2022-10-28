@@ -81,15 +81,15 @@ variant_split <-
       mutate(sample = as.character(sample)) %>% 
       mutate(frequency_of_mutant_allele = as.numeric(frequency_of_mutant_allele)),
      raw_variant_data %>%
-       select(date, contains("d3n")) %>%
+       select(date, contains("xsample"), contains("d3n")) %>%
        mutate(mutation = "d3n") %>%
-       rename_all(~ gsub("d3n_and_l11f", "", .)) %>%
+       rename_all(~ gsub("xsample", "sample", .)) %>%
       rename_all(~ gsub("d3n_ba_", "", .)) %>%
       mutate(sample = as.character(sample)),
     raw_variant_data %>%
-      select(date, contains("l11f")) %>%
+      select(date, contains("xsample"), contains("l11f")) %>%
       mutate(mutation = "l11f") %>%
-      rename_all(~ gsub("d3n_and_l11f", "", .)) %>%
+      rename_all(~ gsub("xsample", "sample", .)) %>%
       rename_all(~ gsub("l11f_ba_", "", .)) %>%
       mutate(sample = as.character(sample))
   )
