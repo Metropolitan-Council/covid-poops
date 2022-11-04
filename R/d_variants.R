@@ -133,7 +133,6 @@ variant_data_run <-
       date >= "2022-04-12" &
         date <= "2022-05-30" &
         # only calculate when k417N is greater than than hv 69/70:
-
         k417n > hv_69_70 &
         # only calculate when hv69/70 and K417N data are present:
         !is.na(hv_69_70) & !is.na(k417n)
@@ -143,7 +142,11 @@ variant_data_run <-
       date >= "2022-05-31" &
         date < "2022-08-31"
       ~ 0,
-      date >= "2022-08-31"
+      date >= "2022-08-31" &
+        # only calculate when k417N is greater than than hv 69/70:
+        k417n > hv_69_70 &
+        # only calculate when hv69/70 and K417N data are present:
+        !is.na(hv_69_70) & !is.na(k417n)
       ~ k417n - hv_69_70,
       # Assigning zeros for BA2:
       date >= "2022-01-01" &
