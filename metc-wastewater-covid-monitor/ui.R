@@ -41,7 +41,7 @@ fluidPage(
            
             HTML("<h6><section style='font-size:14pt'>This graph shows the amount of SARS-CoV-2 viral RNA entering the Metro Plant each day (blue line) and the number of new daily COVID-19 cases in the Metro Plant's service area, by sample collection date (gray line; data from the Minnesota Department of Health). The most recent case data (darker gray) are incomplete and subject to change.</h3>"
             ),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: October 31, 2022. <br>*All data are preliminary and subject to revision</h3>"
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: November 7, 2022. <br>*All data are preliminary and subject to revision</h3>"
             ),
             plotlyOutput("loadPlot", height = "auto")
           ),
@@ -50,7 +50,7 @@ fluidPage(
             "Viral Load by Variant",
             HTML("<h6><section style='font-size:14pt'>This graph shows the estimated amount of SARS-CoV-2 viral RNA by COVID-19 variant, sub-variant and lineage. The total amount of SARS-CoV-2 viral RNA in Metro Plant wastewater influent is shown in the background in gray.</h3>"
             ),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: October 31, 2022.  <br>*All data are preliminary and subject to revision</h3>"
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: November 7, 2022.  <br>*All data are preliminary and subject to revision</h3>"
             ),
             plotlyOutput("variantLoadPlot", height = "auto")
           ),
@@ -59,22 +59,24 @@ fluidPage(
             "Variant Frequencies (%)",
             HTML("<h6><section style='font-size:14pt'>This graph shows the estimated percent of SARS-CoV-2 viral RNA contributed by COVID-19 variant, sub-variant and lineage.</h3>"
             ),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: October 31, 2022. <br>*All data are preliminary and subject to revision</h3>"
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: November 7, 2022. <br>*All data are preliminary and subject to revision</h3>"
             ),
             plotlyOutput("variantFreqPlot", height = "auto")
           ),
           tabPanel(
             "This Week's Summary",
-            h6("November 4, 2022"),
+            h6("November 11, 2022"),
             p(
-              "The most recent data update includes samples taken October 25 - October 31 2022. During this sampling period:"
+              "The most recent data update includes samples taken November 1 - November 7 2022. During this sampling period:"
             ),
             tags$ul(
-              tags$li("The total viral RNA load entering the Metro Plant decreased by 18% last week compared to a week earlier."
+              tags$li("The total viral RNA load entering the Metro Plant increased by 11% last week compared to a week earlier."
               ),
-              tags$li("The weekly average load is now only 1% lower than it was two weeks ago, and essentially the same as it was six weeks ago."
+              tags$li("The average load over the past four weeks (10/11 to 11/7) is 15% higher than that over the previous four weeks (9/13 to 10/10)."
               ),
-              tags$li("BA.5 constituted 92% of the viral RNA entering Metro, and BA.4 and BA.2 represented 4% and 5%, respectively, of the total viral RNA load."
+              tags$li("BA.5 constituted 92% of the viral RNA entering Metro, and BA.4 and BA.2 represented 3% and 5%, respectively, of the total viral RNA load."
+              ),
+              tags$li("Targeted mutation analyses indicate that new, fast-growing Omicron BA.5 subvariants are replacing earlier BA.5 lineages."
               )
             )
           )
@@ -148,7 +150,7 @@ fluidPage(
       ),
       tags$br(),
       "App last updated ",
-      "2022-11-04",
+      "2022-11-11",
       # using gh::gh() causes SAML error in production
       # gh::gh("GET /repos/Metropolitan-Council/covid-poops")[49][[1]] %>% as.Date(),
       style = "font-size: 1.5rem;
