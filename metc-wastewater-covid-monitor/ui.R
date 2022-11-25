@@ -41,7 +41,7 @@ fluidPage(
            
             HTML("<h6><section style='font-size:14pt'>This graph shows the amount of SARS-CoV-2 viral RNA entering the Metro Plant each day (blue line) and the number of new daily COVID-19 cases in the Metro Plant's service area, by sample collection date (gray line; data from the Minnesota Department of Health). The most recent case data (darker gray) are incomplete and subject to change.</h3>"
             ),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: November 14, 2022. <br>*All data are preliminary and subject to revision</h3>"
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: November 21, 2022. <br>*All data are preliminary and subject to revision</h3>"
             ),
             plotlyOutput("loadPlot", height = "auto")
           ),
@@ -50,7 +50,7 @@ fluidPage(
             "Viral Load by Variant",
             HTML("<h6><section style='font-size:14pt'>This graph shows the estimated amount of SARS-CoV-2 viral RNA by COVID-19 variant, sub-variant and lineage. The total amount of SARS-CoV-2 viral RNA in Metro Plant wastewater influent is shown in the background in gray.</h3>"
             ),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: November 14, 2022.  <br>*All data are preliminary and subject to revision</h3>"
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: November 21, 2022.  <br>*All data are preliminary and subject to revision</h3>"
             ),
             plotlyOutput("variantLoadPlot", height = "auto")
           ),
@@ -59,22 +59,22 @@ fluidPage(
             "Variant Frequencies (%)",
             HTML("<h6><section style='font-size:14pt'>This graph shows the estimated percent of SARS-CoV-2 viral RNA contributed by COVID-19 variant, sub-variant and lineage.</h3>"
             ),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: November 14, 2022. <br>*All data are preliminary and subject to revision</h3>"
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: November 21, 2022. <br>*All data are preliminary and subject to revision</h3>"
             ),
             plotlyOutput("variantFreqPlot", height = "auto")
           ),
           tabPanel(
             "This Week's Summary",
-            h6("November 18, 2022"),
+            h6("November 25, 2022"),
             p(
-              "The most recent data update includes samples taken November 8 - November 14 2022. During this sampling period:"
+              "The most recent data update includes samples taken November 15 - November 21 2022. During this sampling period:"
             ),
             tags$ul(
-              tags$li("The total viral RNA load entering the Metro Plant decreased by 7% last week compared to a week earlier."
+              tags$li("The total viral RNA load entering the Metro Plant increased by 24% last week compared to a week earlier."
               ),
-              tags$li("The weekly average load over the past nine weeks (9/13 to 11/14) has not varied much, remaining within 20% of the average value for the period."
+              tags$li("The weekly average load for the past five weeks (10/18 to 11/21) is 17% higher than that observed over the previous five-week period (9/13 to 10/17)."
               ),
-              tags$li("BA.5 constituted 91% of the viral RNA entering Metro, and BA.4 and BA.2 represented 2% and 7%, respectively, of the total viral RNA load."
+              tags$li("BA.5 constituted 88% of the viral RNA entering Metro last week, while BA.4 and BA.2 represented 1% and 8%, respectively."
               )
             )
           )
@@ -148,7 +148,7 @@ fluidPage(
       ),
       tags$br(),
       "App last updated ",
-      "2022-11-18",
+      "2022-11-25",
       # using gh::gh() causes SAML error in production
       # gh::gh("GET /repos/Metropolitan-Council/covid-poops")[49][[1]] %>% as.Date(),
       style = "font-size: 1.5rem;
