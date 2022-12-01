@@ -24,7 +24,7 @@ raw_variant_data <-
     skip = 1
   )) %>%
   set_names(header) %>%
-  select(1:28) %>%
+  select(1:34) %>%
   # get rid of trailing numbers in header:
   rename_all(~ gsub("_[[:digit:]]$|_[[:digit:]][[:digit:]]$", "", .)) %>%
   rename_all(~ gsub("[[:digit:]]sample|[[:digit:]][[:digit:]]sample", "sample", .)) %>%
@@ -91,7 +91,14 @@ variant_split <-
       mutate(mutation = "l11f") %>%
       rename_all(~ gsub("xsample", "sample", .)) %>%
       rename_all(~ gsub("l11f_ba_", "", .)) %>%
+      mutate(sample = as.character(sample)),
+    raw_variant_data %>%
+      select(date, contains("xsample"), contains("E316D")) %>%
+      mutate(mutation = "e316d") %>%
+      rename_all(~ gsub("xsample", "sample", .)) %>%
+      rename_all(~ gsub("e316d", "", .)) %>%
       mutate(sample = as.character(sample))
+    
   )
 
 
@@ -210,15 +217,24 @@ variant_data_run <-
         ~ l11f
     ),
     "Omicron BA.5" = case_when(
-      date >= "2022-05-31"  
+      date >= "2022-05-31"   &
+      date < "2022-11-01"
       ~ d3n
+    ),
+    "Omicron BA.5 (Excluding BQ.1)" = case_when(
+      date >= "2022-11-01"   
+      ~ d3n - e316d
+    ),
+    "Omicron BQ.1" = case_when(
+      date >= "2022-11-01"   
+        ~ e316d
     )
   ) %>%
   # option to NA-out Omicron BA.2 where ratio of hv 69/70 to k417n is above 95%
   # mutate(`Omicron BA.2` = ifelse(hv_69_70/k417n >= 0.95 & !is.na(`Omicron BA.2`), NA, `Omicron BA.2`)) %>%
-  select(-d80a, -e484k, -hv_69_70, -n501y, -k417n, -l452r, -l452q, -t95i, -l11f, -d3n) %>%
+  select(-d80a, -e484k, -hv_69_70, -n501y, -k417n, -l452r, -l452q, -t95i, -l11f, -d3n, -e316d) %>%
   pivot_longer(
-    cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`, `Omicron BA.2 (Excluding BA.2.12.1)`, "Omicron BA.2.12.1" ,"Omicron BA.4 and BA.5", "Omicron BA.4", "Omicron BA.5"),
+    cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`, `Omicron BA.2 (Excluding BA.2.12.1)`, "Omicron BA.2.12.1" ,"Omicron BA.4 and BA.5", "Omicron BA.4", "Omicron BA.5", "Omicron BA.5 (Excluding BQ.1)", "Omicron BQ.1"),
     names_to = "variant",
     values_to = "frequency"
   )
