@@ -33,7 +33,8 @@ omi_ratio_data <- read.csv("data/omi_ratio_data.csv") %>%
 whiteSmoke <- "#F5F5F5"
 
 pal <- c("Total Viral Load" = "white",
-         "Omicron BA.5" = "#000080",
+         "Omicron BQ.1" = "#006400",
+         "Omicron BA.5 (Excluding BQ.1)" = "#000080",
          "Omicron BA.4" = "#3D9F93",
          "Omicron BA.4 and BA.5" = "#A9A3FE",
          "Omicron BA.2.12.1" = "#FBC740",
@@ -92,18 +93,6 @@ variant_plot <-
     width = 670, height = 425) %>%
   add_trace(
     type = "scatter",
-    mode = "markers",
-    x = ~date,
-    y = ~frequency,
-    split = ~variant,
-    color = ~variant,
-    alpha = 0.8,
-    colors = pal,
-    hoverinfo = "text",
-    text = ~hover_text_variant
-  ) %>%
-  add_trace(
-    type = "scatter",
     mode = "lines",
     x = ~date,
     fill = "tozeroy",
@@ -114,6 +103,18 @@ variant_plot <-
     colors = pal,
     hoverinfo = "none",
     showlegend = F
+  ) %>%
+  add_trace(
+    type = "scatter",
+    mode = "markers",
+    x = ~date,
+    y = ~frequency,
+    split = ~variant,
+    color = ~variant,
+    alpha = 0.8,
+    colors = pal,
+    hoverinfo = "text",
+    text = ~hover_text_variant
   ) %>%
   layout(
     hoverlabel = list(

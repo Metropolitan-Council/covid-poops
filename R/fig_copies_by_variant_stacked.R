@@ -27,11 +27,12 @@ copies_by_variant <-
       "Alpha, Beta & Gamma",
       "Delta",
       "Omicron BA.1",
-      "Omicron BA.2 (Excluding BA.2.12.1)",
       "Omicron BA.2.12.1",
       "Omicron BA.4 and BA.5",
       "Omicron BA.4",
-      "Omicron BA.5"
+      "Omicron BA.5 (Excluding BQ.1)",
+      "Omicron BQ.1",
+      "Omicron BA.2 (Excluding BA.2.12.1)"
     )
   )) %>%
   filter(!(variant == "Omicron BA.4 and BA.5" &
@@ -66,7 +67,8 @@ variant_fill_pal <- c(
   "Omicron BA.2.12.1" = "#FBC740",
   "Omicron BA.4 and BA.5" = "#A9A3FE",
   "Omicron BA.4" = "#3D9F93",
-  "Omicron BA.5" = "#000080",
+  "Omicron BQ.1" = "#006400",
+  "Omicron BA.5 (Excluding BQ.1)" = "#000080",
   "Total COVID-19 Load" = "white"
 )
 
@@ -80,7 +82,8 @@ variant_color_pal <-
     "Omicron BA.2.12.1" = "#FBC740",
     "Omicron BA.4 and BA.5" = "#A9A3FE",
     "Omicron BA.4" = "#3D9F93",
-    "Omicron BA.5" = "#000080",
+    "Omicron BQ.1" = "#006400",
+    "Omicron BA.5 (Excluding BQ.1)" = "#000080",
     "Total COVID-19 Load" = "black"
   )
 
@@ -140,7 +143,8 @@ base_plot(data = copies_by_variant, caption_width = 180) +
                                 use_manual_font_sizes = T) +
   guides(fill = guide_legend(nrow = 2),
          color = guide_legend(nrow = 2)) +
-  theme(legend.justification = c(0.9, 0))
+  theme(legend.justification = c(0.9, 0),
+        legend.text = element_text(size= 27))
 
 ggsave(
   "fig/copies_by_variant_stacked_large.png",
@@ -161,7 +165,7 @@ copies_by_variant_stacked_insta <-
   guides(fill = guide_legend(nrow = 3),
          color = guide_legend(nrow = 3)) +
   theme(legend.justification = c(0.85, 0),
-        legend.text = element_text(size = 21))
+        legend.text = element_text(size = 15))
 
 
 ggsave(
@@ -198,7 +202,8 @@ copies_variant_stacked_insta_90days <-
     "Omicron BA.2.12.1" = "#FBC740",
     "Omicron BA.4 and BA.5" = "#A9A3FE",
     "Omicron BA.4" = "#3D9F93",
-    "Omicron BA.5" = "#000080",
+    "Omicron BQ.1" = "#006400",
+    "Omicron BA.5 (Excluding BQ.1)" = "#000080",
     "Total COVID-19 Load" = "black"
   )) + 
   scale_fill_manual(values = c(
@@ -210,7 +215,8 @@ copies_variant_stacked_insta_90days <-
       "Omicron BA.2.12.1" = "#FBC740",
       "Omicron BA.4 and BA.5" = "#A9A3FE",
       "Omicron BA.4" = "#3D9F93",
-      "Omicron BA.5" = "#000080",
+      "Omicron BQ.1" = "#006400",
+      "Omicron BA.5 (Excluding BQ.1)" = "#000080",
       "Total COVID-19 Load" = "white"
     )
   )) + 
@@ -219,7 +225,7 @@ copies_variant_stacked_insta_90days <-
     guides(fill = guide_legend(nrow = 3),
            color = guide_legend(nrow = 3)) +
     theme(legend.justification = c(0.85, 0),
-          legend.text = element_text(size = 21))
+          legend.text = element_text(size = 19))
 
 
 ggsave(
@@ -254,7 +260,8 @@ copies_variant_stacked_insta_OmicronEra <-
     "Omicron BA.2.12.1" = "#FBC740",
     "Omicron BA.4 and BA.5" = "#A9A3FE",
     "Omicron BA.4" = "#3D9F93",
-    "Omicron BA.5" = "#000080",
+    "Omicron BQ.1" = "#006400",
+    "Omicron BA.5 (Excluding BQ.1)" = "#000080",
     "Total COVID-19 Load" = "black"
   )) + 
   scale_fill_manual(values = c(
@@ -266,7 +273,8 @@ copies_variant_stacked_insta_OmicronEra <-
       "Omicron BA.2.12.1" = "#FBC740",
       "Omicron BA.4 and BA.5" = "#A9A3FE",
       "Omicron BA.4" = "#3D9F93",
-      "Omicron BA.5" = "#000080",
+      "Omicron BQ.1" = "#006400",
+      "Omicron BA.5 (Excluding BQ.1)" = "#000080",
       "Total COVID-19 Load" = "white"
     )
   )) + 
@@ -275,7 +283,7 @@ copies_variant_stacked_insta_OmicronEra <-
   guides(fill = guide_legend(nrow = 3),
          color = guide_legend(nrow = 3)) +
   theme(legend.justification = c(0.85, 0),
-        legend.text = element_text(size = 21))
+        legend.text = element_text(size = 19))
 
 
 ggsave(
