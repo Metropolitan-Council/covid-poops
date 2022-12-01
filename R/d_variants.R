@@ -290,6 +290,13 @@ variant_data_date <-
       variant == "Omicron BA.4 and BA.5" &
         date > "2022-05-31", NA, frequency_7day
     )
+  ) %>%
+  mutate(
+    frequency_7day = ifelse(
+      # BA.5 only until 11/1/22
+      variant == "Omicron BA.5" &
+        date > "2022-11-01", NA, frequency_7day
+    )
   )
 
 
