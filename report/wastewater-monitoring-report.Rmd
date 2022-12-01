@@ -32,7 +32,21 @@ load_data <- read.csv("data/clean_load_data.csv") %>%
 variant_data <- read.csv("data/clean_variant_data.csv") %>%
   mutate(date = as.Date(date)) %>%
   mutate(across(where(is.numeric), round, digits = 2)) %>%
-  filter( !variant %in% c("Omicron BA.4 and BA.5"))
+  filter( !variant %in% c("Omicron BA.4 and BA.5")) %>%
+  mutate(variant = factor(
+    variant,
+    levels = c(
+      "Alpha, Beta & Gamma",
+      "Delta",
+      "Omicron BA.1",
+      "Omicron BA.2.12.1",
+      "Omicron BA.4 and BA.5",
+      "Omicron BA.4",
+      "Omicron BA.5",
+      "Omicron BA.5 (Excluding BQ.1)",
+      "Omicron BQ.1",
+      "Omicron BA.2 (Excluding BA.2.12.1)"
+    )))
   
 copies_by_variant <- read.csv("data/copies_by_variant.csv") %>%
     mutate(variant = factor(
@@ -41,13 +55,13 @@ copies_by_variant <- read.csv("data/copies_by_variant.csv") %>%
       "Alpha, Beta & Gamma",
       "Delta",
       "Omicron BA.1",
-      "Omicron BA.2 (Excluding BA.2.12.1)",
       "Omicron BA.2.12.1",
       "Omicron BA.4 and BA.5",
       "Omicron BA.4",
       "Omicron BA.5",
       "Omicron BA.5 (Excluding BQ.1)",
-      "Omicron BQ.1"
+      "Omicron BQ.1",
+      "Omicron BA.2 (Excluding BA.2.12.1)"
     )
   )) %>%
   mutate(date = as.Date(date)) %>%
@@ -66,13 +80,12 @@ font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
 whiteSmoke <- "#F5F5F5"
 
 pal <- c("Total Viral Load" = "white",
+         "Omicron BA.2 (Excluding BA.2.12.1)" = "#D64776",
          "Omicron BQ.1" = "#006400",
-         "Omicron BA.5 (Excluding BQ.1)" = "#B19CD9",
-         "Omicron BA.5" = "#000080",
+         "Omicron BA.5 (Excluding BQ.1)" = "#000080",
          "Omicron BA.4" = "#3D9F93",
          "Omicron BA.4 and BA.5" = "#A9A3FE",
          "Omicron BA.2.12.1" = "#FBC740",
-         "Omicron BA.2 (Excluding BA.2.12.1)" = "#D64776",
          "Omicron BA.1" = "#6D3571",
          "Delta" = "#1D94B7",
          "Alpha, Beta & Gamma" = "#84BB25"
@@ -341,18 +354,6 @@ variant_data %>%
               width = 900, height = 500) %>%
       add_trace(
         type = "scatter",
-        mode = "markers",
-        x = ~date,
-        y = ~frequency,
-        split = ~variant,
-        color = ~variant,
-        alpha = 0.8,
-        colors = pal,
-        hoverinfo = "text",
-        text = ~hover_text_variant
-      ) %>%
-      add_trace(
-        type = "scatter",
         mode = "lines",
         x = ~date,
         fill = "tozeroy",
@@ -363,6 +364,18 @@ variant_data %>%
         colors = pal,
         hoverinfo = "none",
         showlegend = F
+      ) %>%
+        add_trace(
+        type = "scatter",
+        mode = "markers",
+        x = ~date,
+        y = ~frequency,
+        split = ~variant,
+        color = ~variant,
+        alpha = 0.8,
+        colors = pal,
+        hoverinfo = "text",
+        text = ~hover_text_variant
       ) %>%
       layout(
         annotations = list(ann_list, variant_freq_title),
