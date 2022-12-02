@@ -306,18 +306,6 @@ server <- function(input, output) {
         plot_ly() %>%
         add_trace(
           type = "scatter",
-          mode = "markers",
-          x = ~date,
-          y = ~frequency,
-          split = ~variant,
-          color = ~variant,
-          alpha = 0.8,
-          colors = pal,
-          hoverinfo = "text",
-          text = ~hover_text_variant
-        ) %>%
-        add_trace(
-          type = "scatter",
           mode = "lines",
           x = ~date,
           fill = "tozeroy",
@@ -328,6 +316,18 @@ server <- function(input, output) {
           colors = pal,
           hoverinfo = "none",
           showlegend = F
+        ) %>%
+        add_trace(
+          type = "scatter",
+          mode = "markers",
+          x = ~date,
+          y = ~frequency,
+          split = ~variant,
+          color = ~variant,
+          alpha = 0.8,
+          colors = pal,
+          hoverinfo = "text",
+          text = ~hover_text_variant
         ) %>%
         layout(
           annotations = list(list(
