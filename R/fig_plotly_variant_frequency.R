@@ -18,7 +18,21 @@ load_data <- read.csv("data/clean_load_data.csv") %>%
 
 variant_data <- read.csv("data/clean_variant_data.csv") %>%
   mutate(date = as.Date(date)) %>%
-  mutate(across(where(is.numeric), round, digits = 2))
+  mutate(across(where(is.numeric), round, digits = 2)) %>%
+  mutate(variant = factor(
+    variant,
+    levels = c(
+      "Alpha, Beta & Gamma",
+      "Delta",
+      "Omicron BA.1",
+      "Omicron BA.2.12.1",
+      "Omicron BA.4 and BA.5",
+      "Omicron BA.4",
+      "Omicron BA.5 (Excluding BQ.1)",
+      "Omicron BQ.1",
+      "Omicron BA.2 (Excluding BA.2.12.1)"
+    )
+  )) 
 
 copies_by_variant <- read.csv("data/copies_by_variant.csv") %>%
   mutate(date = as.Date(date)) %>%
