@@ -200,7 +200,7 @@ cases_vs_load_insta <-
                  subtitle = my_subtitle_insta,
                  sec_axis_b = b,
                  caption_width = 110,
-                 date_breaks = "month",
+                 date_breaks = "2 months",
                  date_labels = "%b\n'%y") + 
   theme_council_covidplot_insta(use_showtext = T,
                                 use_manual_font_sizes = TRUE) +
@@ -264,7 +264,7 @@ cases_vs_load_insta_OmicronEra <-
                  subtitle = my_subtitle_insta,
                  sec_axis_b = b90,
                  caption_width = 110,
-                 date_breaks = "3 weeks",
+                 date_breaks = "4 weeks",
                  date_labels = "%b\n%d") + 
   theme_council_covidplot_insta(use_showtext = T,
                                 use_manual_font_sizes = TRUE) +
