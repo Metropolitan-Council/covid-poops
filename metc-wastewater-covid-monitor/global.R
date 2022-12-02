@@ -36,6 +36,20 @@ load_data <- read.csv("data/clean_load_data.csv") %>%
 variant_data <- read.csv("data/clean_variant_data.csv") %>%
   mutate(date = as.Date(date)) %>%
   mutate(across(where(is.numeric), round, digits = 2)) %>%
+  mutate(variant = factor(
+    variant,
+    levels = c(
+      "Alpha, Beta & Gamma",
+      "Delta",
+      "Omicron BA.1",
+      "Omicron BA.2.12.1",
+      "Omicron BA.4 and BA.5",
+      "Omicron BA.4",
+      "Omicron BA.5 (Excluding BQ.1)",
+      "Omicron BQ.1",
+      "Omicron BA.2 (Excluding BA.2.12.1)"
+    )
+  )) %>%
   filter( !variant %in% c("Omicron BA.4 and BA.5"))
 
 copies_by_variant <- read.csv("data/copies_by_variant.csv") %>%
@@ -47,11 +61,12 @@ copies_by_variant <- read.csv("data/copies_by_variant.csv") %>%
       "Alpha, Beta & Gamma",
       "Delta",
       "Omicron BA.1",
-      "Omicron BA.2 (Excluding BA.2.12.1)",
       "Omicron BA.2.12.1",
       "Omicron BA.4 and BA.5",
       "Omicron BA.4",
-      "Omicron BA.5"
+      "Omicron BA.5 (Excluding BQ.1)",
+      "Omicron BQ.1",
+      "Omicron BA.2 (Excluding BA.2.12.1)"
     )
   )) %>%
   filter(!(variant == "Omicron BA.4 and BA.5" &
@@ -69,11 +84,12 @@ whiteSmoke <- "#F5F5F5"
 #))
 
 pal <- c("Total Viral Load" = "white",
-         "Omicron BA.5" = "#000080",
+         "Omicron BA.2 (Excluding BA.2.12.1)" = "#D64776",
+         "Omicron BQ.1" = "#006400",
+         "Omicron BA.5 (Excluding BQ.1)" = "#000080",
          "Omicron BA.4" = "#3D9F93",
          "Omicron BA.4 and BA.5" = "#A9A3FE",
          "Omicron BA.2.12.1" = "#FBC740",
-         "Omicron BA.2 (Excluding BA.2.12.1)" = "#D64776",
          "Omicron BA.1" = "#6D3571",
          "Delta" = "#1D94B7",
          "Alpha, Beta & Gamma" = "#84BB25"

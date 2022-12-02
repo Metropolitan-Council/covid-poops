@@ -30,11 +30,12 @@ variant_data_date <- read_csv("data/clean_variant_data.csv", show_col_types = F)
       "Alpha, Beta & Gamma",
       "Delta",
       "Omicron BA.1",
-      "Omicron BA.2 (Excluding BA.2.12.1)",
       "Omicron BA.2.12.1",
       "Omicron BA.4 and BA.5",
       "Omicron BA.4",
-      "Omicron BA.5"
+      "Omicron BA.5 (Excluding BQ.1)",
+      "Omicron BQ.1",
+      "Omicron BA.2 (Excluding BA.2.12.1)"
     )
   ))
 
@@ -63,7 +64,8 @@ variant_pal <- c("Alpha, Beta & Gamma" = "#84BB25",
                  "Omicron BA.2.12.1" = "#FBC740",
                  "Omicron BA.4 and BA.5" = "#A9A3FE", 
                  "Omicron BA.4" = "#3D9F93", 
-                 "Omicron BA.5" = "#000080")
+                 "Omicron BQ.1" = "#006400",
+                 "Omicron BA.5 (Excluding BQ.1)" = "#000080")
 
 # Base plot -----
 base_plot <- function(data, caption_width = 180, subtitle_width = 100){
@@ -122,7 +124,8 @@ variant_frequency_large <-
     color = guide_legend(nrow = 2)
   ) +
   theme(
-    legend.justification = c(0.1, 0)
+    legend.justification = c(0.1, 0),
+    legend.text = element_text(size=25)
   )
   
  
@@ -145,7 +148,8 @@ variant_frequency_insta <-
     fill = guide_legend(nrow = 3),
     color = guide_legend(nrow = 3)
   ) + 
-  theme(legend.justification = c(1, 0))
+  theme(legend.justification = c(1, 0),
+        legend.text = element_text(size=18))
 
 ggsave(
   "fig/variant_frequency_insta.png",
@@ -175,7 +179,8 @@ variant_frequency_insta_90days <-
     fill = guide_legend(nrow = 3),
     color = guide_legend(nrow = 3)
   ) + 
-  theme(legend.justification = c(1, 0)) + 
+  theme(legend.justification = c(1, 0),
+        legend.text = element_text(size=18)) + 
   scale_color_manual(
     values = c(
       # turn off colors as they leave the stream ...
@@ -186,7 +191,8 @@ variant_frequency_insta_90days <-
                "Omicron BA.2.12.1" = "#FBC740",
                "Omicron BA.4 and BA.5" = "#A9A3FE", 
                "Omicron BA.4" = "#3D9F93", 
-               "Omicron BA.5" = "#000080")
+               "Omicron BQ.1" = "#006400",
+               "Omicron BA.5 (Excluding BQ.1)" = "#000080")
   )
   
 ggsave(
