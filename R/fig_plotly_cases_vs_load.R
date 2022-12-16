@@ -68,7 +68,7 @@ left_axis_title <- list(
 right_axis_title <- list(
   x = 1,
   y = 1.05,
-  text = "COVID-19 cases<br>per 100K residents",
+  text = "New Daily COVID-19 cases<br>per 100K residents",
   xref = "paper",
   yref = "paper",
   showarrow = F,
