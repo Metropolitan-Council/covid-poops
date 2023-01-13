@@ -35,7 +35,9 @@ variant_data_date <- read_csv("data/clean_variant_data.csv", show_col_types = F)
       "Omicron BA.4",
       "Omicron BA.5 (Excluding BQ.1)",
       "Omicron BQ.1",
-      "Omicron BA.2 (Excluding BA.2.12.1)"
+      "Omicron BA.2 (Excluding BA.2.12.1)",
+      "Omicron BA.2.75",
+      "XBB"
     )
   ))
 
@@ -65,7 +67,9 @@ variant_pal <- c("Alpha, Beta & Gamma" = "#84BB25",
                  "Omicron BA.4 and BA.5" = "#A9A3FE", 
                  "Omicron BA.4" = "#3D9F93", 
                  "Omicron BQ.1" = "#006400",
-                 "Omicron BA.5 (Excluding BQ.1)" = "#000080")
+                 "Omicron BA.5 (Excluding BQ.1)" = "#000080",
+                 "XBB" = "#800000",
+                 "Omicron BA.2.75" = "#E4ADC4")
 
 # Base plot -----
 base_plot <- function(data, caption_width = 180, subtitle_width = 100){
@@ -125,7 +129,7 @@ variant_frequency_large <-
   ) +
   theme(
     legend.justification = c(0.1, 0),
-    legend.text = element_text(size=25)
+    legend.text = element_text(size=22)
   )
   
  
@@ -149,7 +153,7 @@ variant_frequency_insta <-
     color = guide_legend(nrow = 3)
   ) + 
   theme(legend.justification = c(1, 0),
-        legend.text = element_text(size=18))
+        legend.text = element_text(size=13))
 
 ggsave(
   "fig/variant_frequency_insta.png",
@@ -180,7 +184,7 @@ variant_frequency_insta_90days <-
     color = guide_legend(nrow = 3)
   ) + 
   theme(legend.justification = c(1, 0),
-        legend.text = element_text(size=18)) + 
+        legend.text = element_text(size=13)) + 
   scale_color_manual(
     values = c(
       # turn off colors as they leave the stream ...
@@ -192,7 +196,9 @@ variant_frequency_insta_90days <-
                "Omicron BA.4 and BA.5" = "#A9A3FE", 
                "Omicron BA.4" = "#3D9F93", 
                "Omicron BQ.1" = "#006400",
-               "Omicron BA.5 (Excluding BQ.1)" = "#000080")
+               "Omicron BA.5 (Excluding BQ.1)" = "#000080",
+               "XBB" = "#800000",
+               "Omicron BA.2.75" = "#E4ADC4")
   )
   
 ggsave(

@@ -1,7 +1,7 @@
 ---
 title: "Metro Wastewater COVID-19 Monitoring"
 author: "Metropolitan Council"
-date: "January 6, 2023"
+date: "January 13, 2023"
 output:
   html_document:
     css: ["www/rmd-report-style.css", "www/colors.css", "www/font.css"]
@@ -45,7 +45,9 @@ variant_data <- read.csv("data/clean_variant_data.csv") %>%
       "Omicron BA.5",
       "Omicron BA.5 (Excluding BQ.1)",
       "Omicron BQ.1",
-      "Omicron BA.2 (Excluding BA.2.12.1)"
+      "Omicron BA.2 (Excluding BA.2.12.1)",
+      "Omicron BA.2.75",
+      "XBB"
     )))
   
 copies_by_variant <- read.csv("data/copies_by_variant.csv") %>%
@@ -61,7 +63,9 @@ copies_by_variant <- read.csv("data/copies_by_variant.csv") %>%
       "Omicron BA.5",
       "Omicron BA.5 (Excluding BQ.1)",
       "Omicron BQ.1",
-      "Omicron BA.2 (Excluding BA.2.12.1)"
+      "Omicron BA.2 (Excluding BA.2.12.1)",
+      "Omicron BA.2.75",
+      "XBB"
     )
   )) %>%
   mutate(date = as.Date(date)) %>%
@@ -80,6 +84,8 @@ font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
 whiteSmoke <- "#F5F5F5"
 
 pal <- c("Total Viral Load" = "white",
+         "XBB" = "#800000",
+         "Omicron BA.2.75" = "#E4ADC4",
          "Omicron BA.2 (Excluding BA.2.12.1)" = "#D64776",
          "Omicron BQ.1" = "#006400",
          "Omicron BA.5 (Excluding BQ.1)" = "#000080",

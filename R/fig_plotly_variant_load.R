@@ -24,7 +24,9 @@ copies_by_variant <-
       "Omicron BA.4",
       "Omicron BA.5 (Excluding BQ.1)",
       "Omicron BQ.1",
-      "Omicron BA.2 (Excluding BA.2.12.1)"
+      "Omicron BA.2 (Excluding BA.2.12.1)",
+      "Omicron BA.2.75",
+      "XBB"
     )
   )) %>%
   filter(!(variant == "Omicron BA.4 and BA.5" &
@@ -44,7 +46,9 @@ pal <- c("Total Viral Load" = "white",
          "Omicron BA.2 (Excluding BA.2.12.1)" = "#D64776",
          "Omicron BA.1" = "#6D3571",
          "Delta" = "#1D94B7",
-         "Alpha, Beta & Gamma" = "#84BB25"
+         "Alpha, Beta & Gamma" = "#84BB25",
+         "XBB" = "#800000",
+         "Omicron BA.2.75" = "#E4ADC4"
          )
 
 ann_list <- list(
