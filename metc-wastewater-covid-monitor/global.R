@@ -47,7 +47,9 @@ variant_data <- read.csv("data/clean_variant_data.csv") %>%
       "Omicron BA.4",
       "Omicron BA.5 (Excluding BQ.1)",
       "Omicron BQ.1",
-      "Omicron BA.2 (Excluding BA.2.12.1)"
+      "Omicron BA.2 (Excluding BA.2.12.1)",
+      "Omicron BA.2.75",
+      "XBB"
     )
   )) %>%
   filter( !variant %in% c("Omicron BA.4 and BA.5"))
@@ -66,7 +68,9 @@ copies_by_variant <- read.csv("data/copies_by_variant.csv") %>%
       "Omicron BA.4",
       "Omicron BA.5 (Excluding BQ.1)",
       "Omicron BQ.1",
-      "Omicron BA.2 (Excluding BA.2.12.1)"
+      "Omicron BA.2 (Excluding BA.2.12.1)",
+      "Omicron BA.2.75",
+      "XBB"
     )
   )) %>%
   filter(!(variant == "Omicron BA.4 and BA.5" &
@@ -84,6 +88,8 @@ whiteSmoke <- "#F5F5F5"
 #))
 
 pal <- c("Total Viral Load" = "white",
+         "XBB" = "#800000",
+         "Omicron BA.2.75" = "#E4ADC4",
          "Omicron BA.2 (Excluding BA.2.12.1)" = "#D64776",
          "Omicron BQ.1" = "#006400",
          "Omicron BA.5 (Excluding BQ.1)" = "#000080",
