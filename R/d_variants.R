@@ -190,7 +190,7 @@ variant_data_run <-
         ~ e316d
     ),
     "XBB" = case_when(
-      date >= "2022-12-13"   
+      date >= "2022-12-14"   
       ~ k417n - hv_69_70 - f157l
     ),
     "Omicron BA.2.75" = case_when(
@@ -225,14 +225,14 @@ variant_data_run <-
       date >= "2022-05-31" &
         date < "2022-08-31"
       ~ 0,
-      date >= "2022-08-31" &
-        date < "2022-09-01" &
-        # only calculate when k417N is greater than than hv 69/70:
-        k417n > hv_69_70 &
-        # only calculate when hv69/70 and K417N data are present:
-        !is.na(hv_69_70) & !is.na(k417n)
-        ~ k417n - hv_69_70,
-      date >= "2022-09-01" 
+      # date >= "2022-08-31" &
+      #   date < "2022-09-01" &
+      #   # only calculate when k417N is greater than than hv 69/70:
+      #   k417n > hv_69_70 &
+      #   # only calculate when hv69/70 and K417N data are present:
+      #   !is.na(hv_69_70) & !is.na(k417n)
+      #   ~ k417n - hv_69_70,
+      date >= "2022-08-31" 
         ~ 0,
       # Assigning zeros for BA2:
       date >= "2022-01-01" &
