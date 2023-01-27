@@ -93,10 +93,10 @@ variant_split <-
       rename_all(~ gsub("l11f_ba_", "", .)) %>%
       mutate(sample = as.character(sample)),
     raw_variant_data %>%
-      select(date, contains("xsample"), contains("E316D")) %>%
-      mutate(mutation = "e316d") %>%
+      select(date, contains("xsample"), contains("E136D")) %>%
+      mutate(mutation = "e136d") %>%
       rename_all(~ gsub("xsample", "sample", .)) %>%
-      rename_all(~ gsub("e316d", "", .)) %>%
+      rename_all(~ gsub("e136d", "", .)) %>%
       mutate(sample = as.character(sample)),
     raw_variant_data %>%
       select(date, contains("xsample"), contains("F157L")) %>%
@@ -183,11 +183,11 @@ variant_data_run <-
       date < "2022-10-11"
       ~ d3n,
       date >= "2022-10-11"   
-      ~ d3n - e316d
+      ~ d3n - e136d
     ),
     "Omicron BQ.1" = case_when(
       date >= "2022-10-11"   
-        ~ e316d
+        ~ e136d
     ),
     "XBB" = case_when(
       date >= "2022-12-14"   
@@ -247,7 +247,7 @@ variant_data_run <-
   ) %>%
   # option to NA-out Omicron BA.2 where ratio of hv 69/70 to k417n is above 95%
   # mutate(`Omicron BA.2` = ifelse(hv_69_70/k417n >= 0.95 & !is.na(`Omicron BA.2`), NA, `Omicron BA.2`)) %>%
-  select(-d80a, -e484k, -hv_69_70, -n501y, -k417n, -l452r, -l452q, -t95i, -l11f, -d3n, -e316d, -f157l) %>%
+  select(-d80a, -e484k, -hv_69_70, -n501y, -k417n, -l452r, -l452q, -t95i, -l11f, -d3n, -e136d, -f157l) %>%
   pivot_longer(
     cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`, "Omicron BA.2.12.1" ,"Omicron BA.4 and BA.5", "Omicron BA.4", "Omicron BA.5 (Excluding BQ.1)", "Omicron BQ.1", "XBB", "Omicron BA.2.75", `Omicron BA.2 (Excluding BA.2.12.1)`),
     names_to = "variant",
