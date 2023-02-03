@@ -65,7 +65,7 @@ fluidPage(
           ),
           tabPanel(
             "This Week's Summary",
-            h6("January 27, 2023"),
+            h6("February 3, 2023"),
             p(
               "The most recent data update includes samples taken January 24 - January 30 2023. During this sampling period:"
             ),
