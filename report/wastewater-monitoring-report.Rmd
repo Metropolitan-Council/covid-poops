@@ -1,7 +1,7 @@
 ---
 title: "Metro Wastewater COVID-19 Monitoring"
 author: "Metropolitan Council"
-date: "January 27, 2023"
+date: "February 3, 2023"
 output:
   html_document:
     css: ["www/rmd-report-style.css", "www/colors.css", "www/font.css"]
@@ -451,7 +451,7 @@ div(variant_plot, align = "center")
 \newpage
 ## COVID-19 Load by Variant
 #### Another way of looking at the variant data
-This plot shows the total amount (“load”) of each variant entering the Metro Plant, over time.  BA.5 has been the dominant variant since early July 2022. XBB, a BA.2-derived recombinant lineage, has now replaced the BA.5-derived sub-lineages as the most prevalent SARS-CoV-2 variant in the Metro Plant service area.
+This plot shows the total amount (“load”) of each variant entering the Metro Plant, over time.  BA.5 sublineages were the dominant variants between July 2022 and early January 2023. Recently, XBB replaced the BA.5-derived sublineages as the most prevalent SARS-CoV-2 variant in the Metro Plant service area.
 
 ###### How to read this graph:
 This graph shows the measured number of copies per person per day of each variant in wastewater. Shaded areas are averages of the previous 7 days for each variant load. The gray line is the 7-day average total viral load. Variant proportions do not always add to 100%, so slight discrepancies between the total viral load and that of the individual variants are expected. 
