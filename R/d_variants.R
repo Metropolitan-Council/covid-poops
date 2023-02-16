@@ -61,7 +61,7 @@ variant_split <-
       select(date, contains("l452r")) %>%
       mutate(mutation = "l452r") %>%
       rename_all(~ gsub("l452r_", "", .)) %>%
-      # mysteriously, this column is reading in as character 
+      # mysteriously, this column is reading in as character
       mutate(frequency_of_mutant_allele = as.numeric(frequency_of_mutant_allele)),
     raw_variant_data %>%
       select(date, contains("k417n")) %>%
@@ -72,18 +72,18 @@ variant_split <-
       mutate(mutation = "l452q") %>%
       rename_all(~ gsub("l452q_", "", .)) %>%
       mutate(sample = as.character(sample)) %>%
-      # mysteriously, this column is reading in as character 
+      # mysteriously, this column is reading in as character
       mutate(frequency_of_mutant_allele = as.numeric(frequency_of_mutant_allele)),
     raw_variant_data %>%
       select(date, contains("t95i")) %>%
       mutate(mutation = "t95i") %>%
       rename_all(~ gsub("t95i_", "", .)) %>%
-      mutate(sample = as.character(sample)) %>% 
+      mutate(sample = as.character(sample)) %>%
       mutate(frequency_of_mutant_allele = as.numeric(frequency_of_mutant_allele)),
-     raw_variant_data %>%
-       select(date, contains("xsample"), contains("d3n")) %>%
-       mutate(mutation = "d3n") %>%
-       rename_all(~ gsub("xsample", "sample", .)) %>%
+    raw_variant_data %>%
+      select(date, contains("xsample"), contains("d3n")) %>%
+      mutate(mutation = "d3n") %>%
+      rename_all(~ gsub("xsample", "sample", .)) %>%
       rename_all(~ gsub("d3n_ba_", "", .)) %>%
       mutate(sample = as.character(sample)),
     raw_variant_data %>%
@@ -104,7 +104,6 @@ variant_split <-
       rename_all(~ gsub("xsample", "sample", .)) %>%
       rename_all(~ gsub("f157l_ba_2_", "", .)) %>%
       mutate(sample = as.character(sample))
-    
   )
 
 
@@ -160,58 +159,58 @@ variant_data_run <-
       ~ t95i
     ),
     "Omicron BA.2.12.1" = case_when(
-      date >= "2022-04-12" & 
+      date >= "2022-04-12" &
         date <= "2022-05-30"
       ~ l452q,
       date >= "2022-05-31" &
         date < "2022-08-31"
       ~ k417n - hv_69_70,
       date >= "2022-08-31"
-      ~0
+      ~ 0
     ),
     "Omicron BA.4 and BA.5" = case_when(
-      date >= "2022-05-10" & 
-      date <= "2022-05-30" 
+      date >= "2022-05-10" &
+        date <= "2022-05-30"
       ~ hv_69_70 - t95i
     ),
     "Omicron BA.4" = case_when(
-      date >= "2022-05-31"  
-        ~ l11f
+      date >= "2022-05-31"
+      ~ l11f
     ),
     "Omicron BA.5 (Excluding BQ.1)" = case_when(
-      date >= "2022-05-31"   &
-      date < "2022-10-11"
+      date >= "2022-05-31" &
+        date < "2022-10-11"
       ~ d3n,
-      date >= "2022-10-11"   
+      date >= "2022-10-11"
       ~ d3n - e136d
     ),
     "Omicron BQ.1" = case_when(
-      date >= "2022-10-11"   
-        ~ e136d
+      date >= "2022-10-11"
+      ~ e136d
     ),
     "XBB" = case_when(
-      date >= "2022-12-14"   
+      date >= "2022-12-14"
       ~ k417n - hv_69_70 - f157l
     ),
     "Omicron BA.2.75" = case_when(
-      date >= "2022-09-01"   
+      date >= "2022-09-01"
       ~ f157l
     ),
     `Omicron BA.2 (Excluding BA.2.12.1)` = case_when(
-      
+
       # Assigning values for BA2:
       # We start detecting BA 2 on 1/1:
       date >= "2022-01-01" &
         date < "2022-04-12" &
         # only calculate when k417N is greater than than hv 69/70:
-        
+
         k417n > hv_69_70 &
         # only calculate when hv69/70 and K417N data are present:
         !is.na(hv_69_70) & !is.na(k417n)
       # omicron BA2 = k417N minus frequency of hv69/70
       ~ k417n - hv_69_70,
-      
-      
+
+
       # Assigning values for BA2 After Detecting BA.2.12.1
       date >= "2022-04-12" &
         date <= "2022-05-30" &
@@ -221,7 +220,6 @@ variant_data_run <-
         !is.na(hv_69_70) & !is.na(k417n)
       # omicron BA2 = k417N minus frequency of hv69/70 and l452q
       ~ k417n - hv_69_70 - l452q,
-      
       date >= "2022-05-31" &
         date < "2022-08-31"
       ~ 0,
@@ -232,16 +230,16 @@ variant_data_run <-
       #   # only calculate when hv69/70 and K417N data are present:
       #   !is.na(hv_69_70) & !is.na(k417n)
       #   ~ k417n - hv_69_70,
-      date >= "2022-08-31" 
-        ~ 0,
+      date >= "2022-08-31"
+      ~ 0,
       # Assigning zeros for BA2:
       date >= "2022-01-01" &
         # only assign a zero when k417N is less than than hv 69/70:
-        
+
         k417n < hv_69_70 &
         # only assign a zero when both hv69/70 or K417N data are present:
         !is.na(hv_69_70) & !is.na(k417n) ~ 0
-      
+
       # The rest of the time, BA 2 will be NA.
     )
   ) %>%
@@ -249,7 +247,7 @@ variant_data_run <-
   # mutate(`Omicron BA.2` = ifelse(hv_69_70/k417n >= 0.95 & !is.na(`Omicron BA.2`), NA, `Omicron BA.2`)) %>%
   select(-d80a, -e484k, -hv_69_70, -n501y, -k417n, -l452r, -l452q, -t95i, -l11f, -d3n, -e136d, -f157l) %>%
   pivot_longer(
-    cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`, "Omicron BA.2.12.1" ,"Omicron BA.4 and BA.5", "Omicron BA.4", "Omicron BA.5 (Excluding BQ.1)", "Omicron BQ.1", "XBB", "Omicron BA.2.75", `Omicron BA.2 (Excluding BA.2.12.1)`),
+    cols = c(`Alpha, Beta & Gamma`, Delta, `Omicron BA.1`, "Omicron BA.2.12.1", "Omicron BA.4 and BA.5", "Omicron BA.4", "Omicron BA.5 (Excluding BQ.1)", "Omicron BQ.1", "XBB", "Omicron BA.2.75", `Omicron BA.2 (Excluding BA.2.12.1)`),
     names_to = "variant",
     values_to = "frequency"
   )
@@ -298,7 +296,8 @@ variant_data_date <-
       # Only use l452r for delta until 4/25/22
       variant == "Delta" &
         date > "2022-04-25", NA, frequency_7day
-    )) %>%
+    )
+  ) %>%
   mutate(
     frequency_7day = ifelse(
       # Total BA.4 and BA.5 only until data that separates the two out is available.

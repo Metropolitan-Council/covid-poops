@@ -28,11 +28,11 @@ theme_council_covidplot_insta <-
         ))
       }
       font_locs <- subset(sysfonts::font_files(), family %in%
-                            c(
-                              "HelveticaNeueLT Std Cn",
-                              "HelveticaNeueLT Std Lt",
-                              "Arial Narrow"
-                            ) & face == "Regular")
+        c(
+          "HelveticaNeueLT Std Cn",
+          "HelveticaNeueLT Std Lt",
+          "Arial Narrow"
+        ) & face == "Regular")
       purrr::map2(font_locs$family, font_locs$file, sysfonts::font_add)
       font_families <- list(
         title = "HelveticaNeueLT Std Lt",
@@ -56,7 +56,7 @@ theme_council_covidplot_insta <-
         strip = "sans"
       )
     }
-    
+
     if (use_manual_font_sizes == FALSE) {
       font_sizes <-
         list(
@@ -298,11 +298,11 @@ theme_council_covidplot_large <-
         ))
       }
       font_locs <- subset(sysfonts::font_files(), family %in%
-                            c(
-                              "HelveticaNeueLT Std Cn",
-                              "HelveticaNeueLT Std Lt",
-                              "Arial Narrow"
-                            ) & face == "Regular")
+        c(
+          "HelveticaNeueLT Std Cn",
+          "HelveticaNeueLT Std Lt",
+          "Arial Narrow"
+        ) & face == "Regular")
       purrr::map2(font_locs$family, font_locs$file, sysfonts::font_add)
       font_families <- list(
         title = "HelveticaNeueLT Std Lt",
