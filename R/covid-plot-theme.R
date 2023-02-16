@@ -82,7 +82,7 @@ theme_council_covidplot_insta <-
         rect = ggplot2::element_rect(
           fill = colors$suppWhite,
           colour = colors$suppBlack,
-          size = base_rect_size,
+          linewidth = base_rect_size,
           linetype = 1
         ),
         text = ggplot2::element_text(
@@ -351,7 +351,7 @@ theme_council_covidplot_large <-
         rect = ggplot2::element_rect(
           fill = colors$suppWhite,
           colour = colors$suppBlack,
-          size = base_rect_size,
+          linewidth = base_rect_size,
           linetype = 1
         ),
         text = ggplot2::element_text(
