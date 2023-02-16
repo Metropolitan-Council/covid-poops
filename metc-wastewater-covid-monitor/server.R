@@ -436,6 +436,7 @@ server <- function(input, output) {
         -hover_text_case, -hover_text_load,
         -hover_text_load_7day
       ) %>%
+      arrange(desc(date)) %>% 
       DT::datatable(
         rownames = FALSE,
         extensions = "Buttons",
@@ -471,6 +472,7 @@ server <- function(input, output) {
         -frequency_gapfill
       ) %>%
       filter(!is.na(frequency)) %>%
+      arrange(desc(date)) %>% 
       DT::datatable(
         rownames = FALSE,
         extensions = "Buttons",
@@ -496,6 +498,7 @@ server <- function(input, output) {
   output$caseData <- renderDT(server = FALSE, {
     case_data %>%
       select(-hover_text_case) %>%
+      arrange(desc(date)) %>% 
       DT::datatable(
         rownames = FALSE,
         extensions = "Buttons",
