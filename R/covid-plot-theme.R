@@ -19,14 +19,21 @@ theme_council_covidplot_insta <-
       requireNamespace("sysfonts", quietly = TRUE)
       requireNamespace("showtext", quietly = TRUE)
       showtext::showtext_auto()
-      sysfonts::font_paths()
-      files <- sysfonts::font_files()
-      sysfonts::font_add("HelveticaNeueLT Std Cn", "HelveticaNeueLTStd-Cn.otf")
-      sysfonts::font_add("HelveticaNeueLT Std Lt", "HelveticaNeueLTStd-Lt.otf")
-      sysfonts::font_add("HelveticaNeueLT Std Med Cn",
-                         "HelveticaNeueLTStd-MdCn.otf")
-      sysfonts::font_add("Arial Narrow", "ARIALN.TTF")
-      sysfonts::font_add("Palatino Linotype", "pala.ttf")
+      if (grepl("mac", osVersion)) {
+        sysfonts::font_paths()
+      } else {
+        sysfonts::font_paths(paste0(
+          "C:\\Users\\", Sys.info()["user"],
+          "\\AppData\\Local\\Microsoft\\Windows\\Fonts"
+        ))
+      }
+      font_locs <- subset(sysfonts::font_files(), family %in%
+                            c(
+                              "HelveticaNeueLT Std Cn",
+                              "HelveticaNeueLT Std Lt",
+                              "Arial Narrow"
+                            ) & face == "Regular")
+      purrr::map2(font_locs$family, font_locs$file, sysfonts::font_add)
       font_families <- list(
         title = "HelveticaNeueLT Std Lt",
         subtitle = "HelveticaNeueLT Std Lt",
@@ -37,8 +44,7 @@ theme_council_covidplot_insta <-
         caption = "Arial Narrow",
         strip = "HelveticaNeueLT Std Lt"
       )
-    }
-    else {
+    } else {
       font_families <- list(
         title = "sans",
         subtitle = "sans",
@@ -283,14 +289,21 @@ theme_council_covidplot_large <-
       requireNamespace("sysfonts", quietly = TRUE)
       requireNamespace("showtext", quietly = TRUE)
       showtext::showtext_auto()
-      sysfonts::font_paths()
-      files <- sysfonts::font_files()
-      sysfonts::font_add("HelveticaNeueLT Std Cn", "HelveticaNeueLTStd-Cn.otf")
-      sysfonts::font_add("HelveticaNeueLT Std Lt", "HelveticaNeueLTStd-Lt.otf")
-      sysfonts::font_add("HelveticaNeueLT Std Med Cn",
-                         "HelveticaNeueLTStd-MdCn.otf")
-      sysfonts::font_add("Arial Narrow", "ARIALN.TTF")
-      sysfonts::font_add("Palatino Linotype", "pala.ttf")
+      if (grepl("mac", osVersion)) {
+        sysfonts::font_paths()
+      } else {
+        sysfonts::font_paths(paste0(
+          "C:\\Users\\", Sys.info()["user"],
+          "\\AppData\\Local\\Microsoft\\Windows\\Fonts"
+        ))
+      }
+      font_locs <- subset(sysfonts::font_files(), family %in%
+                            c(
+                              "HelveticaNeueLT Std Cn",
+                              "HelveticaNeueLT Std Lt",
+                              "Arial Narrow"
+                            ) & face == "Regular")
+      purrr::map2(font_locs$family, font_locs$file, sysfonts::font_add)
       font_families <- list(
         title = "HelveticaNeueLT Std Lt",
         subtitle = "HelveticaNeueLT Std Lt",
@@ -301,8 +314,7 @@ theme_council_covidplot_large <-
         caption = "Arial Narrow",
         strip = "HelveticaNeueLT Std Lt"
       )
-    }
-    else {
+    } else {
       font_families <- list(
         title = "sans",
         subtitle = "sans",
