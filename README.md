@@ -5,9 +5,7 @@
 
 <!-- badges: start -->
 
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-[![Deploy](https://github.com/Metropolitan-Council/covid-poops/workflows/deploy/badge.svg)](https://github.com/Metropolitan-Council/covid-poops/actions)
+[![Deploy](https://github.com/Metropolitan-Council/covid-poops/actions/workflows/deploy.yaml/badge.svg)](https://github.com/Metropolitan-Council/covid-poops/actions/workflows/deploy.yaml)
 <!-- badges: end -->
 
 This repository contains the code for cleaning, transforming and
