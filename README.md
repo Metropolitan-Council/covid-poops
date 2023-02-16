@@ -31,14 +31,20 @@ processing. `0_run_all.R` runs all scripts and saves final data.
 
 <PRE class="fansi fansi-output"><CODE>#&gt; <span style='color: #0000BB; font-weight: bold;'>R</span>
 #&gt; ├── <span style='color: #00BB00;'>0_run_all.R</span>
+#&gt; ├── <span style='color: #00BB00;'>covid-plot-theme.R</span>
 #&gt; ├── <span style='color: #00BB00;'>d_copies_by_variant.R</span>
 #&gt; ├── <span style='color: #00BB00;'>d_covid_cases.R</span>
 #&gt; ├── <span style='color: #00BB00;'>d_load.R</span>
+#&gt; ├── <span style='color: #00BB00;'>d_sewershed_map.R</span>
 #&gt; ├── <span style='color: #00BB00;'>d_variants.R</span>
 #&gt; ├── <span style='color: #00BB00;'>fig_cases_vs_load.R</span>
 #&gt; ├── <span style='color: #00BB00;'>fig_copies_by_variant.R</span>
-#&gt; ├── <span style='color: #00BB00;'>fig_sewershed.R</span>
-#&gt; └── <span style='color: #00BB00;'>fig_variants.R</span>
+#&gt; ├── <span style='color: #00BB00;'>fig_copies_by_variant_stacked.R</span>
+#&gt; ├── <span style='color: #00BB00;'>fig_plotly_cases_vs_load.R</span>
+#&gt; ├── <span style='color: #00BB00;'>fig_plotly_variant_frequency.R</span>
+#&gt; ├── <span style='color: #00BB00;'>fig_plotly_variant_load.R</span>
+#&gt; ├── <span style='color: #00BB00;'>fig_variant_frequency.R</span>
+#&gt; └── <span style='color: #00BB00;'>map_sewershed_leaflet.R</span>
 </CODE></PRE>
 
 The Shiny app is located in ./metc-wastewater-covid-monitor. /data
@@ -71,7 +77,7 @@ By contributing to this project, you agree to abide by its terms.
 
 Special thanks to our community contributors!
 
-## [@adamstener](https://github.com/adamstener), [@ashleyasmus](https://github.com/ashleyasmus), [@eggsurplus](https://github.com/eggsurplus), [@ehesch](https://github.com/ehesch), [@enebo](https://github.com/enebo), [@eroten](https://github.com/eroten), [@JonathanEhrlichMC](https://github.com/JonathanEhrlichMC), [@jpflanigan](https://github.com/jpflanigan), [@knumat](https://github.com/knumat), [@Lex137](https://github.com/Lex137), and [@lfletch0025](https://github.com/lfletch0025).
+## [@adamstener](https://github.com/adamstener), [@ashleyasmus](https://github.com/ashleyasmus), [@eggsurplus](https://github.com/eggsurplus), [@ehesch](https://github.com/ehesch), [@enebo](https://github.com/enebo), [@eroten](https://github.com/eroten), [@JonathanEhrlichMC](https://github.com/JonathanEhrlichMC), [@jpflanigan](https://github.com/jpflanigan), [@knumat](https://github.com/knumat), [@Lex137](https://github.com/Lex137), [@lfletch0025](https://github.com/lfletch0025), and [@riggs](https://github.com/riggs).
 
 <a href="https://metrocouncil.org" target="_blank"><img src="metc-wastewater-covid-monitor/www/main-logo.png" style="margin-left: 50%;margin-right: 50%;">
 
