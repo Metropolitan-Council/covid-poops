@@ -13,7 +13,7 @@ library(stringr)
 library(councilR)
 
 # Load custom themes -----
-source('R/covid-plot-theme.R')
+source("R/covid-plot-theme.R")
 # loads theme_council_covidplot_large, theme_council_covidplot_insta
 
 # Data -----
@@ -32,22 +32,22 @@ copies_by_variant <-
       "Omicron BA.4",
       "Omicron BA.5 (Excluding BQ.1)",
       "Omicron BQ.1",
-      "Omicron BA.2 (Excluding BA.2.12.1)",      
+      "Omicron BA.2 (Excluding BA.2.12.1)",
       "Omicron BA.2.75",
       "XBB"
     )
   )) %>%
   filter(!(variant == "Omicron BA.4 and BA.5" &
-             date > "2022-05-31")) %>%
+    date > "2022-05-31")) %>%
   filter(date > "2021-04-01") %>%
   mutate(variant = factor(variant, levels = rev(levels(variant))))
 
 # Plot Snippets -----
-my_title <-  "Viral load by variant"
+my_title <- "Viral load by variant"
 
 my_subtitle <- "in Metro Plant wastewater influent, seven-day averages"
 
-my_caption <-  paste0(
+my_caption <- paste0(
   "The viral load for each variant is estimated by multiplying the total viral load by the frequency of that variant. ",
   "Because measured frequencies do not always add to 100%, the sum of all variant loads may be slightly greater or less than the total viral load. ",
   "The loads of Omicron BA.4 and BA.5 are shown as the sum (BA.4+BA.5) before May 31, 2022, and separately afterwards. ",
@@ -74,7 +74,6 @@ variant_fill_pal <- c(
   "XBB" = "#800000",
   "Omicron BA.2.75" = "#E4ADC4",
   "Total COVID-19 Load" = "white"
-
 )
 
 
@@ -92,7 +91,6 @@ variant_color_pal <-
     "XBB" = "#800000",
     "Omicron BA.2.75" = "#E4ADC4",
     "Total COVID-19 Load" = "black"
-
   )
 
 
@@ -116,7 +114,7 @@ base_plot <-
       ) +
       # solid black line - total covid load
       geom_line(
-        data = load_data[load_data$date > min(data$date),] %>%
+        data = load_data[load_data$date > min(data$date), ] %>%
           mutate(variant = "Total COVID-19 Load"),
         aes(
           x = date,
@@ -126,33 +124,47 @@ base_plot <-
         ),
         lwd = 0.6
       ) +
-      scale_fill_manual(values = variant_fill_pal,
-                        drop = T) + 
-      scale_color_manual(values = variant_color_pal,
-                         drop = T) +
+      scale_fill_manual(
+        values = variant_fill_pal,
+        drop = T
+      ) +
+      scale_color_manual(
+        values = variant_color_pal,
+        drop = T
+      ) +
       scale_y_continuous(my_y_label,
-                         labels = scales::unit_format(unit = "M")) +
-      scale_x_date(name = "Date",
-                   breaks = "3 months",
-                   date_labels = "%b '%y") +
+        labels = scales::unit_format(unit = "M")
+      ) +
+      scale_x_date(
+        name = "Date",
+        breaks = "3 months",
+        date_labels = "%b '%y"
+      ) +
       labs(
         title = my_title,
         subtitle = my_subtitle,
         caption = str_wrap(my_caption,
-                           width = caption_width)
+          width = caption_width
+        )
       )
   }
 
 
 ## Large, all dates
 copies_by_variant_stacked_large <-
-base_plot(data = copies_by_variant, caption_width = 180) + 
-  theme_council_covidplot_large(use_showtext = T,
-                                use_manual_font_sizes = T) +
-  guides(fill = guide_legend(nrow = 2),
-         color = guide_legend(nrow = 2)) +
-  theme(legend.justification = c(0.9, 0),
-        legend.text = element_text(size= 27))
+  base_plot(data = copies_by_variant, caption_width = 180) +
+  theme_council_covidplot_large(
+    use_showtext = T,
+    use_manual_font_sizes = T
+  ) +
+  guides(
+    fill = guide_legend(nrow = 2),
+    color = guide_legend(nrow = 2)
+  ) +
+  theme(
+    legend.justification = c(0.9, 0),
+    legend.text = element_text(size = 27)
+  )
 
 ggsave(
   "fig/copies_by_variant_stacked_large.png",
@@ -167,13 +179,19 @@ ggsave(
 # Instagram, all Dates ----
 
 copies_by_variant_stacked_insta <-
-  base_plot(data = copies_by_variant, caption_width = 110) + 
-  theme_council_covidplot_insta(use_showtext = T,
-                                use_manual_font_sizes = T) +
-  guides(fill = guide_legend(nrow = 3),
-         color = guide_legend(nrow = 3)) +
-  theme(legend.justification = c(0.85, 0),
-        legend.text = element_text(size = 15))
+  base_plot(data = copies_by_variant, caption_width = 110) +
+  theme_council_covidplot_insta(
+    use_showtext = T,
+    use_manual_font_sizes = T
+  ) +
+  guides(
+    fill = guide_legend(nrow = 3),
+    color = guide_legend(nrow = 3)
+  ) +
+  theme(
+    legend.justification = c(0.85, 0),
+    legend.text = element_text(size = 15)
+  )
 
 
 ggsave(
@@ -190,18 +208,20 @@ ggsave(
 
 
 # Instagram, last 90 days -----
-cutoff90 <- max(copies_by_variant$date) -90
-copies_by_variant_90 <- 
-  copies_by_variant %>% 
+cutoff90 <- max(copies_by_variant$date) - 90
+copies_by_variant_90 <-
+  copies_by_variant %>%
   filter(!is.na(copies_7day) & date >= cutoff90) %>%
   droplevels()
 
 
 copies_variant_stacked_insta_90days <-
-  base_plot(data = copies_by_variant_90, caption_width = 110) + 
-  scale_x_date(name = "Date",
-               breaks = "2 weeks",
-               date_labels = "%b %d") +
+  base_plot(data = copies_by_variant_90, caption_width = 110) +
+  scale_x_date(
+    name = "Date",
+    breaks = "2 weeks",
+    date_labels = "%b %d"
+  ) +
   scale_color_manual(values = c(
     # "Alpha, Beta & Gamma" = "#84BB25",
     "Delta" = "#1D94B7",
@@ -215,8 +235,7 @@ copies_variant_stacked_insta_90days <-
     "XBB" = "#800000",
     "Omicron BA.2.75" = "#E4ADC4",
     "Total COVID-19 Load" = "black"
-
-  )) + 
+  )) +
   scale_fill_manual(values = c(
     c(
       # "Alpha, Beta & Gamma" = "#84BB25",
@@ -231,15 +250,20 @@ copies_variant_stacked_insta_90days <-
       "XBB" = "#800000",
       "Omicron BA.2.75" = "#E4ADC4",
       "Total COVID-19 Load" = "white"
-
     )
-  )) + 
-    theme_council_covidplot_insta(use_showtext = T,
-                                  use_manual_font_sizes = T) +
-    guides(fill = guide_legend(nrow = 3),
-           color = guide_legend(nrow = 3)) +
-    theme(legend.justification = c(0.85, 0),
-          legend.text = element_text(size = 14))
+  )) +
+  theme_council_covidplot_insta(
+    use_showtext = T,
+    use_manual_font_sizes = T
+  ) +
+  guides(
+    fill = guide_legend(nrow = 3),
+    color = guide_legend(nrow = 3)
+  ) +
+  theme(
+    legend.justification = c(0.85, 0),
+    legend.text = element_text(size = 14)
+  )
 
 
 ggsave(
@@ -255,17 +279,19 @@ ggsave(
 
 
 # Instagram, Since Omicron -----
-copies_by_variant_Omi <- 
-  copies_by_variant %>% 
+copies_by_variant_Omi <-
+  copies_by_variant %>%
   filter(!is.na(copies_7day) & date >= "2021-12-01") %>%
   droplevels()
 
 
 copies_variant_stacked_insta_OmicronEra <-
-  base_plot(data = copies_by_variant_Omi, caption_width = 110) + 
-  scale_x_date(name = "Date",
-               breaks = "4 weeks",
-               date_labels = "%b\n%d") +
+  base_plot(data = copies_by_variant_Omi, caption_width = 110) +
+  scale_x_date(
+    name = "Date",
+    breaks = "4 weeks",
+    date_labels = "%b\n%d"
+  ) +
   scale_color_manual(values = c(
     # "Alpha, Beta & Gamma" = "#84BB25",
     "Delta" = "#1D94B7",
@@ -279,8 +305,7 @@ copies_variant_stacked_insta_OmicronEra <-
     "XBB" = "#800000",
     "Omicron BA.2.75" = "#E4ADC4",
     "Total COVID-19 Load" = "black"
-
-  )) + 
+  )) +
   scale_fill_manual(values = c(
     c(
       # "Alpha, Beta & Gamma" = "#84BB25",
@@ -296,13 +321,19 @@ copies_variant_stacked_insta_OmicronEra <-
       "Omicron BA.2.75" = "#E4ADC4",
       "Total COVID-19 Load" = "white"
     )
-  )) + 
-  theme_council_covidplot_insta(use_showtext = T,
-                                use_manual_font_sizes = T) +
-  guides(fill = guide_legend(nrow = 3),
-         color = guide_legend(nrow = 3)) +
-  theme(legend.justification = c(0.85, 0),
-        legend.text = element_text(size = 14))
+  )) +
+  theme_council_covidplot_insta(
+    use_showtext = T,
+    use_manual_font_sizes = T
+  ) +
+  guides(
+    fill = guide_legend(nrow = 3),
+    color = guide_legend(nrow = 3)
+  ) +
+  theme(
+    legend.justification = c(0.85, 0),
+    legend.text = element_text(size = 14)
+  )
 
 
 ggsave(

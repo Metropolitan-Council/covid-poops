@@ -56,11 +56,11 @@ copies_by_variant <-
     "<b>",
     round(copies_7day, digits = 2),
     "M",
-    "</b>", 
+    "</b>",
     " copies/person/day",
     "<br>",
     "<b>",
-    round(100 * frequency_7day), 
+    round(100 * frequency_7day),
     "%",
     "</b>",
     " of total viral load"
