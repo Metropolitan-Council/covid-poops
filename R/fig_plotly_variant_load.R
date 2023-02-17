@@ -30,26 +30,27 @@ copies_by_variant <-
     )
   )) %>%
   filter(!(variant == "Omicron BA.4 and BA.5" &
-             date > "2022-05-30")) %>%
+    date > "2022-05-30")) %>%
   filter(date > "2021-04-01")
 
 font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
 
 whiteSmoke <- "#F5F5F5"
 
-pal <- c("Total Viral Load" = "white",
-         "Omicron BQ.1" = "#006400",
-         "Omicron BA.5 (Excluding BQ.1)" = "#000080",
-         "Omicron BA.4" = "#3D9F93",
-         "Omicron BA.4 and BA.5" = "#A9A3FE",
-         "Omicron BA.2.12.1" = "#FBC740",
-         "Omicron BA.2 (Excluding BA.2.12.1)" = "#D64776",
-         "Omicron BA.1" = "#6D3571",
-         "Delta" = "#1D94B7",
-         "Alpha, Beta & Gamma" = "#84BB25",
-         "XBB" = "#800000",
-         "Omicron BA.2.75" = "#E4ADC4"
-         )
+pal <- c(
+  "Total Viral Load" = "white",
+  "Omicron BQ.1" = "#006400",
+  "Omicron BA.5 (Excluding BQ.1)" = "#000080",
+  "Omicron BA.4" = "#3D9F93",
+  "Omicron BA.4 and BA.5" = "#A9A3FE",
+  "Omicron BA.2.12.1" = "#FBC740",
+  "Omicron BA.2 (Excluding BA.2.12.1)" = "#D64776",
+  "Omicron BA.1" = "#6D3571",
+  "Delta" = "#1D94B7",
+  "Alpha, Beta & Gamma" = "#84BB25",
+  "XBB" = "#800000",
+  "Omicron BA.2.75" = "#E4ADC4"
+)
 
 ann_list <- list(
   text = paste(
@@ -150,10 +151,10 @@ base_ggplot <-
     alpha = 0.75,
     na.rm = T,
     lwd = 0.25
-  )  +
+  ) +
   # solid black line - total covid load
   geom_line(
-    data = load_data[load_data$date > min(copies_by_variant$date),] %>%
+    data = load_data[load_data$date > min(copies_by_variant$date), ] %>%
       mutate(variant = "Total COVID-19 Load") %>%
       rename(`7-day-average` = hover_text_load_7day),
     aes(
@@ -165,25 +166,37 @@ base_ggplot <-
     ),
     lwd = 0.6
   ) +
-  scale_fill_manual(values = pal,
-                    drop = T) + 
-  scale_color_manual(values = pal,
-                     drop = T) +
-  scale_y_continuous(name = "",
-                     labels = scales::unit_format(unit = "M")) +
-  scale_x_date(name = "Date",
-               breaks = "2 months",
-               date_labels = "%b '%y") +
-  geom_hline(yintercept = 0, color = "gray30", size = 0.5) + 
-  theme_void()+
-  theme(panel.grid.major.x= element_blank(),
-        axis.line = element_blank(),
-        axis.text.x = element_text(),
-        axis.text.y = element_text())
+  scale_fill_manual(
+    values = pal,
+    drop = T
+  ) +
+  scale_color_manual(
+    values = pal,
+    drop = T
+  ) +
+  scale_y_continuous(
+    name = "",
+    labels = scales::unit_format(unit = "M")
+  ) +
+  scale_x_date(
+    name = "Date",
+    breaks = "2 months",
+    date_labels = "%b '%y"
+  ) +
+  geom_hline(yintercept = 0, color = "gray30", size = 0.5) +
+  theme_void() +
+  theme(
+    panel.grid.major.x = element_blank(),
+    axis.line = element_blank(),
+    axis.text.x = element_text(),
+    axis.text.y = element_text()
+  )
 
-variant_load_plot <- 
-ggplotly(base_ggplot, tooltip = c("label"),
-         width = 670, height = 425) %>%
+variant_load_plot <-
+  ggplotly(base_ggplot,
+    tooltip = c("label"),
+    width = 670, height = 425
+  ) %>%
   layout(
     hoverlabel = list(
       font = list(
@@ -210,7 +223,8 @@ ggplotly(base_ggplot, tooltip = c("label"),
         size = 14,
         family = "Arial Narrow",
         color = councilR::colors$suppBlack
-      )),
+      )
+    ),
     yaxis = list(
       title = list(text = ""),
       tickfont = list(
@@ -232,7 +246,8 @@ ggplotly(base_ggplot, tooltip = c("label"),
         size = 16,
         family = "Arial Narrow",
         color = councilR::colors$suppBlack
-      )),
+      )
+    ),
     annotations = list(
       list(
         x = -0.22,
@@ -246,7 +261,8 @@ ggplotly(base_ggplot, tooltip = c("label"),
           size = 16,
           family = "Arial Narrow",
           color = councilR::colors$suppBlack
-        ))
+        )
+      )
     )
   )
 

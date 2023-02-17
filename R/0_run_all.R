@@ -1,4 +1,3 @@
-
 # remotes::install_github("Metropolitan-Council/councilR")
 library(councilR)
 library(janitor)
@@ -24,7 +23,7 @@ source("R/fig_variant_frequency.R", verbose = F)
 source("R/fig_copies_by_variant.R", verbose = F)
 source("R/fig_copies_by_variant_stacked.R", verbose = F)
 
-# Interactives: 
+# Interactives:
 source("R/map_sewershed_leaflet.R", verbose = F)
 source("R/fig_plotly_cases_vs_load.R", verbose = F)
 source("R/fig_plotly_variant_frequency.R", verbose = F)

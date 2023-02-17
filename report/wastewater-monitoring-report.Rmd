@@ -1,7 +1,7 @@
 ---
 title: "Metro Wastewater COVID-19 Monitoring"
 author: "Metropolitan Council"
-date: "February 10, 2023"
+date: "February 17, 2023"
 output:
   html_document:
     css: ["www/rmd-report-style.css", "www/colors.css", "www/font.css"]
@@ -22,7 +22,7 @@ library(gh)
 
 case_data <- read.csv("data/case_data.csv") %>%
   mutate(date = as.Date(date)) %>%
-  mutate(across(where(is.numeric), round, digits = 4)) 
+  mutate(across(where(is.numeric), round, digits = 4))
 
 load_data <- read.csv("data/clean_load_data.csv") %>%
   mutate(date = as.Date(date)) %>%
@@ -32,7 +32,7 @@ load_data <- read.csv("data/clean_load_data.csv") %>%
 variant_data <- read.csv("data/clean_variant_data.csv") %>%
   mutate(date = as.Date(date)) %>%
   mutate(across(where(is.numeric), round, digits = 2)) %>%
-  filter( !variant %in% c("Omicron BA.4 and BA.5")) %>%
+  filter(!variant %in% c("Omicron BA.4 and BA.5")) %>%
   mutate(variant = factor(
     variant,
     levels = c(
@@ -48,10 +48,11 @@ variant_data <- read.csv("data/clean_variant_data.csv") %>%
       "Omicron BA.2 (Excluding BA.2.12.1)",
       "Omicron BA.2.75",
       "XBB"
-    )))
-  
+    )
+  ))
+
 copies_by_variant <- read.csv("data/copies_by_variant.csv") %>%
-    mutate(variant = factor(
+  mutate(variant = factor(
     variant,
     levels = c(
       "Alpha, Beta & Gamma",
@@ -69,9 +70,9 @@ copies_by_variant <- read.csv("data/copies_by_variant.csv") %>%
     )
   )) %>%
   mutate(date = as.Date(date)) %>%
-  mutate(across(where(is.numeric), round, digits = 2))  %>%
+  mutate(across(where(is.numeric), round, digits = 2)) %>%
   filter(!(variant == "Omicron BA.4 and BA.5" &
-             date > "2022-05-30")) %>%
+    date > "2022-05-30")) %>%
   filter(date > "2021-04-01")
 
 
@@ -83,19 +84,20 @@ font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
 
 whiteSmoke <- "#F5F5F5"
 
-pal <- c("Total Viral Load" = "white",
-         "XBB" = "#800000",
-         "Omicron BA.2.75" = "#E4ADC4",
-         "Omicron BA.2 (Excluding BA.2.12.1)" = "#D64776",
-         "Omicron BQ.1" = "#006400",
-         "Omicron BA.5 (Excluding BQ.1)" = "#000080",
-         "Omicron BA.4" = "#3D9F93",
-         "Omicron BA.4 and BA.5" = "#A9A3FE",
-         "Omicron BA.2.12.1" = "#FBC740",
-         "Omicron BA.1" = "#6D3571",
-         "Delta" = "#1D94B7",
-         "Alpha, Beta & Gamma" = "#84BB25"
-         )
+pal <- c(
+  "Total Viral Load" = "white",
+  "XBB" = "#800000",
+  "Omicron BA.2.75" = "#E4ADC4",
+  "Omicron BA.2 (Excluding BA.2.12.1)" = "#D64776",
+  "Omicron BQ.1" = "#006400",
+  "Omicron BA.5 (Excluding BQ.1)" = "#000080",
+  "Omicron BA.4" = "#3D9F93",
+  "Omicron BA.4 and BA.5" = "#A9A3FE",
+  "Omicron BA.2.12.1" = "#FBC740",
+  "Omicron BA.1" = "#6D3571",
+  "Delta" = "#1D94B7",
+  "Alpha, Beta & Gamma" = "#84BB25"
+)
 
 ann_list <- list(
   text = paste(
@@ -168,9 +170,11 @@ hov_lab_list <- list(
 )
 
 left_axis_text <- list(
-  tickfont = list(color = colors$councilBlue,
-                  size = 16,
-                  family = "Arial Narrow"),
+  tickfont = list(
+    color = colors$councilBlue,
+    size = 16,
+    family = "Arial Narrow"
+  ),
   overlaying = "y",
   side = "left",
   zerolinewidth = 0,
@@ -213,8 +217,10 @@ right_axis_title <- list(
 load_plot <-
   load_data %>%
   # left_join(case_data, by = "date") %>%
-  plot_ly(type = "scatter", mode = "lines",
-          width = 900, height = 500) %>%
+  plot_ly(
+    type = "scatter", mode = "lines",
+    width = 900, height = 500
+  ) %>%
   add_trace(
     mode = "markers",
     x = ~date,
@@ -249,24 +255,24 @@ load_plot <-
     text = ~hover_text_load_7day
   ) %>%
   add_trace(
-    x = ~slice(load_data, 1:(n()-7))$date,
-    y = ~slice(load_data, 1:(n()-7))$covid_cases_7day,
+    x = ~ slice(load_data, 1:(n() - 7))$date,
+    y = ~ slice(load_data, 1:(n() - 7))$covid_cases_7day,
     name = "7-day avg. cases per capita",
     fill = "tozeroy",
     fillcolor = "rgba(160, 160, 160, .3)",
     line = list(width = 0.5, color = colors$suppGray),
     hoverinfo = "text",
-    text = ~slice(load_data, 1:(n()-7))$hover_text_case
+    text = ~ slice(load_data, 1:(n() - 7))$hover_text_case
   ) %>%
   add_trace(
-    x = ~slice(load_data, (n() - 6):n())$date,
-    y = ~slice(load_data, (n() - 6):n())$covid_cases_7day,
+    x = ~ slice(load_data, (n() - 6):n())$date,
+    y = ~ slice(load_data, (n() - 6):n())$covid_cases_7day,
     name = "7-day avg. cases per capita, Incomplete",
     fill = "tozeroy",
     fillcolor = "rgba(160, 160, 160, .8)",
     line = list(width = 0.5, color = colors$suppGray),
     hoverinfo = "text",
-    text = ~slice(load_data, (n() - 6):n())$hover_text_case
+    text = ~ slice(load_data, (n() - 6):n())$hover_text_case
   ) %>%
   layout(
     annotations = list(left_axis_title, right_axis_title),
@@ -279,7 +285,7 @@ load_plot <-
     yaxis2 = left_axis_text,
     xaxis = list(
       title = list(
-        range = ~c(min(date)-4, max(date) + 4),
+        range = ~ c(min(date) - 4, max(date) + 4),
         text = "",
         standoff = 0,
         font = list(
@@ -325,7 +331,7 @@ load_plot <-
       )
     )
   ) %>%
-  config(displayModeBar = F) 
+  config(displayModeBar = F)
 
 div(load_plot, align = "center")
 ```
@@ -338,112 +344,112 @@ The dominance of various SARS-CoV-2 variants in wastewater entering the Metro Pl
 This graph shows the frequency of SARS-CoV-2 variants in Metro Plant wastewater. This frequency is the percentage of the total viral RNA that was identified as being from each particular variant.  Points are daily data; lines and shaded areas are averages of the previous 7 days.
 
 ```{r variant plot, message = FALSE, warning = FALSE}
-
 variant_freq_title <- list(
-            x = -0.05,
-            y = 1.05,
-            text = "Variant frequency (%)<br>indicated by maker genes",
-            xref = "paper",
-            yref = "paper",
-            showarrow = F,
-            align = "left",
-            font = list(
-              size = 14,
-              family = font_family_list,
-              color = councilR::colors$suppBlack
-            )
-          )
+  x = -0.05,
+  y = 1.05,
+  text = "Variant frequency (%)<br>indicated by maker genes",
+  xref = "paper",
+  yref = "paper",
+  showarrow = F,
+  align = "left",
+  font = list(
+    size = 14,
+    family = font_family_list,
+    color = councilR::colors$suppBlack
+  )
+)
 
-variant_plot <- 
-variant_data %>%
-      plot_ly(# set height and width
-              width = 900, height = 500) %>%
-      add_trace(
-        type = "scatter",
-        mode = "lines",
-        x = ~date,
-        fill = "tozeroy",
-        y = ~frequency_7day,
-        split = ~variant,
-        color = ~variant,
-        alpha = 0.25,
-        colors = pal,
-        hoverinfo = "none",
-        showlegend = F
-      ) %>%
-        add_trace(
-        type = "scatter",
-        mode = "markers",
-        x = ~date,
-        y = ~frequency,
-        split = ~variant,
-        color = ~variant,
-        alpha = 0.8,
-        colors = pal,
-        hoverinfo = "text",
-        text = ~hover_text_variant
-      ) %>%
-      layout(
-        annotations = list(ann_list, variant_freq_title),
-        hovermode = "closest",
-        hoverdistance = "10",
-        hoverlabel = hov_lab_list,
-        margin = list(
-          l = 50,
-          r = 100,
-          b = 50,
-          pad = 10
-        ),
-        xaxis = list(
-          title = list(
-            text = "", standoff = 25,
-            font = list(
-              size = 14,
-              family = font_family_list,
-              color = councilR::colors$suppBlack
-            )
-          ),
-          zerolinewidth = 2,
-          zeroline = TRUE,
-          showline = FALSE,
-          showgrid = FALSE,
-          tickfont = list(
-            size = 12,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          )
-        ),
-        yaxis = list(
-          title = list(
-           # text = "<b>Frequency of marker genes (%)</b>",
-            standoff = 25,
-            font = list(
-              size = 14,
-              family = font_family_list,
-              color = councilR::colors$suppBlack
-            )
-          ),
-          tickformat = "1%",
-          tickfont = list(
-            size = 12,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          ),
-          gridcolor = "gray90",
-          zerolinecolor = "gray50",
-          zerolinewidth = 2,
-          range = c(0, 1.1)
-        ),
-        legend = list(
-          orientation = "h",
-          font = list(
-            size = 11,
-            family = font_family_list,
-            color = councilR::colors$suppBlack
-          )
+variant_plot <-
+  variant_data %>%
+  plot_ly( # set height and width
+    width = 900, height = 500
+  ) %>%
+  add_trace(
+    type = "scatter",
+    mode = "lines",
+    x = ~date,
+    fill = "tozeroy",
+    y = ~frequency_7day,
+    split = ~variant,
+    color = ~variant,
+    alpha = 0.25,
+    colors = pal,
+    hoverinfo = "none",
+    showlegend = F
+  ) %>%
+  add_trace(
+    type = "scatter",
+    mode = "markers",
+    x = ~date,
+    y = ~frequency,
+    split = ~variant,
+    color = ~variant,
+    alpha = 0.8,
+    colors = pal,
+    hoverinfo = "text",
+    text = ~hover_text_variant
+  ) %>%
+  layout(
+    annotations = list(ann_list, variant_freq_title),
+    hovermode = "closest",
+    hoverdistance = "10",
+    hoverlabel = hov_lab_list,
+    margin = list(
+      l = 50,
+      r = 100,
+      b = 50,
+      pad = 10
+    ),
+    xaxis = list(
+      title = list(
+        text = "", standoff = 25,
+        font = list(
+          size = 14,
+          family = font_family_list,
+          color = councilR::colors$suppBlack
         )
-      ) %>%
-      config(displayModeBar = FALSE)
+      ),
+      zerolinewidth = 2,
+      zeroline = TRUE,
+      showline = FALSE,
+      showgrid = FALSE,
+      tickfont = list(
+        size = 12,
+        family = font_family_list,
+        color = councilR::colors$suppBlack
+      )
+    ),
+    yaxis = list(
+      title = list(
+        # text = "<b>Frequency of marker genes (%)</b>",
+        standoff = 25,
+        font = list(
+          size = 14,
+          family = font_family_list,
+          color = councilR::colors$suppBlack
+        )
+      ),
+      tickformat = "1%",
+      tickfont = list(
+        size = 12,
+        family = font_family_list,
+        color = councilR::colors$suppBlack
+      ),
+      gridcolor = "gray90",
+      zerolinecolor = "gray50",
+      zerolinewidth = 2,
+      range = c(0, 1.1)
+    ),
+    legend = list(
+      orientation = "h",
+      font = list(
+        size = 11,
+        family = font_family_list,
+        color = councilR::colors$suppBlack
+      )
+    )
+  ) %>%
+  config(displayModeBar = FALSE)
 
 div(variant_plot, align = "center")
 ```
@@ -458,7 +464,6 @@ This graph shows the measured number of copies per person per day of each varian
 
 Last Sample Date: `r max(load_data$date, na.rm = T)`
 ```{r load x variant plot, message = FALSE, warning = FALSE}
-
 variant_prev_title <- list(
   x = -0.05,
   y = 1.15,
@@ -517,10 +522,10 @@ base_ggplot <-
     alpha = 0.75,
     na.rm = T,
     lwd = 0.25
-  )  +
+  ) +
   # solid black line - total covid load
   geom_line(
-    data = load_data[load_data$date > min(copies_by_variant$date),] %>%
+    data = load_data[load_data$date > min(copies_by_variant$date), ] %>%
       mutate(variant = "Total COVID-19 Load") %>%
       rename(`7-day-average` = hover_text_load_7day),
     aes(
@@ -532,25 +537,37 @@ base_ggplot <-
     ),
     lwd = 0.6
   ) +
-  scale_fill_manual(values = pal,
-                    drop = T) + 
-  scale_color_manual(values = pal,
-                     drop = T) +
-  scale_y_continuous(name = "",
-                     labels = scales::unit_format(unit = "M")) +
-  scale_x_date(name = "Date",
-               breaks = "2 months",
-               date_labels = "%b '%y") +
-  geom_hline(yintercept = 0, color = "gray30", size = 0.5) + 
-  theme_void()+
-  theme(panel.grid.major.x= element_blank(),
-        axis.line = element_blank(),
-        axis.text.x = element_text(),
-        axis.text.y = element_text())
+  scale_fill_manual(
+    values = pal,
+    drop = T
+  ) +
+  scale_color_manual(
+    values = pal,
+    drop = T
+  ) +
+  scale_y_continuous(
+    name = "",
+    labels = scales::unit_format(unit = "M")
+  ) +
+  scale_x_date(
+    name = "Date",
+    breaks = "2 months",
+    date_labels = "%b '%y"
+  ) +
+  geom_hline(yintercept = 0, color = "gray30", size = 0.5) +
+  theme_void() +
+  theme(
+    panel.grid.major.x = element_blank(),
+    axis.line = element_blank(),
+    axis.text.x = element_text(),
+    axis.text.y = element_text()
+  )
 
-variant_load_plot <- 
-ggplotly(base_ggplot, tooltip = c("label"),
-         width = 900, height = 500) %>%
+variant_load_plot <-
+  ggplotly(base_ggplot,
+    tooltip = c("label"),
+    width = 900, height = 500
+  ) %>%
   layout(
     hoverlabel = list(
       font = list(
@@ -577,7 +594,8 @@ ggplotly(base_ggplot, tooltip = c("label"),
         size = 16,
         family = "Arial Narrow",
         color = councilR::colors$suppBlack
-      )),
+      )
+    ),
     yaxis = list(
       title = list(text = ""),
       tickfont = list(
@@ -599,7 +617,8 @@ ggplotly(base_ggplot, tooltip = c("label"),
         size = 16,
         family = "Arial Narrow",
         color = councilR::colors$suppBlack
-      )),
+      )
+    ),
     annotations = list(
       list(
         x = -0.16,
@@ -615,7 +634,8 @@ ggplotly(base_ggplot, tooltip = c("label"),
           size = 16,
           family = "Arial Narrow",
           color = councilR::colors$suppBlack
-        ))
+        )
+      )
     )
   )
 

@@ -13,26 +13,26 @@ library(stringr)
 library(councilR)
 
 # Load custom themes -----
-source('R/covid-plot-theme.R')
+source("R/covid-plot-theme.R")
 # loads theme_council_covidplot_large, theme_council_covidplot_insta
 
 # Load data -----
 case_data <- read_csv("data/case_data.csv", show_col_types = F) %>%
-  mutate(incomplete_flag = ifelse(date > max(date)-7, "incomplete", "complete"))
+  mutate(incomplete_flag = ifelse(date > max(date) - 7, "incomplete", "complete"))
 
 cases_load <- read_csv("data/clean_load_data.csv", show_col_types = F) %>%
-  left_join(case_data, by = "date") 
+  left_join(case_data, by = "date")
 
-cases_load_90 <- 
+cases_load_90 <-
   cases_load %>%
-  filter(date > max(date, na.rm = T)-90) 
+  filter(date > max(date, na.rm = T) - 90)
 
 
 # Figure snippets ----
 
 ## Title, large plot ----
 # 64pt font for large plots
-my_title_large <-  paste0(
+my_title_large <- paste0(
   "<span style='color:#0054A4; font-size:64pt'>",
   "Total Viral load",
   "</span>",
@@ -50,7 +50,7 @@ my_subtitle_large <- paste0(
 
 ## Title, Instagram ---
 # 48pt font for instagram-sized plots
-my_title_insta <-  paste0(
+my_title_insta <- paste0(
   "<span style='color:#0054A4; font-size:48pt'>",
   "Total viral load",
   "</span>",
@@ -135,8 +135,10 @@ load_plot_base <-
       ) +
       scale_fill_manual(values = c("#C1CCD9", "#8A91AB")) +
       scale_color_manual(values = c("#C1CCD9", "#8A91AB")) +
-      guides(color = "none",
-             fill = "none") +
+      guides(
+        color = "none",
+        fill = "none"
+      ) +
       scale_y_continuous(
         name = my_yaxis_left,
         labels = scales::unit_format(unit = "M"),
@@ -146,7 +148,7 @@ load_plot_base <-
           # breaks = seq(
           #   from = 0,
           #   # round to nearest hundred
-          #   to = round(max(data[,"covid_cases_7day"], na.rm = T), -2), 
+          #   to = round(max(data[,"covid_cases_7day"], na.rm = T), -2),
           #   by = by_cases
           # )
         )
@@ -158,19 +160,23 @@ load_plot_base <-
       ) +
       scale_x_date(date_breaks = date_breaks, date_labels = date_labels)
   }
-  
+
 
 # All dates, large -----
-cases_vs_load_large <- 
-  load_plot_base(data = cases_load,
-           title = my_title_large,
-           subtitle = my_subtitle_large,
-           sec_axis_b = b,
-           caption_width = 180,
-           date_breaks = "month",
-           date_labels = "%b\n'%y") + 
-  theme_council_covidplot_large(use_showtext = T,
-                                use_manual_font_sizes = TRUE) +
+cases_vs_load_large <-
+  load_plot_base(
+    data = cases_load,
+    title = my_title_large,
+    subtitle = my_subtitle_large,
+    sec_axis_b = b,
+    caption_width = 180,
+    date_breaks = "month",
+    date_labels = "%b\n'%y"
+  ) +
+  theme_council_covidplot_large(
+    use_showtext = T,
+    use_manual_font_sizes = TRUE
+  ) +
   theme(
     plot.title = element_markdown(
       lineheight = 0.5,
@@ -182,7 +188,7 @@ cases_vs_load_large <-
       size = 48,
       hjust = 0.9
     )
-  ) 
+  )
 
 
 ggsave("fig/cases_vs_load_large.png",
@@ -194,16 +200,20 @@ ggsave("fig/cases_vs_load_large.png",
 
 
 # Instagram, All Dates ----
-cases_vs_load_insta <- 
-  load_plot_base(data = cases_load,
-                 title = my_title_insta,
-                 subtitle = my_subtitle_insta,
-                 sec_axis_b = b,
-                 caption_width = 110,
-                 date_breaks = "2 months",
-                 date_labels = "%b\n'%y") + 
-  theme_council_covidplot_insta(use_showtext = T,
-                                use_manual_font_sizes = TRUE) +
+cases_vs_load_insta <-
+  load_plot_base(
+    data = cases_load,
+    title = my_title_insta,
+    subtitle = my_subtitle_insta,
+    sec_axis_b = b,
+    caption_width = 110,
+    date_breaks = "2 months",
+    date_labels = "%b\n'%y"
+  ) +
+  theme_council_covidplot_insta(
+    use_showtext = T,
+    use_manual_font_sizes = TRUE
+  ) +
   theme(
     plot.title = element_markdown(
       lineheight = 0.5,
@@ -215,25 +225,29 @@ cases_vs_load_insta <-
       size = 30,
       hjust = 1
     )
-  ) 
+  )
 
 ggsave("fig/cases_vs_load_insta.png",
-       cases_vs_load_insta,
-       height = 1080, width = 1080, 
-       units = "px", dpi = 300
+  cases_vs_load_insta,
+  height = 1080, width = 1080,
+  units = "px", dpi = 300
 )
 
 # Instagram, Last 90 Days ----
 cases_vs_load_insta_90days <-
-load_plot_base(data = cases_load_90,
-               title = my_title_insta,
-               subtitle = my_subtitle_insta,
-               sec_axis_b = b90,
-               caption_width = 110,
-               date_breaks = "2 weeks",
-               date_labels = "%b\n'%y") + 
-  theme_council_covidplot_insta(use_showtext = T,
-                                use_manual_font_sizes = TRUE) +
+  load_plot_base(
+    data = cases_load_90,
+    title = my_title_insta,
+    subtitle = my_subtitle_insta,
+    sec_axis_b = b90,
+    caption_width = 110,
+    date_breaks = "2 weeks",
+    date_labels = "%b\n'%y"
+  ) +
+  theme_council_covidplot_insta(
+    use_showtext = T,
+    use_manual_font_sizes = TRUE
+  ) +
   theme(
     plot.title = element_markdown(
       lineheight = 0.5,
@@ -245,44 +259,48 @@ load_plot_base(data = cases_load_90,
       size = 30,
       hjust = 1
     )
-  ) 
+  )
 
 ggsave("fig/cases_vs_load_insta_90days.png",
-       cases_vs_load_insta_90days,
-       height = 1080, width = 1080, 
-       units = "px", dpi = 300
+  cases_vs_load_insta_90days,
+  height = 1080, width = 1080,
+  units = "px", dpi = 300
 )
 
 # Instagram, Omicron Era ----
-cases_load_Omi <- 
+cases_load_Omi <-
   cases_load %>%
-  filter(date >= "2021-12-01") 
+  filter(date >= "2021-12-01")
 
-cases_vs_load_insta_OmicronEra <- 
-  load_plot_base(data = cases_load_Omi,
-                 title = my_title_insta,
-                 subtitle = my_subtitle_insta,
-                 sec_axis_b = b90,
-                 caption_width = 110,
-                 date_breaks = "5 weeks",
-                 date_labels = "%b\n%d") + 
-  theme_council_covidplot_insta(use_showtext = T,
-                                use_manual_font_sizes = TRUE) +
-  
+cases_vs_load_insta_OmicronEra <-
+  load_plot_base(
+    data = cases_load_Omi,
+    title = my_title_insta,
+    subtitle = my_subtitle_insta,
+    sec_axis_b = b90,
+    caption_width = 110,
+    date_breaks = "5 weeks",
+    date_labels = "%b\n%d"
+  ) +
+  theme_council_covidplot_insta(
+    use_showtext = T,
+    use_manual_font_sizes = TRUE
+  ) +
+
   ## custom y axis - will need to adjust manually over time ----
-scale_y_continuous(
-  name = my_yaxis_left,
-  labels = scales::unit_format(unit = "M"),
-  sec.axis = sec_axis(
-    ~ . * b90,
-    name = my_yaxis_right,
-    breaks = seq(
-      from = 0,
-      to = 100, 
-      by = 25
+  scale_y_continuous(
+    name = my_yaxis_left,
+    labels = scales::unit_format(unit = "M"),
+    sec.axis = sec_axis(
+      ~ . * b90,
+      name = my_yaxis_right,
+      breaks = seq(
+        from = 0,
+        to = 100,
+        by = 25
+      )
     )
-  )
-) +
+  ) +
   theme(
     plot.title = element_markdown(
       lineheight = 0.5,
@@ -297,7 +315,7 @@ scale_y_continuous(
   )
 
 ggsave("fig/cases_vs_load_insta_OmicronEra.png",
-       cases_vs_load_insta_OmicronEra,
-       height = 1080, width = 1080, 
-       units = "px", dpi = 300
+  cases_vs_load_insta_OmicronEra,
+  height = 1080, width = 1080,
+  units = "px", dpi = 300
 )

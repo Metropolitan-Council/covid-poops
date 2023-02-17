@@ -1,5 +1,3 @@
-
-
 library(shiny)
 library(tidyverse)
 library(lubridate)
@@ -39,9 +37,11 @@ hov_lab_list <- list(
 )
 
 left_axis_text <- list(
-  tickfont = list(color = colors$councilBlue,
-                  size = 16,
-                  family = "Arial Narrow"),
+  tickfont = list(
+    color = colors$councilBlue,
+    size = 16,
+    family = "Arial Narrow"
+  ),
   overlaying = "y",
   side = "left",
   zerolinewidth = 0,
@@ -143,24 +143,24 @@ load_plot <-
     text = ~hover_text_load_7day
   ) %>%
   add_trace(
-    x = ~slice(load_data, 1:(n()-7))$date,
-    y = ~slice(load_data, 1:(n()-7))$covid_cases_7day,
+    x = ~ slice(load_data, 1:(n() - 7))$date,
+    y = ~ slice(load_data, 1:(n() - 7))$covid_cases_7day,
     name = "7-day avg. cases per capita",
     fill = "tozeroy",
     fillcolor = "rgba(160, 160, 160, .3)",
     line = list(width = 0.5, color = colors$suppGray),
     hoverinfo = "text",
-    text = ~slice(load_data, 1:(n()-7))$hover_text_case
+    text = ~ slice(load_data, 1:(n() - 7))$hover_text_case
   ) %>%
   add_trace(
-    x = ~slice(load_data, (n() - 6):n())$date,
-    y = ~slice(load_data, (n() - 6):n())$covid_cases_7day,
+    x = ~ slice(load_data, (n() - 6):n())$date,
+    y = ~ slice(load_data, (n() - 6):n())$covid_cases_7day,
     name = "7-day avg. cases per capita, Incomplete",
     fill = "tozeroy",
     fillcolor = "rgba(160, 160, 160, .8)",
     line = list(width = 0.5, color = colors$suppGray),
     hoverinfo = "text",
-    text = ~slice(load_data, (n() - 6):n())$hover_text_case
+    text = ~ slice(load_data, (n() - 6):n())$hover_text_case
   ) %>%
   layout(
     annotations = list(left_axis_title, right_axis_title),
@@ -197,7 +197,7 @@ load_plot <-
     yaxis2 = left_axis_text,
     xaxis = list(
       title = list(
-        range = ~c(min(date)-4, max(date) + 4),
+        range = ~ c(min(date) - 4, max(date) + 4),
         text = "",
         standoff = 0,
         font = list(
@@ -243,6 +243,6 @@ load_plot <-
       )
     )
   ) %>%
-  config(displayModeBar = F) 
+  config(displayModeBar = F)
 
 htmlwidgets::saveWidget(load_plot, "fig/cases_vs_load.html")

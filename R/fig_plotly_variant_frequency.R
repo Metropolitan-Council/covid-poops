@@ -34,7 +34,7 @@ variant_data <- read.csv("data/clean_variant_data.csv") %>%
       "XBB",
       "Omicron BA.2 (Excluding BA.2.12.1)"
     )
-  )) 
+  ))
 
 copies_by_variant <- read.csv("data/copies_by_variant.csv") %>%
   mutate(date = as.Date(date)) %>%
@@ -48,18 +48,19 @@ omi_ratio_data <- read.csv("data/omi_ratio_data.csv") %>%
 
 whiteSmoke <- "#F5F5F5"
 
-pal <- c("Total Viral Load" = "white",
-         "XBB" = "#800000",
-         "Omicron BA.2.75" = "#E4ADC4",
-         "Omicron BQ.1" = "#006400",
-         "Omicron BA.5 (Excluding BQ.1)" = "#000080",
-         "Omicron BA.4" = "#3D9F93",
-         "Omicron BA.4 and BA.5" = "#A9A3FE",
-         "Omicron BA.2.12.1" = "#FBC740",
-         "Omicron BA.2 (Excluding BA.2.12.1)" = "#D64776",
-         "Omicron BA.1" = "#6D3571",
-         "Delta" = "#1D94B7",
-         "Alpha, Beta & Gamma" = "#84BB25"
+pal <- c(
+  "Total Viral Load" = "white",
+  "XBB" = "#800000",
+  "Omicron BA.2.75" = "#E4ADC4",
+  "Omicron BQ.1" = "#006400",
+  "Omicron BA.5 (Excluding BQ.1)" = "#000080",
+  "Omicron BA.4" = "#3D9F93",
+  "Omicron BA.4 and BA.5" = "#A9A3FE",
+  "Omicron BA.2.12.1" = "#FBC740",
+  "Omicron BA.2 (Excluding BA.2.12.1)" = "#D64776",
+  "Omicron BA.1" = "#6D3571",
+  "Delta" = "#1D94B7",
+  "Alpha, Beta & Gamma" = "#84BB25"
 )
 
 # ann_list <- list(
@@ -105,10 +106,11 @@ hov_lab_list <- list(
 
 
 
-variant_plot <- 
+variant_plot <-
   variant_data %>%
-  plot_ly(# set height and width
-    width = 670, height = 425) %>%
+  plot_ly( # set height and width
+    width = 670, height = 425
+  ) %>%
   add_trace(
     type = "scatter",
     mode = "lines",
@@ -160,7 +162,8 @@ variant_plot <-
         size = 16,
         family = "Arial Narrow",
         color = councilR::colors$suppBlack
-      )),
+      )
+    ),
     yaxis = list(
       title = list(
         # text = "<b>Frequency of marker genes (%)</b>",
@@ -191,7 +194,8 @@ variant_plot <-
         size = 16,
         family = "Arial Narrow",
         color = councilR::colors$suppBlack
-      )),
+      )
+    ),
     annotations = list(list(
       x = -0.05,
       y = 1.15,
