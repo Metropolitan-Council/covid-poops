@@ -57,17 +57,17 @@ fluidPage(
               "The most recent data update includes samples taken February 7 - February 13 2023. During this sampling period:"
             ),
             tags$ul(
-              tags$li("The total viral RNA load entering the Metro Plant decreased by 6% last week compared to a week earlier."),
-              tags$li("BA.2 and BA.5 sublineages contributed 74% and 24%, respectively, of the viral RNA load entering Metro last week."),
+              tags$li("The total viral RNA load entering the Metro Plant decreased by 13% last week compared to a week earlier."),
+              tags$li("BA.2 and BA.5 sublineages contributed 78% and 18%, respectively, of the viral RNA load entering Metro last week."),
               tags$li(
-                "BA.2.75 and XBB subvariants are both subsets of the BA.2 lineage:",
-                tags$ul(tags$li("XBB made up 71% of the viral RNA entering Metro last week, increasing from the previous week’s level of 65%.")),
-                tags$ul(tags$li("BA.2.75 made up only 3% of the viral RNA entering Metro last week, unchanged from a week earlier."))
+                "XBB and BA.2.75 subvariants are both subsets of the BA.2 lineage:",
+                tags$ul(tags$li("XBB made up 77% of the viral RNA entering Metro last week, increasing from the previous week’s level of 71%.")),
+                tags$ul(tags$li("BA.2.75 made up only 2% of the viral RNA entering Metro last week."))
               ),
-              tags$li("BQ.1 subvariants are a subset of the BA.5 lineage. They made up 24% of the viral RNA entering the Metro Plant last week and are the only remaining BA.5 sublineage observed at a significant level in Metro influent.")
+              tags$li("BQ.1 subvariants are a subset of the BA.5 lineage. They made up 17% of the viral RNA entering the Metro Plant last week, and other BA.5-derived sublineages accounted for 1%.")
             ),
             br(),
-            p(tags$b("Summary: "), "The total level of virus decreased slightly last week compared to the previous week. XBB sublineages remain the most prevalent SARS-CoV-2 variants in the Metro Plant service area.")
+            p(tags$b("Summary: "), "The total level of virus decreased last week compared to the previous week. XBB sublineages remain the most prevalent SARS-CoV-2 variants in the Metro Plant service area.")
           )
         )
       )
