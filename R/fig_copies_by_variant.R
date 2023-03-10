@@ -150,8 +150,10 @@ base_plot <-
       labs(
         title = my_title,
         subtitle = my_subtitle,
+        color  = "", 
+        fill = "",
         caption = str_wrap(my_caption,
-          width = caption_width
+          width = caption_width,
         )
       )
   }
