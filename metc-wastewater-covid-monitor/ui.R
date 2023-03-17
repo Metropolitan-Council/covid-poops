@@ -62,7 +62,7 @@ fluidPage(
               tags$li(
                 "XBB and BA.2.75 subvariants are both subsets of the BA.2 lineage:",
                 tags$ul(tags$li("XBB made up 91%, and BA.2.75 made up 2%, of the viral RNA entering Metro last week."))
-               ),
+              ),
               tags$li("BQ.1 subvariants are a subset of the BA.5 lineage. They made up 5% of the viral RNA entering the Metro Plant last week.")
             ),
             br(),
