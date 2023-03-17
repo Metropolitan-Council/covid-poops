@@ -34,7 +34,7 @@ raw_variant_data <-
   select(-contains("sample_start_date")) %>%
   mutate(date = as.Date(date)) %>%
   mutate(n4060sfrequency_of_mutant_allele = as.numeric(n4060sfrequency_of_mutant_allele)) %>%
-  mutate(p19539pfrequency_of_mutant_allele = as.numeric(p19539pfrequency_of_mutant_allele))%>%
+  mutate(p19539pfrequency_of_mutant_allele = as.numeric(p19539pfrequency_of_mutant_allele)) %>%
   mutate(s959pfrequency_of_mutant_allele = as.numeric(s959pfrequency_of_mutant_allele))
 
 # tidy up - split format of spreadsheet to long-form
