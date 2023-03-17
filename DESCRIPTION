@@ -10,11 +10,7 @@ Imports:
     plotly,
     DT,
     gh,
-    councilR,
     leaflet,
     leaflet.extras,
-    sf,
     shinyBS,
     ggplot2
-Remotes:
-  Metropolitan-Council/councilR
