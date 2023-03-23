@@ -13,7 +13,6 @@ Imports:
     councilR,
     leaflet,
     leaflet.extras,
-    sf,
     shinyBS,
     ggplot2
 Remotes:

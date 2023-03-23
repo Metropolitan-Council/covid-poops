@@ -28,7 +28,7 @@ server <- function(input, output) {
     font = list(
       size = 16,
       family = font_family_list,
-      color = councilR::colors$councilBlue
+      color = colors$councilBlue
     )
   )
 
@@ -43,7 +43,7 @@ server <- function(input, output) {
     font = list(
       size = 16,
       family = font_family_list,
-      color = councilR::colors$suppBlack
+      color = colors$suppBlack
     )
   )
 
@@ -123,7 +123,7 @@ server <- function(input, output) {
             tickfont = list(
               size = 16,
               family = font_family_list,
-              color = councilR::colors$suppBlack
+              color = colors$suppBlack
             )
           ),
           yaxis = list(
@@ -136,7 +136,7 @@ server <- function(input, output) {
             tickfont = list(
               size = 16,
               family = font_family_list,
-              color = councilR::colors$suppBlack
+              color = colors$suppBlack
             ),
             gridcolor = colors$suppWhite,
             zerolinecolor = colors$suppWhite,
@@ -148,7 +148,7 @@ server <- function(input, output) {
             font = list(
               size = 16,
               family = font_family_list,
-              color = councilR::colors$suppBlack
+              color = colors$suppBlack
             )
           )
         ) %>%
@@ -233,14 +233,14 @@ server <- function(input, output) {
             font = list(
               size = 20,
               family = "Arial Narrow",
-              color = councilR::colors$suppWhite
+              color = colors$suppWhite
             ),
             # bgcolor = "white",
             stroke = list(
-              councilR::colors$suppGray,
-              councilR::colors$suppGray,
-              councilR::colors$suppGray,
-              councilR::colors$suppGray
+              colors$suppGray,
+              colors$suppGray,
+              colors$suppGray,
+              colors$suppGray
             ),
             padding = list(l = 5, r = 5, b = 5, t = 5)
           ),
@@ -253,7 +253,7 @@ server <- function(input, output) {
             font = list(
               size = 16,
               family = "Arial Narrow",
-              color = councilR::colors$suppBlack
+              color = colors$suppBlack
             )
           ),
           yaxis = list(
@@ -264,7 +264,7 @@ server <- function(input, output) {
             tickfont = list(
               size = 16,
               family = "Arial Narrow",
-              color = councilR::colors$suppBlack
+              color = colors$suppBlack
             ),
             rangemode = "nonnegative",
             gridcolor = "gray90",
@@ -279,7 +279,7 @@ server <- function(input, output) {
             tickfont = list(
               size = 16,
               family = "Arial Narrow",
-              color = councilR::colors$suppBlack
+              color = colors$suppBlack
             )
           ),
           annotations = list(
@@ -294,7 +294,7 @@ server <- function(input, output) {
               font = list(
                 size = 16,
                 family = "Arial Narrow",
-                color = councilR::colors$suppBlack
+                color = colors$suppBlack
               )
             )
           )
@@ -354,7 +354,7 @@ server <- function(input, output) {
             font = list(
               size = 16,
               family = font_family_list,
-              color = councilR::colors$suppBlack
+              color = colors$suppBlack
             )
           )),
           hovermode = "closest",
@@ -374,7 +374,7 @@ server <- function(input, output) {
             tickfont = list(
               size = 16,
               family = font_family_list,
-              color = councilR::colors$suppBlack
+              color = colors$suppBlack
             )
           ),
           yaxis = list(
@@ -386,7 +386,7 @@ server <- function(input, output) {
             tickfont = list(
               size = 16,
               family = font_family_list,
-              color = councilR::colors$suppBlack
+              color = colors$suppBlack
             ),
             gridcolor = colors$suppWhite,
             zerolinecolor = colors$suppWhite,
@@ -400,7 +400,7 @@ server <- function(input, output) {
             font = list(
               size = 16,
               family = font_family_list,
-              color = councilR::colors$suppBlack
+              color = colors$suppBlack
             )
           )
         ) %>%

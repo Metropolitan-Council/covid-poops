@@ -102,6 +102,20 @@ pal <- c(
   "Alpha, Beta & Gamma" = "#84BB25"
 )
 
+colors <- list(
+  councilBlue = "#0054A4", cdGreen = "#78A22F", mtsRed = "#EE3124",
+  esBlue = "#009AC7", transitBlue = "#0053A0", transitRed = "#ED1B2E",
+  transitYellow = "#FFD200", suppYellow = "#FFD200", suppBlack = "#000000",
+  suppGray = "#666666", suppWhite = "#FFFFFF", metroGreen = "#008144",
+  metroOrange = "#F68A1E", transitGold = "#7A8690", metroGray = "#7A8690",
+  playGreen = "#7BA529", playBlue = "#005AAD", playDaBlue = "#00295A",
+  playLiBlue = "#009CCE", playSalmon = "#E78452", playYellow = "#C6DE29",
+  metrostatsBlue = "#0875C3", metrostatsBrown = "#A16C4C",
+  metrostatsRed = "#A14D5D", metrostatsDaPurp = "#643967",
+  metrostatsMePurp = "#AC74A6", metrostatsLiPurp = "#D8B5D6",
+  metrostatsPink = "#F6BD9C", metrostatsTan = "#EAE6C8"
+)
+
 ann_list <- list(
   text = paste(
     "<br><br>",
@@ -117,7 +131,7 @@ ann_list <- list(
   font = list(
     size = 11,
     family = font_family_list,
-    color = councilR::colors$suppBlack
+    color = colors$suppBlack
   ),
   x = 1,
   y = -0.19,
@@ -131,14 +145,14 @@ hov_lab_list <- list(
   font = list(
     size = 20,
     family = font_family_list,
-    color = councilR::colors$suppWhite
+    color = colors$suppWhite
   ),
   # bgcolor = "white",
   stroke = list(
-    councilR::colors$suppGray,
-    councilR::colors$suppGray,
-    councilR::colors$suppGray,
-    councilR::colors$suppGray
+    colors$suppGray,
+    colors$suppGray,
+    colors$suppGray,
+    colors$suppGray
   ),
   padding = list(l = 5, r = 5, b = 5, t = 5)
 )
