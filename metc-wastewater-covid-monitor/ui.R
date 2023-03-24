@@ -35,38 +35,38 @@ fluidPage(
           tabPanel(
             "Total Viral Load",
             HTML("<h6><section style='font-size:14pt'>This graph shows the amount of SARS-CoV-2 viral RNA entering the Metro Plant each day (blue line) and the number of new daily COVID-19 cases in the Metro Plant's service area, by sample collection date (gray line; data from the Minnesota Department of Health). The most recent case data (darker gray) are incomplete and subject to change.</h3>"),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: March 13, 2023. <br>*All data are preliminary and subject to revision</h3>"),
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: March 20, 2023. <br>*All data are preliminary and subject to revision</h3>"),
             plotlyOutput("loadPlot", height = "auto")
           ),
           tabPanel(
             "Viral Load by Variant",
             HTML("<h6><section style='font-size:14pt'>This graph shows the estimated amount of SARS-CoV-2 viral RNA by COVID-19 variant, sub-variant and lineage. The total amount of SARS-CoV-2 viral RNA in Metro Plant wastewater influent is shown in the background in gray.</h3>"),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: March 13, 2023.  <br>*All data are preliminary and subject to revision</h3>"),
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: March 20, 2023.  <br>*All data are preliminary and subject to revision</h3>"),
             plotlyOutput("variantLoadPlot", height = "auto")
           ),
           tabPanel(
             "Variant Frequencies (%)",
             HTML("<h6><section style='font-size:14pt'>This graph shows the estimated percent of SARS-CoV-2 viral RNA contributed by COVID-19 variant, sub-variant and lineage.</h3>"),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: March 13, 2023. <br>*All data are preliminary and subject to revision</h3>"),
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: March 20, 2023. <br>*All data are preliminary and subject to revision</h3>"),
             plotlyOutput("variantFreqPlot", height = "auto")
           ),
           tabPanel(
             "This Week's Summary",
-            h6("March 17, 2023"),
+            h6("March 24, 2023"),
             p(
-              "The most recent data update includes samples taken March 7 - March 13 2023. During this sampling period:"
+              "The most recent data update includes samples taken March 14 - March 20 2023. During this sampling period:"
             ),
             tags$ul(
-              tags$li("The total viral RNA load entering the Metro Plant was remained steady last week, increasing by only 2% compared to a week earlier."),
-              tags$li("BA.2 and BA.5 sublineages contributed 93% and 5%, respectively, of the viral RNA load entering Metro last week, unchanged from a week earlier."),
+              tags$li("The total viral RNA load entering the Metro Plant dropped sharply again last week, down by 30% compared to a week earlier. It is now 61% lower than it was four weeks ago."),
+              tags$li("BA.2 and BA.5 sublineages contributed 94% and 4%, respectively, of the viral RNA load entering Metro last week."),
               tags$li(
                 "XBB and BA.2.75 subvariants are both subsets of the BA.2 lineage:",
-                tags$ul(tags$li("XBB made up 91%, and BA.2.75 made up 2%, of the viral RNA entering Metro last week."))
+                tags$ul(tags$li("XBB made up 93%, and BA.2.75 made up 2%, of the viral RNA entering Metro last week."))
               ),
-              tags$li("BQ.1 subvariants are a subset of the BA.5 lineage. They made up 5% of the viral RNA entering the Metro Plant last week.")
+              tags$li("BQ.1 subvariants are a subset of the BA.5 lineage. They made up 3% of the viral RNA entering the Metro Plant last week.")
             ),
             br(),
-            p(tags$b("Summary: "), "The total level of virus remained relatively steady last week compared to the previous week. XBB sublineages are the dominant SARS-CoV-2 variants in the Metro Plant service area.")
+            p(tags$b("Summary: "), "The total level of virus dropped sharply last week compared to the previous week. XBB sublineages are the dominant SARS-CoV-2 variants in the Metro Plant service area.")
           )
         )
       )
@@ -159,7 +159,7 @@ fluidPage(
       ),
       tags$br(),
       "App last updated ",
-      "2023-03-17",
+      "2023-03-24",
       # using gh::gh() causes SAML error in production
       # gh::gh("GET /repos/Metropolitan-Council/covid-poops")[49][[1]] %>% as.Date(),
       style = "font-size: 1.5rem;
