@@ -60,10 +60,10 @@ fluidPage(
               tags$li("The total viral RNA load entering the Metro Plant last week was up by 9% compared to a week earlier."),
               tags$li("Levels over the past two weeks are lower than they have been at any time since early April 2022, at the start of the BA.2 wave."),
               tags$li("BA.2 and BA.5 sublineages contributed 96% and 2%, respectively, of the viral RNA load entering Metro last week."),
-              tags$li("XBB, a sublineage of BA.2, is the dominant variant, making up 93% of the viral RNA entering Metro last week.")
+              tags$li("XBB, a sublineage of BA.2, is the dominant variant, making up 93% of the viral RNA entering the plant last week.")
             ),
             br(),
-            p(tags$b("Summary: "), "The total level of viral RNA in the Metro service area is as low as it has been since early April 2022. XBB sublineages are the dominant SARS-CoV-2 variants in the Metro Plant service area.")
+            p(tags$b("Summary: "), "The total amount of viral RNA entering the Metro Plant is as low as it has been since early April 2022. XBB sublineages are the dominant SARS-CoV-2 variants in the Metro Plant service area.")
           )
         )
       )
