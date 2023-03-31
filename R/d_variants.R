@@ -34,7 +34,7 @@ raw_variant_data <-
   select(-contains("sample_start_date")) %>%
   mutate(date = as.Date(date)) %>%
   mutate(n4060sfrequency_of_mutant_allele = as.numeric(n4060sfrequency_of_mutant_allele)) %>%
-  mutate(p19539pfrequency_of_mutant_allele = as.numeric(p19539pfrequency_of_mutant_allele)) %>%
+  mutate(p19539pfrequency_of_mutant_allele = as.numeric(p19539pfrequency_of_mutant_allele))%>%
   mutate(s959pfrequency_of_mutant_allele = as.numeric(s959pfrequency_of_mutant_allele))
 
 # tidy up - split format of spreadsheet to long-form
@@ -210,9 +210,9 @@ variant_data_run <-
       date >= "2022-10-11" &
         date < "2023-02-14" &
         d3n - e136d < 0
-      ~ 0,
-      date >= "2023-02-14"
       ~ 0
+      # date >= "2023-02-14"
+      # ~ NA
     ),
     "Omicron BQ.1" = case_when(
       date >= "2022-10-11" &
