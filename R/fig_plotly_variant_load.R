@@ -180,7 +180,7 @@ base_ggplot <-
   ) +
   scale_x_date(
     name = "Date",
-    breaks = "2 months",
+    breaks = "3 months",
     date_labels = "%b '%y"
   ) +
   geom_hline(yintercept = 0, color = "gray30", size = 0.5) +
