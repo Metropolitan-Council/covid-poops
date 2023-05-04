@@ -150,7 +150,7 @@ load_data_umgc <-
   filter(!is.na(date))
 
 
-umgc_switch_date = as.Date("2023-04-24")
+umgc_switch_date = as.Date("2023-05-01")
 
 load_data_umgc_official <- load_data_umgc %>%
                             filter (date >= umgc_switch_date) %>%
