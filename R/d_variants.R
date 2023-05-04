@@ -4,6 +4,7 @@ library(tidyverse)
 
 source("R/sharepointfilepath.R")
 
+# Process R&D Extraction Data:
 # read in raw -----
 header1 <- suppressMessages(read_excel(file.path(paste0(sharepath, "/1 - Update data/A- Metro data - load and variants.xlsx")),
   sheet = "variants"
@@ -347,6 +348,19 @@ variant_data_date <-
     )
   )
 
+
+# Process UMGC Extraction Data:
+
+umgc_switch_date = as.Date("2023-05-01")
+
+source("R/d_variants_umgc.R", verbose = F)
+
+variant_data_date_umgc <- variant_data_date_umgc %>%
+  filter (date >= umgc_switch_date) 
+
+variant_data_date <- variant_data_date %>%
+  filter( date < umgc_switch_date) %>%
+  rbind(variant_data_date_umgc)
 
 write.csv(variant_data_date, "data/clean_variant_data.csv", row.names = F)
 write.csv(variant_data_date, "metc-wastewater-covid-monitor/data/clean_variant_data.csv", row.names = F)
