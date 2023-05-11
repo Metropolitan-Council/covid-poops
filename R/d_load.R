@@ -102,9 +102,10 @@ load_data_formatted_umgc  <- raw_load_data_umgc %>%
 seq_date <- function(x) seq(min(x, na.rm = T), max(x, na.rm = T), by = "day")
 all_dates <- seq_date(raw_load_data$sample_start_date)
 
+
 load_data_bysample_umgc <-
   load_data_formatted_umgc %>%
-  mutate(flow_l_day = metro_influent_flow * 3785411.8) %>%
+  mutate(flow_l_day = metro_influent_flow * 3785000) %>%
   select(-metro_influent_flow) %>%
   mutate( copies_per_l = copies_per_u_l / wastewater_volume_ml * elution_volume_ul * 1000 )  %>%
   mutate( copies_per_l_N1 = ifelse( target == "N1", copies_per_l, NA))  %>%
