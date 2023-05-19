@@ -103,36 +103,28 @@ seq_date <- function(x) seq(min(x, na.rm = T), max(x, na.rm = T), by = "day")
 all_dates <- seq_date(raw_load_data$sample_start_date)
 
 
-load_data_bysample_umgc <-
+load_data_umgc <-
   load_data_formatted_umgc %>%
   mutate(flow_l_day = metro_influent_flow * 3785000) %>%
-  select(-metro_influent_flow) %>%
   mutate( copies_per_l = copies_per_u_l / wastewater_volume_ml * elution_volume_ul * 1000 )  %>%
   mutate( copies_per_l_N1 = ifelse( target == "N1", copies_per_l, NA))  %>%
   mutate( copies_per_l_N2 = ifelse( target == "N2", copies_per_l, NA))  %>%
-  # calculate n per day, per person, per person in millions
-  mutate(copies_day = copies_per_l * flow_l_day) %>%
-  mutate(copies_day_person = copies_day / 1950000) %>%
-  mutate(copies_day_person_M = copies_day_person / 1e6) %>%
-  # average across runs for a sample average
-  group_by(sample_id, sample_start_date, flow_l_day) %>%
-  summarize(
-    across(c(copies_day, copies_day_person_M, copies_per_l, copies_per_l_N1, copies_per_l_N2), ~ mean(., na.rm = T))) %>%
-  ungroup()
-
-load_data_umgc <-
-  load_data_bysample_umgc %>%
-  # average by date:
+  select(-metro_influent_flow, -copies_per_u_l, -copies_per_u_l_raw, -target, -sample_id, -umgc_notes, -copies_per_l, -wastewater_volume_ml, -elution_volume_ul) %>%
   group_by(sample_start_date) %>%
   add_tally(name = "n_samples") %>%
   # average across multiple samples:
   summarize(
-    copies_day_mn = mean(copies_day, na.rm = T),
-    copies_day_person_M_mn = mean(copies_day_person_M, na.rm = T),
-    copies_day_person_M_se = sd(copies_day_person_M, na.rm = T) / sqrt(n_samples),
-  ) %>%
-  ungroup() %>%
-  unique() %>%
+  copies_per_l_N1 = mean(copies_per_l_N1, na.rm = TRUE),
+  copies_per_l_N2 = mean(copies_per_l_N2, na.rm = TRUE),
+  flow_l_day = mean(flow_l_day, na.rm = TRUE)) %>%
+  rowwise() %>%
+  mutate ( copies_per_l = mean(c(copies_per_l_N1, copies_per_l_N2), na.rm = TRUE)) %>%
+  # calculate n per day, per person, per person in millions
+  mutate(copies_day_mn = copies_per_l * flow_l_day) %>%
+  mutate(copies_day_person_mn = copies_day_mn / 1950000) %>%
+  mutate(copies_day_person_M_mn = copies_day_person_mn / 1e6) %>%
+  mutate(copies_day_person_M_se = NA) %>%
+  select ( -copies_per_l_N1, -copies_per_l_N2, -flow_l_day, -copies_per_l, -copies_day_mn, -copies_day_person_mn ) %>%
   rename(date = sample_start_date) %>%
   # (fill in for missing dates)
   complete(date = seq.Date(min(date, na.rm = T), max(date, na.rm = T), by = "days")) %>% 
@@ -154,8 +146,7 @@ load_data_umgc <-
 umgc_switch_date = as.Date("2023-05-01")
 
 load_data_umgc_official <- load_data_umgc %>%
-                            filter (date >= umgc_switch_date) %>%
-                            select( -copies_day_mn)
+                            filter (date >= umgc_switch_date) 
 
 load_data_combined <- load_data %>%
                       filter( date < umgc_switch_date) %>%
