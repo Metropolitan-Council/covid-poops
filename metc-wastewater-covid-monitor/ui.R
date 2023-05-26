@@ -54,7 +54,7 @@ fluidPage(
             "This Week's Summary",
             h6("May 26, 2023"),
             p(
-              "The most recent data update includes samples taken May 15 - May 21 2023. During this sampling period:"
+              "The most recent data update includes samples taken May 15 - May 22 2023. During this sampling period:"
             ),
             tags$ul(
               tags$li("The total viral RNA load entering the Metro Plant decreased by 36% last week compared to a week earlier."),
