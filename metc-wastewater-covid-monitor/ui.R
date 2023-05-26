@@ -35,26 +35,26 @@ fluidPage(
           tabPanel(
             "Total Viral Load",
             HTML("<h6><section style='font-size:14pt'>This graph shows the amount of SARS-CoV-2 viral RNA entering the Metro Plant each day (blue line) and the number of new daily COVID-19 cases in the Metro Plant's service area, by sample collection date (gray line; data from the Minnesota Department of Health). The most recent case data (darker gray) are incomplete and subject to change.</h3>"),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: May 22, 2023. <br>*All data are preliminary and subject to revision</h3>"),
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: May 21, 2023. <br>*All data are preliminary and subject to revision</h3>"),
             plotlyOutput("loadPlot", height = "auto")
           ),
           tabPanel(
             "Viral Load by Variant",
             HTML("<h6><section style='font-size:14pt'>This graph shows the estimated amount of SARS-CoV-2 viral RNA by COVID-19 variant, sub-variant and lineage. The total amount of SARS-CoV-2 viral RNA in Metro Plant wastewater influent is shown in the background in gray.</h3>"),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: May 22, 2023.  <br>*All data are preliminary and subject to revision</h3>"),
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: May 21, 2023.  <br>*All data are preliminary and subject to revision</h3>"),
             plotlyOutput("variantLoadPlot", height = "auto")
           ),
           tabPanel(
             "Variant Frequencies (%)",
             HTML("<h6><section style='font-size:14pt'>This graph shows the estimated percent of SARS-CoV-2 viral RNA contributed by COVID-19 variant, sub-variant and lineage.</h3>"),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: May 22, 2023. <br>*All data are preliminary and subject to revision</h3>"),
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: May 21, 2023. <br>*All data are preliminary and subject to revision</h3>"),
             plotlyOutput("variantFreqPlot", height = "auto")
           ),
           tabPanel(
             "This Week's Summary",
             h6("May 26, 2023"),
             p(
-              "The most recent data update includes samples taken May 15 - May 22 2023. During this sampling period:"
+              "The most recent data update includes samples taken May 15 - May 21 2023. During this sampling period:"
             ),
             tags$ul(
               tags$li("The total viral RNA load entering the Metro Plant decreased by 36% last week compared to a week earlier."),
