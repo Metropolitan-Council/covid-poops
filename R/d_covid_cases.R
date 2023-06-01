@@ -4,7 +4,10 @@ library(readxl)
 library(janitor)
 library(tidyverse)
 
-raw_case_data <- read_csv(paste0("data/raw_zip_code_data.csv")) %>%
+# Find Sharepoint Directory:
+source("R/sharepointfilepath.R")
+
+raw_case_data <- read_csv(paste0(sharepath, "/BLU EMP SEN - SARS-CoV-2/raw_zip_code_data.csv")) %>%
   janitor::clean_names() %>%
   rename(date = 1, zip = 2) %>%
   mutate(date = as.Date(date, "%m/%d/%Y"))
@@ -39,6 +42,5 @@ case_data <- raw_case_data %>%
 write.csv(case_data, "metc-wastewater-covid-monitor/data/case_data.csv", row.names = F)
 write.csv(case_data, "data/case_data.csv", row.names = F)
 
-source("R/sharepointfilepath.R")
 
 write.csv(case_data, file.path(paste0(sharepath, "/1 - Update data/metro-case-data.csv")), row.names = F)
