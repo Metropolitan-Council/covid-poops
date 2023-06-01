@@ -86,7 +86,7 @@ raw_load_data_umgc <- read_excel(file.path(paste0(sharepath, "/BLU EMP SEN - SAR
   mutate( site = substr(sample_id, 1, 3)) %>% 
   filter( ( site %in% c('MET')))
 
-influent_flow <- read.csv(paste0(sharepath, "/1 - Update data/influent_flow_data.csv")) %>%
+influent_flow <- read.csv(paste0(sharepath, "/1 - Update data/influent_flow_data.csv"))[ ,1:2] %>%
   janitor::clean_names() %>% 
   rename( sample_start_date = date) %>% 
   mutate(sample_start_date = as.Date(sample_start_date, format = "%m/%d/%Y"))
