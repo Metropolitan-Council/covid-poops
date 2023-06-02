@@ -17,9 +17,10 @@ variant_split_umgc <- raw_variant_data_umgc  %>%
   select(-collection_date) %>% 
   mutate( site = substr(sample_id, 1, 3)) %>% 
   filter ( site == "MET") %>%
+  mutate( amino_acid_target = ifelse( amino_acid_target == "HV69/70 Del", "HV 69-70", ifelse(amino_acid_target == "ORF1b.P1953P" ,"P1953P", ifelse(amino_acid_target == "ORF1ab:N4060S", "N4060S", ifelse(amino_acid_target == "ORF1b:Y264H", "Y264H", amino_acid_target))))) %>%
   mutate( mutation = gsub(" Mutant", "" ,amino_acid_target)) %>% 
   select (-amino_acid_target) %>%
-  select (-site, -mutant_conc_copies_per_u_l, -wt_conc_copies_per_u_l, -umgc_notes, -mutant_conc_copies_per_u_l_raw, -wt_conc_copies_per_u_l_raw)
+  select (-site, -mutant_conc_copies_per_u_l, -wt_conc_copies_per_u_l, -umgc_notes, -mutant_conc_copies_per_u_l_raw, -wt_conc_copies_per_u_l_raw) 
 
 variant_data_run_umgc <-
   variant_split_umgc %>%

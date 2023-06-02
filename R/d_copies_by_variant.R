@@ -8,7 +8,7 @@ copies_by_variant <-
   variant_data_date %>%
   select(date, variant, frequency, frequency_7day) %>%
   # match to the load data, by date:
-  left_join(load_data %>% select(date, copies_day_person_M_mn)) %>%
+  left_join(load_data_combined %>% select(date, copies_day_person_M_mn)) %>%
   # get complete data:
   filter(!is.na(frequency) & !is.na(copies_day_person_M_mn)) %>%
   # approx. number of copies of the variant is equal to the frequency of that variant, times the total # of copies:
