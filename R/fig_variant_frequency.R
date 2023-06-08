@@ -106,7 +106,7 @@ base_plot <- function(data, caption_width = 180, subtitle_width = 100) {
     ) +
     scale_x_date(
       name = "Date",
-      breaks = "3 months",
+      breaks = "4 months",
       date_labels = "%b '%y"
     ) +
     labs(
