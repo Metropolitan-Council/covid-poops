@@ -158,7 +158,8 @@ load_plot_base <-
         subtitle = subtitle,
         caption = stringr::str_wrap(my_caption, width = caption_width)
       ) +
-      scale_x_date(date_breaks = date_breaks, date_labels = date_labels)
+      scale_x_date(date_breaks = date_breaks, 
+                   date_labels = date_labels)
   }
 
 
@@ -170,7 +171,7 @@ cases_vs_load_large <-
     subtitle = my_subtitle_large,
     sec_axis_b = b,
     caption_width = 180,
-    date_breaks = "month",
+    date_breaks = "2 months",
     date_labels = "%b\n'%y"
   ) +
   theme_council_covidplot_large(
@@ -207,7 +208,7 @@ cases_vs_load_insta <-
     subtitle = my_subtitle_insta,
     sec_axis_b = b,
     caption_width = 110,
-    date_breaks = "2 months",
+    date_breaks = "3 months",
     date_labels = "%b\n'%y"
   ) +
   theme_council_covidplot_insta(
