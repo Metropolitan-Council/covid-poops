@@ -52,12 +52,12 @@ fluidPage(
           ),
           tabPanel(
             "This Week's Summary",
-            h6("June 9, 2023"),
+            h6("June 16, 2023"),
             p(
-              "The most recent data update includes samples taken May 29 - June 4 2023. During this sampling period:"
+              "The most recent data update includes samples taken June 5 to June 11 2023. During this sampling period:"
             ),
             tags$ul(
-              tags$li("The weekly average viral RNA load entering the Metro Plant continues to vary week-to-week but remains at a very low level."),
+              tags$li("The weekly average viral RNA load entering the Metro Plant remains at a very low level. It is now lower than it has been in nearly two years, since the week of July 6-12, 2021."),
               # tags$li("That increase was driven by a single high value, on May 27. Ignoring that high value, the load decreased by 21%, week-over-week."),
               tags$li("XBB is the dominant variant in wastewater entering the plant.")
             )
@@ -153,7 +153,7 @@ fluidPage(
       ),
       tags$br(),
       "App last updated ",
-      "2023-06-09",
+      "2023-06-16",
       # using gh::gh() causes SAML error in production
       # gh::gh("GET /repos/Metropolitan-Council/covid-poops")[49][[1]] %>% as.Date(),
       style = "font-size: 1.5rem;
