@@ -88,7 +88,7 @@ raw_load_data_umgc <- read_excel(file.path(paste0(sharepath, "/BLU EMP SEN - SAR
 
 influent_flow <- read.csv(paste0(sharepath, "/1 - Update data/influent_flow_data.csv"))[ ,1:2] %>%
   janitor::clean_names() %>% 
-  rename( sample_start_date = date) %>% 
+  rename( sample_start_date = i_date) %>% 
   mutate(sample_start_date = as.Date(sample_start_date, format = "%m/%d/%Y"))
 
 load_data_formatted_umgc  <- raw_load_data_umgc %>%
