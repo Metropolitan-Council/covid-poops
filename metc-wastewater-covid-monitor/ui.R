@@ -35,29 +35,29 @@ fluidPage(
           tabPanel(
             "Total Viral Load",
             HTML("<h6><section style='font-size:14pt'>This graph shows the amount of SARS-CoV-2 viral RNA entering the Metro Plant each day (blue line) and the number of new daily COVID-19 cases in the Metro Plant's service area, by sample collection date (gray line; data from the Minnesota Department of Health). The most recent case data (darker gray) are incomplete and subject to change.</h3>"),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date:June 18, 2023. <br>*All data are preliminary and subject to revision</h3>"),
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date:June 25, 2023. <br>*All data are preliminary and subject to revision</h3>"),
             plotlyOutput("loadPlot", height = "auto")
           ),
           tabPanel(
             "Viral Load by Variant",
             HTML("<h6><section style='font-size:14pt'>This graph shows the estimated amount of SARS-CoV-2 viral RNA by COVID-19 variant, sub-variant and lineage. The total amount of SARS-CoV-2 viral RNA in Metro Plant wastewater influent is shown in the background in gray.</h3>"),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date:June 18, 2023.  <br>*All data are preliminary and subject to revision</h3>"),
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date:June 25, 2023.  <br>*All data are preliminary and subject to revision</h3>"),
             plotlyOutput("variantLoadPlot", height = "auto")
           ),
           tabPanel(
             "Variant Frequencies (%)",
             HTML("<h6><section style='font-size:14pt'>This graph shows the estimated percent of SARS-CoV-2 viral RNA contributed by COVID-19 variant, sub-variant and lineage.</h3>"),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date:June 18, 2023. <br>*All data are preliminary and subject to revision</h3>"),
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date:June 25, 2023. <br>*All data are preliminary and subject to revision</h3>"),
             plotlyOutput("variantFreqPlot", height = "auto")
           ),
           tabPanel(
             "This Week's Summary",
-            h6("June 23, 2023"),
+            h6("June 30, 2023"),
             p(
-              "The most recent data update includes samples taken June 12 to June 18 2023. During this sampling period:"
+              "The most recent data update includes samples taken June 19 to June 25 2023. During this sampling period:"
             ),
             tags$ul(
-              tags$li("The weekly average viral RNA load entering the Metro Plant remains at a very low level, similar to levels last seen in July 2021."),
+              tags$li("The weekly average viral RNA load entering the Metro Plant remains at a very low level, unchanged from last week."),
               # tags$li("That increase was driven by a single high value, on May 27. Ignoring that high value, the load decreased by 21%, week-over-week."),
               tags$li("XBB is the dominant variant in wastewater entering the plant.")
             )
@@ -153,7 +153,7 @@ fluidPage(
       ),
       tags$br(),
       "App last updated ",
-      "2023-06-23",
+      "2023-06-30",
       # using gh::gh() causes SAML error in production
       # gh::gh("GET /repos/Metropolitan-Council/covid-poops")[49][[1]] %>% as.Date(),
       style = "font-size: 1.5rem;
