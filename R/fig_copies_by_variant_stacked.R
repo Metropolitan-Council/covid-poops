@@ -289,7 +289,7 @@ copies_variant_stacked_insta_OmicronEra <-
   base_plot(data = copies_by_variant_Omi, caption_width = 110) +
   scale_x_date(
     name = "Date",
-    breaks = "4 weeks",
+    breaks = "8 weeks",
     date_labels = "%b\n%d"
   ) +
   scale_color_manual(values = c(
