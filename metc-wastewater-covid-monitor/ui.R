@@ -153,7 +153,7 @@ fluidPage(
       ),
       tags$br(),
       "App last updated ",
-      "2023-07-09",
+      "2023-07-14",
       # using gh::gh() causes SAML error in production
       # gh::gh("GET /repos/Metropolitan-Council/covid-poops")[49][[1]] %>% as.Date(),
       style = "font-size: 1.5rem;
