@@ -1,7 +1,7 @@
 ---
 title: "Metro Wastewater COVID-19 Monitoring"
 author: "Metropolitan Council"
-date: "July 7, 2023"
+date: "July 14, 2023"
 output:
   html_document:
     css: ["www/rmd-report-style.css", "www/colors.css", "www/font.css"]
@@ -76,9 +76,9 @@ copies_by_variant <- read.csv("data/copies_by_variant.csv") %>%
   filter(date > "2021-04-01")
 
 
-omi_ratio_data <- read.csv("data/omi_ratio_data.csv") %>%
-  mutate(date = as.Date(date)) %>%
-  mutate(across(where(is.numeric), round, digits = 3))
+# omi_ratio_data <- read.csv("data/omi_ratio_data.csv") %>%
+#   mutate(date = as.Date(date)) %>%
+#   mutate(across(where(is.numeric), round, digits = 3))
 
 font_family_list <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
 

@@ -40,9 +40,9 @@ copies_by_variant <- read.csv("data/copies_by_variant.csv") %>%
   mutate(date = as.Date(date)) %>%
   mutate(across(where(is.numeric), round, digits = 2))
 
-omi_ratio_data <- read.csv("data/omi_ratio_data.csv") %>%
-  mutate(date = as.Date(date)) %>%
-  mutate(across(where(is.numeric), round, digits = 3))
+# omi_ratio_data <- read.csv("data/omi_ratio_data.csv") %>%
+#   mutate(date = as.Date(date)) %>%
+#   mutate(across(where(is.numeric), round, digits = 3))
 
 # "Arial Narrow" <- "Roman, Helvetica, Tahoma, Geneva, Arial, sans-serif"
 
