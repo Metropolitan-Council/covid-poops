@@ -103,7 +103,7 @@ load_plot_base <-
            date_breaks = "month",
            date_labels = "%b\n'%y") {
     data %>%
-      filter(date >= "2021-10-01") %>%
+      filter(date >= "2020-11-01") %>%
       ggplot(aes(x = date, y = copies_day_person_M_mn)) +
       geom_bar(
         aes(
@@ -200,6 +200,45 @@ ggsave("fig/cases_vs_load_large.png",
 )
 
 
+
+# Since Nov 2021, large -----
+cases_vs_load_large_since_nov_2021 <-
+  load_plot_base(
+    data = cases_load %>% filter(date >= "2021-11-01"),
+    title = my_title_large,
+    subtitle = my_subtitle_large,
+    sec_axis_b = b,
+    caption_width = 180,
+    date_breaks = "2 months",
+    date_labels = "%b\n'%y"
+  ) +
+  theme_council_covidplot_large(
+    use_showtext = T,
+    use_manual_font_sizes = TRUE
+  ) +
+  theme(
+    plot.title = element_markdown(
+      lineheight = 0.5,
+      size = 48,
+      hjust = 0.1
+    ),
+    plot.subtitle = element_markdown(
+      lineheight = 0.5,
+      size = 48,
+      hjust = 0.9
+    )
+  )
+
+
+ggsave("fig/cases_vs_load_large_since_nov_2021.png",
+       cases_vs_load_large_since_nov_2021,
+       scale = 1,
+       height = 4, width = 8,
+       units = "in", dpi = 300
+)
+
+
+
 # Instagram, All Dates ----
 cases_vs_load_insta <-
   load_plot_base(
@@ -233,6 +272,43 @@ ggsave("fig/cases_vs_load_insta.png",
   height = 1080, width = 1080,
   units = "px", dpi = 300
 )
+
+
+# Instagram, Since Nov 2021 ----
+cases_vs_load_insta_since_nov_2021 <-
+  load_plot_base(
+    data = cases_load %>% filter(date >= "2021-11-01"),
+    title = my_title_insta,
+    subtitle = my_subtitle_insta,
+    sec_axis_b = b,
+    caption_width = 110,
+    date_breaks = "3 months",
+    date_labels = "%b\n'%y"
+  ) +
+  theme_council_covidplot_insta(
+    use_showtext = T,
+    use_manual_font_sizes = TRUE
+  ) +
+  theme(
+    plot.title = element_markdown(
+      lineheight = 0.5,
+      size = 30,
+      hjust = 0
+    ),
+    plot.subtitle = element_markdown(
+      lineheight = 0.5,
+      size = 30,
+      hjust = 1
+    )
+  )
+
+ggsave("fig/cases_vs_load_insta_since_nov_2021.png",
+       cases_vs_load_insta_since_nov_2021,
+       height = 1080, width = 1080,
+       units = "px", dpi = 300
+)
+
+
 
 # Instagram, Last 90 Days ----
 cases_vs_load_insta_90days <-
