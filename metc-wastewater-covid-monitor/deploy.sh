@@ -6,6 +6,7 @@ Rscript -e "rsconnect::deployApp(
   appName = 'metc-wastewater-covid-monitor', 
   appTitle = 'metc-wastewater-covid-monitor',
   lint = FALSE,
+  forceUpdate = TRUE,
   metadata = list(asMultiple = FALSE, 
                   asStatic = FALSE,
                   ignoredFiles = 'deploy.sh'), 
