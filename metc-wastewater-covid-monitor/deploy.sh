@@ -5,6 +5,7 @@ Rscript -e "rsconnect::deployApp(
   server = 'shinyapps.io', 
   appName = 'metc-wastewater-covid-monitor', 
   appTitle = 'metc-wastewater-covid-monitor',
+  appId = 5437936,
   lint = FALSE,
   forceUpdate = TRUE,
   metadata = list(asMultiple = FALSE, 
