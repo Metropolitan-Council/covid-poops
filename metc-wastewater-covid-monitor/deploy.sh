@@ -1,3 +1,4 @@
+Rscript -e "remotes::install_version('rsconnect', '0.8.29', force = TRUE)"
 Rscript -e "rsconnect::setAccountInfo(name='metrotransitmn', token='${SHINYAPPSIO_TOKEN}', secret='${SHINYAPPSIO_SECRET}')"
 Rscript -e "rsconnect::deployApp(
   appDir = './metc-wastewater-covid-monitor', 
