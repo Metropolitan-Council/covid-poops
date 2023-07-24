@@ -31,7 +31,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: rsconnect
+          extra-packages: rsconnect, remotes
 
       - name: Deploy app to shinyappsio
         env:
