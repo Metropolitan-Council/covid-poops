@@ -14,7 +14,6 @@ Imports:
     leaflet,
     leaflet.extras,
     shinyBS,
-    rsconnect (0.8.29), 
     ggplot2
 Remotes:
   Metropolitan-Council/councilR
