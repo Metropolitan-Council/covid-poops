@@ -34,31 +34,30 @@ fluidPage(
           type = "pills",
           tabPanel(
             "Total Viral Load",
-            HTML("<h6><section style='font-size:14pt'>This graph shows the amount of SARS-CoV-2 viral RNA entering the Metro Plant each day (blue line) and the number of new daily COVID-19 cases in the Metro Plant's service area, by sample collection date (gray line; data from the Minnesota Department of Health). The most recent case data (darker gray) are incomplete and subject to change.</h3>"),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date:July 23, 2023. <br>*All data are preliminary and subject to revision</h3>"),
+            HTML("<h6><section style='font-size:14pt'>This graph shows the amount of SARS-CoV-2 viral RNA entering the Metro Plant each day (blue line) and the number of new daily COVID-19 cases in the Metro Plant's service area, by sample collection date (gray line; data from the Minnesota Department of Health). The most recent case data (darker gray) are incomplete and subject to change.  Note:  Case data is not available after 7/24/23.</h3>"),
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: July 30, 2023. <br>*All data are preliminary and subject to revision</h3>"),
             plotlyOutput("loadPlot", height = "auto")
           ),
           tabPanel(
             "Viral Load by Variant",
             HTML("<h6><section style='font-size:14pt'>This graph shows the estimated amount of SARS-CoV-2 viral RNA by COVID-19 variant, sub-variant and lineage. The total amount of SARS-CoV-2 viral RNA in Metro Plant wastewater influent is shown in the background in gray.</h3>"),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date:July 23, 2023.  <br>*All data are preliminary and subject to revision</h3>"),
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: July 30, 2023.  <br>*All data are preliminary and subject to revision</h3>"),
             plotlyOutput("variantLoadPlot", height = "auto")
           ),
           tabPanel(
             "Variant Frequencies (%)",
             HTML("<h6><section style='font-size:14pt'>This graph shows the estimated percent of SARS-CoV-2 viral RNA contributed by COVID-19 variant, sub-variant and lineage.</h3>"),
-            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date:July 23, 2023. <br>*All data are preliminary and subject to revision</h3>"),
+            HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: July 30, 2023. <br>*All data are preliminary and subject to revision</h3>"),
             plotlyOutput("variantFreqPlot", height = "auto")
           ),
           tabPanel(
             "This Week's Summary",
-            h6("July 28, 2023"),
+            h6("August 4, 2023"),
             p(
-              "The most recent data update includes samples taken July 17 to July 23, 2023. During this sampling period:"
+              "The most recent data update includes samples taken July 24 to July 30, 2023. During this sampling period:"
             ),
             tags$ul(
-              tags$li("The total viral RNA load entering the Metro Plant increased by 54% last week compared to a week earlier. It is nearly double its recent low value observed for the period ending June 18th and higher than it has been since Memorial Day (May 29- June 4)."),
-              tags$li("The total weekly viral RNA load entering the Metro Plant remains quite low, however, within the lowest 15% of values observed since observations began in November 2020."),
+              tags$li("The total viral RNA load entering the Metro Plant increased by 12% last week compared to a week earlier."),
               tags$li("XBB is the dominant variant in wastewater entering the plant.")
             )
           )
@@ -153,7 +152,7 @@ fluidPage(
       ),
       tags$br(),
       "App last updated ",
-      "2023-07-28",
+      "2023-08-04",
       # using gh::gh() causes SAML error in production
       # gh::gh("GET /repos/Metropolitan-Council/covid-poops")[49][[1]] %>% as.Date(),
       style = "font-size: 1.5rem;

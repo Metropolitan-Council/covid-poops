@@ -83,24 +83,24 @@ server <- function(input, output) {
           text = ~hover_text_load_7day
         ) %>%
         add_trace(
-          x = ~ slice(load_data, 1:(n() - 7))$date,
-          y = ~ slice(load_data, 1:(n() - 7))$covid_cases_7day,
+          x = ~ slice(load_data, 1:(n() - 13))$date,
+          y = ~ slice(load_data, 1:(n() - 13))$covid_cases_7day,
           name = "7-day avg. cases per capita, Metro Service Area",
           fill = "tozeroy",
           fillcolor = "rgba(160, 160, 160, .3)",
           line = list(width = 0.5, color = colors$suppGray),
           hoverinfo = "text",
-          text = ~ slice(load_data, 1:(n() - 7))$hover_text_case
+          text = ~ slice(load_data, 1:(n() - 13))$hover_text_case
         ) %>%
         add_trace(
-          x = ~ slice(load_data, (n() - 6):n())$date,
-          y = ~ slice(load_data, (n() - 6):n())$covid_cases_7day,
+          x = ~ slice(load_data, (n() - 12):n())$date,
+          y = ~ slice(load_data, (n() - 12):n())$covid_cases_7day,
           name = "7-day avg. cases per capita, Metro Service Area, Incomplete",
           fill = "tozeroy",
           fillcolor = "rgba(160, 160, 160, .8)",
           line = list(width = 0.5, color = colors$suppGray),
           hoverinfo = "text",
-          text = ~ slice(load_data, (n() - 6):n())$hover_text_case
+          text = ~ slice(load_data, (n() - 12):n())$hover_text_case
         ) %>%
         layout(
           annotations = list(left_axis_title, right_axis_title),
