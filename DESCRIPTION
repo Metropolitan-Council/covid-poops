@@ -5,6 +5,7 @@ Depends:
     R (>= 3.5.0)
 Imports: 
     shiny,
+    cpp11,
     dplyr,
     lubridate,
     plotly,
