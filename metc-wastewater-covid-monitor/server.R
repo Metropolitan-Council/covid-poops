@@ -523,14 +523,14 @@ server <- function(input, output) {
   output$faqAnswer2 <- renderUI({
     str1 <- "In the Twin Cities metro area, the Metropolitan Council’s Environmental Services (MCES) Division collects and treats wastewater. At the start of the COVID-19 pandemic in 2020, research staff at the Council’s Metro Plant in Saint Paul developed a new laboratory method for extracting SARS-CoV-2 RNA (ribonucleic acid) from untreated wastewater samples."
     str2 <- "The viral RNA is present in all virus particles and is used by the virus to replicate itself inside human cells. Fragments of this RNA are present in the feces of people infected with COVID-19 and flushed into the community’s wastewater collection system."
-    str3 <- "Samples containing the viral RNA extracted from wastewater are analyzed by scientists at the University of Minnesota Genomics Center (UMGC) to quantify the viral RNA. The amount of viral RNA they observe is a measure of the prevalence of COVID-19 in the plant’s service area and an indicator of community spread."
-    str4 <- "The Council reports this information weekly to the Minnesota Department of Health and the Governor’s Office. The Council also posts this information on its website weekly so it’s available to the public, media, and other health officials."
+    str3 <- "Samples containing the viral RNA extracted from wastewater were analyzed by scientists at the University of Minnesota Genomics Center (UMGC) to quantify the viral RNA. The amount of viral RNA they observe is a measure of the prevalence of COVID-19 in the plant’s service area and an indicator of community spread."
+    str4 <- "For the period of November 1st, 2020 to August 27, 2023 the Council reported this information weekly to the Minnesota Department of Health and the Governor’s Office and posted this information on its website.  Monitoring of Metropolitan Council’s wastewater continues through the University of Minnesota Medical School wastewater project <a href='https://experience.arcgis.com/experience/a8d269bd670a421e9fd45f967f23f13c'> (https://experience.arcgis.com/experience/a8d269bd670a421e9fd45f967f23f13c).</a> "
     HTML(paste(str1, str2, str3, str4, sep = "<br/><br/>"))
   })
 
   output$faqAnswer3 <- renderUI({
-    str1 <- "The Council reports the total amount of viral RNA, or viral load, flowing into the Metro Plant in Saint Paul. This plant treats wastewater from 66 metro-area communities, serving nearly two million people. Because the Metro Plant is so large and serves so many people, it provides a good picture of COVID-19 infections and trends occurring throughout the region."
-    str2 <- "The Council also collects data on the virus at three of its other wastewater regional treatment plants. These data, too, are shared with public health authorities to inform their decision-making."
+    str1 <- "The Council reported the total amount of viral RNA, or viral load, flowing into the Metro Plant in Saint Paul. This plant treats wastewater from 66 metro-area communities, serving nearly two million people. Because the Metro Plant is so large and serves so many people, it provides a good picture of COVID-19 infections and trends occurring throughout the region."
+    str2 <- "The Council also collected data on the virus at three of its other wastewater regional treatment plants. These data, too, were shared with public health authorities to inform their decision-making."
     HTML(paste(paste(str1, str2, sep = "<br/><br/>"), "<br/>"))
   })
 
@@ -550,12 +550,12 @@ server <- function(input, output) {
   })
 
   output$faqAnswer7 <- renderUI({
-    str1 <- "The Council updates the dashboard data every week on Friday mornings. The data provides information on the prevalence of the virus during the week that precedes the data release. In other words, if the data are released on a Friday the 20th of the month, the reported data are from the 10th through the 16th of the month."
+    str1 <- "The Council generated daily wastewater data for the period of November 1, 2020 to September 27, 2023. It has transitioned to having all wastewater monitoring accomplished through the National Wastewater Surveillance System and the University of Minnesota Medical School Wastewater Project."
     HTML(paste(str1, sep = "<br/><br/>"))
   })
 
   output$faqAnswer8 <- renderUI({
-    str1 <- "Wastewater treatment is our primary business, but we are committed to helping to monitor the viral trends we’re experiencing. Wastewater surveillance has proven to be a valuable tool in the battle against COVID-19, and we are committed to continuing our efforts in this area. Our observations are that, due to sometimes large variability in the day-to-day data, the weekly update gives a better picture of the developing trends than we would observe in a more frequent review of the data."
+    str1 <- "The Council has transitioned to having all wastewater monitoring accomplished through the National Wastewater Surveillance System and the University of Minnesota Medical School Wastewater Project."
     HTML(paste(str1, sep = "<br/><br/>"))
   })
 
