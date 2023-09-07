@@ -34,14 +34,14 @@ fluidPage(
           type = "pills",
           tabPanel(
             "Total Viral Load",
-            HTML("<h6><section style='font-size:14pt'>This graph shows the amount of SARS-CoV-2 viral RNA entering the Metro Plant each day (blue line) and the number of new daily COVID-19 cases in the Metro Plant's service area, by sample collection date (gray line; data from the Minnesota Department of Health). The most recent case data (darker gray) are incomplete and subject to change.  Notes:  Case data is not available after 7/24/23.  Metropolitan Council ended wastewater monitoring on 8/27/23.  Monitoring of Metropolitan Council's wastewater continues through the <a href='https://experience.arcgis.com/experience/a8d269bd670a421e9fd45f967f23f13c'>University of Minnesota Medical School wastewater project (https://experience.arcgis.com/experience/a8d269bd670a421e9fd45f967f23f13c).</a></h3>"),
+            HTML("<h6><section style='font-size:14pt;color:black'>This graph shows the amount of SARS-CoV-2 viral RNA entering the Metro Plant each day (blue line) and the number of new daily COVID-19 cases in the Metro Plant's service area, by sample collection date (gray line; data from the Minnesota Department of Health). The most recent case data (darker gray) are incomplete and subject to change.  Notes:  Case data is not available after 7/24/23.  Metropolitan Council ended wastewater monitoring on 8/27/23.  Monitoring of Metropolitan Council's wastewater continues through the <a href='https://experience.arcgis.com/experience/a8d269bd670a421e9fd45f967f23f13c' target='_blank'> University of Minnesota Medical School wastewater project
+                  <i class='fa fa-external-link-alt' role='presentation' aria-label='external-link-alt icon'></i></a></h3>"),
             HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: August 27, 2023. <br>*All data are preliminary and subject to revision</h3>"),
             plotlyOutput("loadPlot", height = "auto")
           ),
           tabPanel(
             "Viral Load by Variant",
-            HTML("<h6><section style='font-size:14pt'>This graph shows the estimated amount of SARS-CoV-2 viral RNA by COVID-19 variant, sub-variant and lineage. The total amount of SARS-CoV-2 viral RNA in Metro Plant wastewater influent is shown in the background in gray.  Note: Metropolitan Council ended wastewater monitoring on 8/27/2023.
-</h3>"),
+            HTML("<h6><section style='font-size:14pt'>This graph shows the estimated amount of SARS-CoV-2 viral RNA by COVID-19 variant, sub-variant and lineage. The total amount of SARS-CoV-2 viral RNA in Metro Plant wastewater influent is shown in the background in gray.  Note: Metropolitan Council ended wastewater monitoring on 8/27/2023.</h3>"),
             HTML("<h6><section style='font-size:12pt;font-style:italic'>Last Sample Date: August 27, 2023.  <br>*All data are preliminary and subject to revision</h3>"),
             plotlyOutput("variantLoadPlot", height = "auto")
           ),
@@ -58,9 +58,13 @@ fluidPage(
               tags$li("Together they applied the methods to influent wastewater from the Council’s Metropolitan Wastewater Plant which serves 1.9 million people of the Twin Cities metropolitan region."),
               tags$li("Daily data were generated for the period of November 1, 2020 to August 27, 2023."),
               tags$li("The data proved to be very useful for understanding the prevalence and variant composition of Covid-19 in the metropolitan region."),
-              tags$li("Monitoring of Metropolitan Council’s wastewater continues through the University of Minnesota Medical School wastewater project", (tags$a(href= "https://experience.arcgis.com/experience/a8d269bd670a421e9fd45f967f23f13c", "https://experience.arcgis.com/experience/a8d269bd670a421e9fd45f967f23f13c"))),
+              tags$li("Monitoring of Metropolitan Council’s wastewater continues through the ", (tags$a(href= "https://experience.arcgis.com/experience/a8d269bd670a421e9fd45f967f23f13c", "University of Minnesota Medical School wastewater project",
+                                                                                                                                                                 shiny::icon("external-link-alt", lib = "font-awesome"),
+                                                                                                                                                                 target = "_blank"))),
             )
           )
+          
+          
         )
       )
     ),
