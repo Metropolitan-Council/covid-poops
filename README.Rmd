@@ -25,11 +25,17 @@ library(fs)
 [![Deploy](https://github.com/Metropolitan-Council/covid-poops/actions/workflows/deploy.yaml/badge.svg)](https://github.com/Metropolitan-Council/covid-poops/actions/workflows/deploy.yaml)
 <!-- badges: end -->
 
-This repository contains the code for cleaning, transforming and visualizing data from Environmental Services, whose researchers are monitoring COVID-19 prevalence in the metro area by analyzing SARS CoV-2 viral RNA load in Metro Plant wastewater.
+This repository contains the code for cleaning, transforming and visualizing data from Environmental Services, whose researchers were monitoring COVID-19 prevalence in the metro area by analyzing SARS CoV-2 viral RNA load in Metro Plant wastewater.
 
 ## Data update schedule  
 
-All data used in the interactive Shiny app lives in `/metc-wastewater-covid-monitor/data`. Though samples are taken daily, samples are processed and analyzed in the University of Minnesota Genomics Center lab once a week. We aim to release the weekly data update every Friday before noon.  
+The Council generated daily wastewater data for the period of November 1, 2020 to September 27, 2023. It has transitioned to having all wastewater monitoring accomplished through the National Wastewater Surveillance System and the University of Minnesota Medical School Wastewater Project. 
+
+[University of Minnesota Medical School Wastewater Project](https://experience.arcgis.com/experience/a8d269bd670a421e9fd45f967f23f13c?data_id=dataSource_1-regions_wwtp_view_6302%3A2l)
+
+[National Wastewater Surveillance System](https://covid.cdc.gov/covid-data-tracker/#wastewater-surveillance)
+
+[National Wastewater Surveillance System Dataset](https://data.cdc.gov/Public-Health-Surveillance/NWSS-Public-SARS-CoV-2-Wastewater-Metric-Data/2ew6-ywp6)
 
 ## Structure  
 
